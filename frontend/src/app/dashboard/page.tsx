@@ -1,0 +1,685 @@
+"use client";
+
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { getCurrentUser, logout } from "../utils/api";
+import {
+  Building2,
+  Calendar,
+  Calculator as CalcIcon,
+  HelpCircle,
+  LogOut,
+  AlertCircle,
+  FileText,
+  Package,
+  Users,
+  TrendingUp,
+  DollarSign,
+  ArrowRight,
+  ChevronRight,
+  Percent,
+  X
+} from "lucide-react";
+
+interface Company {
+  id: string;
+  name: string;
+  address?: string;
+  gst_number?: string;
+  state?: string;
+  financial_year_start?: string;
+  financial_year_end?: string;
+  contact_email?: string;
+  contact_phone?: string;
+}
+
+export default function DashboardPage() {
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [company, setCompany] = useState<Company | null>(null);
+
+  // Keyboard Navigation Menu State
+  const [selectedMenuIndex, setSelectedMenuIndex] = useState(0);
+
+  // Modals & Widgets State
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+  const [isPeriodModalOpen, setIsPeriodModalOpen] = useState(false);
+  const [isCompanyInfoOpen, setIsCompanyInfoOpen] = useState(false);
+
+  // Period state
+  const [fyStart, setFyStart] = useState("");
+  const [fyEnd, setFyEnd] = useState("");
+
+  // Calculator State
+  const [calcDisplay, setCalcDisplay] = useState("0");
+  const [calcEquation, setCalcEquation] = useState("");
+  const [shouldResetDisplay, setShouldResetDisplay] = useState(false);
+
+  // Menu items (Gateway of SmartERP)
+  // Bold capital letters highlight the hotkey characters.
+  const menuItems = [
+    { label: "Masters", isHeader: true },
+    { label: "Ledgers", hotkey: "L", action: () => alert("Navigating to Ledgers Management...") },
+    { label: "Groups", hotkey: "G", action: () => alert("Navigating to Groups Management...") },
+    { label: "Stock Items", hotkey: "S", action: () => alert("Navigating to Stock Items...") },
+    { label: "Units of Measure", hotkey: "U", action: () => alert("Navigating to Units...") },
+
+    { label: "Transactions", isHeader: true },
+    { label: "Vouchers Entry", hotkey: "V", action: () => alert("Opening Voucher Entries page...") },
+    { label: "Banking module", hotkey: "B", action: () => alert("Opening Banking panel...") },
+
+    { label: "Reports", isHeader: true },
+    { label: "Balance Sheet", hotkey: "A", action: () => alert("Generating Balance Sheet...") },
+    { label: "Profit & Loss", hotkey: "P", action: () => alert("Generating Profit & Loss statement...") },
+    { label: "Trial Balance", hotkey: "T", action: () => alert("Generating Trial Balance...") },
+    { label: "GST Register", hotkey: "X", action: () => alert("Generating GST Reports...") }
+  ];
+
+  // Filter out headers for arrow key index mapping
+  const navigableIndices = menuItems
+    .map((item, idx) => (item.isHeader ? -1 : idx))
+    .filter((idx) => idx !== -1);
+
+  // Check auth and selected company
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      router.push("/login");
+      return;
+    }
+    setUser(currentUser);
+
+    const activeCompanyStr = localStorage.getItem("activeCompany");
+    if (!activeCompanyStr) {
+      router.push("/companies");
+      return;
+    }
+
+    const activeCompany = JSON.parse(activeCompanyStr);
+    setCompany(activeCompany);
+    setFyStart(activeCompany.financial_year_start ? activeCompany.financial_year_start.split("T")[0] : "2026-04-01");
+    setFyEnd(activeCompany.financial_year_end ? activeCompany.financial_year_end.split("T")[0] : "2027-03-31");
+  }, [router]);
+
+  // Global Keyboard listener hook
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Prevent browser default search, help, refresh keys where applicable
+      if (["F1", "F2", "F3", "F4"].includes(e.key)) {
+        e.preventDefault();
+      }
+
+      // 1. Calculator input handling when calculator is open
+      if (isCalculatorOpen) {
+        if (/^[0-9.+\-*/]$/.test(e.key)) {
+          e.preventDefault();
+          handleCalcInput(e.key);
+          return;
+        }
+        if (e.key === "Enter" || e.key === "=") {
+          e.preventDefault();
+          handleCalcEvaluate();
+          return;
+        }
+        if (e.key === "Backspace") {
+          e.preventDefault();
+          handleCalcBackspace();
+          return;
+        }
+        if (e.key === "c" || e.key === "C") {
+          e.preventDefault();
+          handleCalcClear();
+          return;
+        }
+      }
+
+      // 2. Global Shortcuts
+      switch (e.key) {
+        case "F1":
+          // F1 = Company Selection
+          router.push("/companies");
+          break;
+        case "F2":
+          // F2 = Change Financial Year
+          setIsPeriodModalOpen(true);
+          break;
+        case "F3":
+          // F3 = Company Information
+          setIsCompanyInfoOpen(true);
+          break;
+        case "F4":
+          // F4 = Calculator Panel
+          setIsCalculatorOpen((prev) => !prev);
+          break;
+        case "Escape":
+          // ESC = Previous Screen / Close modals
+          if (isCalculatorOpen) setIsCalculatorOpen(false);
+          else if (isPeriodModalOpen) setIsPeriodModalOpen(false);
+          else if (isCompanyInfoOpen) setIsCompanyInfoOpen(false);
+          break;
+        case "ArrowDown":
+          // Navigate Menu
+          e.preventDefault();
+          setSelectedMenuIndex((prev) => {
+            const currentPos = navigableIndices.indexOf(prev);
+            const nextPos = (currentPos + 1) % navigableIndices.length;
+            return navigableIndices[nextPos];
+          });
+          break;
+        case "ArrowUp":
+          // Navigate Menu
+          e.preventDefault();
+          setSelectedMenuIndex((prev) => {
+            const currentPos = navigableIndices.indexOf(prev);
+            const prevPos = (currentPos - 1 + navigableIndices.length) % navigableIndices.length;
+            return navigableIndices[prevPos];
+          });
+          break;
+        case "Enter":
+          // Select Menu Item
+          e.preventDefault();
+          if (!isCalculatorOpen && !isPeriodModalOpen && !isCompanyInfoOpen) {
+            menuItems[selectedMenuIndex].action?.();
+          }
+          break;
+        default:
+          // Check for Hotkey navigation (single-key shortcuts like L, G, S, etc.)
+          if (!isCalculatorOpen && !isPeriodModalOpen && !isCompanyInfoOpen && !e.ctrlKey && !e.altKey && !e.metaKey) {
+            const pressedKey = e.key.toUpperCase();
+            const matchingItem = menuItems.find(
+              (item) => !item.isHeader && item.hotkey === pressedKey
+            );
+            if (matchingItem) {
+              e.preventDefault();
+              matchingItem.action?.();
+            }
+          }
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isCalculatorOpen, isPeriodModalOpen, isCompanyInfoOpen, selectedMenuIndex]);
+
+  // Calculator Functions
+  const handleCalcInput = (val: string) => {
+    if (shouldResetDisplay) {
+      setCalcDisplay(val);
+      setShouldResetDisplay(false);
+    } else {
+      setCalcDisplay((prev) => (prev === "0" ? val : prev + val));
+    }
+    setCalcEquation((prev) => prev + val);
+  };
+
+  const handleCalcClear = () => {
+    setCalcDisplay("0");
+    setCalcEquation("");
+    setShouldResetDisplay(false);
+  };
+
+  const handleCalcBackspace = () => {
+    setCalcDisplay((prev) => (prev.length > 1 ? prev.slice(0, -1) : "0"));
+    setCalcEquation((prev) => (prev.length > 0 ? prev.slice(0, -1) : ""));
+  };
+
+  const handleCalcEvaluate = () => {
+    try {
+      // Evaluate basic arithmetic expression safely
+      // Replace safe characters only
+      const sanitized = calcEquation.replace(/[^0-9.+\-*/]/g, "");
+      // eslint-disable-next-line no-eval
+      const result = eval(sanitized);
+      setCalcDisplay(Number(result).toLocaleString("en-US", { maximumFractionDigits: 4 }));
+      setCalcEquation(String(result));
+      setShouldResetDisplay(true);
+    } catch {
+      setCalcDisplay("Error");
+      setCalcEquation("");
+      setShouldResetDisplay(true);
+    }
+  };
+
+  const handleSavePeriod = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (company) {
+      const updatedCompany = {
+        ...company,
+        financial_year_start: fyStart,
+        financial_year_end: fyEnd
+      };
+      setCompany(updatedCompany);
+      localStorage.setItem("activeCompany", JSON.stringify(updatedCompany));
+    }
+    setIsPeriodModalOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    router.push("/login");
+  };
+
+  return (
+    <div className="min-h-screen bg-brand-navy-dark text-slate-100 flex flex-col select-none relative overflow-hidden">
+      {/* Header bar */}
+      <header className="border-b border-brand-navy-light bg-brand-navy-dark/70 backdrop-blur-md sticky top-0 z-20">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            {/* Logo */}
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/")}>
+              <span className="text-xl font-extrabold text-white tracking-wide">My smart</span>
+              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">ERP</span>
+            </div>
+
+            {/* Active Company Name */}
+            <div className="h-6 w-[1px] bg-slate-800"></div>
+            <div className="flex items-center gap-2 text-brand-lime font-bold">
+              <Building2 className="w-5 h-5" />
+              <span>{company?.name}</span>
+            </div>
+          </div>
+
+          {/* FY Period info */}
+          <div className="flex items-center gap-6">
+            <div className="hidden lg:flex items-center gap-2 text-slate-400 text-xs font-semibold">
+              <Calendar className="w-4 h-4 text-sky-400" />
+              <span>Period: {fyStart} to {fyEnd}</span>
+            </div>
+
+            {/* F-key indicators */}
+            <div className="hidden sm:flex items-center gap-3 text-[11px] font-mono font-bold text-slate-500">
+              <span className="px-2 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 rounded cursor-pointer hover:border-brand-lime" onClick={() => router.push("/companies")}>F1 Select Comp</span>
+              <span className="px-2 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 rounded cursor-pointer hover:border-brand-lime" onClick={() => setIsPeriodModalOpen(true)}>F2 Period</span>
+              <span className="px-2 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 rounded cursor-pointer hover:border-brand-lime" onClick={() => setIsCompanyInfoOpen(true)}>F3 Info</span>
+              <span className="px-2 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 rounded cursor-pointer hover:border-brand-lime" onClick={() => setIsCalculatorOpen(!isCalculatorOpen)}>F4 Calc</span>
+            </div>
+
+            <button
+              onClick={handleLogout}
+              className="p-2.5 rounded-full bg-slate-900 border border-slate-800 text-slate-400 hover:text-brand-lime hover:border-brand-lime/40 transition duration-200"
+              title="Logout"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Body */}
+      <main className="flex-1 max-w-7xl mx-auto px-6 py-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Side: Navigation Menu (Gateway of Tally style) */}
+        <section className="lg:col-span-4 rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-6 shadow-2xl backdrop-blur-xl">
+          <div className="border-b border-slate-900 pb-3 mb-4 flex items-center justify-between">
+            <h2 className="text-sm font-extrabold uppercase tracking-widest text-slate-400">
+              Gateway of SmartERP
+            </h2>
+            <span className="text-[10px] bg-slate-900 border border-slate-800 px-2 py-0.5 rounded font-mono text-slate-500">
+              Use ↑↓ & Enter
+            </span>
+          </div>
+
+          <nav className="flex flex-col gap-0.5 text-sm">
+            {menuItems.map((item, idx) => {
+              if (item.isHeader) {
+                return (
+                  <h3
+                    key={idx}
+                    className="text-xs font-bold text-sky-400/80 uppercase tracking-wider pt-4 pb-1 select-none border-t border-slate-900/40 first:border-0 first:pt-1"
+                  >
+                    {item.label}
+                  </h3>
+                );
+              }
+
+              const isSelected = selectedMenuIndex === idx;
+              // Format hotkey highlight: e.g. "Ledgers" -> find 'L' or append hotkey hint
+              const formattedLabel = () => {
+                const label = item.label;
+                const hotkey = item.hotkey!;
+                const firstChar = label[0];
+                if (firstChar.toUpperCase() === hotkey) {
+                  return (
+                    <span>
+                      <strong className="text-brand-lime underline pr-0.5 font-bold">
+                        {firstChar}
+                      </strong>
+                      {label.slice(1)}
+                    </span>
+                  );
+                }
+                // Try finding index of hotkey inside label
+                const index = label.toUpperCase().indexOf(hotkey);
+                if (index !== -1) {
+                  return (
+                    <span>
+                      {label.slice(0, index)}
+                      <strong className="text-brand-lime underline px-0.5 font-bold">
+                        {label[index]}
+                      </strong>
+                      {label.slice(index + 1)}
+                    </span>
+                  );
+                }
+                // Fallback
+                return (
+                  <span>
+                    {label} <strong className="text-brand-lime font-mono">[{hotkey}]</strong>
+                  </span>
+                );
+              };
+
+              return (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    setSelectedMenuIndex(idx);
+                    item.action?.();
+                  }}
+                  className={`w-full py-2.5 px-4 flex items-center justify-between rounded-xl transition-all duration-150 text-left ${
+                    isSelected
+                      ? "bg-brand-lime text-brand-navy-dark font-extrabold shadow-lg shadow-brand-lime/10"
+                      : "text-slate-300 hover:bg-brand-navy-light/40 hover:text-white"
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    {isSelected && <ChevronRight className="w-4 h-4 shrink-0" />}
+                    {formattedLabel()}
+                  </span>
+                  {!isSelected && (
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 bg-slate-900 border border-slate-800/60 text-slate-500 rounded font-semibold group-hover:text-brand-lime">
+                      {item.hotkey}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+        </section>
+
+        {/* Right Side: Key widgets / Charts & Live Overview */}
+        <section className="lg:col-span-8 space-y-6">
+          {/* Quick Metrics */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="p-5 rounded-2xl bg-brand-navy-light/10 border border-slate-950 flex items-center gap-4">
+              <div className="p-3 bg-brand-lime/10 border border-brand-lime/20 text-brand-lime rounded-xl">
+                <FileText className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Voucher Count</p>
+                <p className="text-2xl font-black text-white mt-1">24</p>
+              </div>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-brand-navy-light/10 border border-slate-950 flex items-center gap-4">
+              <div className="p-3 bg-sky-500/10 border border-sky-500/20 text-sky-400 rounded-xl">
+                <Package className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Stock Items</p>
+                <p className="text-2xl font-black text-white mt-1">118</p>
+              </div>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-brand-navy-light/10 border border-slate-950 flex items-center gap-4">
+              <div className="p-3 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-xl">
+                <Users className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Active Ledgers</p>
+                <p className="text-2xl font-black text-white mt-1">15</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Stats overview panel */}
+          <div className="p-6 rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 space-y-6 shadow-2xl backdrop-blur-xl">
+            <div className="flex items-center justify-between border-b border-slate-900 pb-4">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-brand-lime" />
+                Financial Overview (FY 2026-27)
+              </h3>
+              <span className="text-xs text-slate-400">Mock metrics powered by active ledgers</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Asset & Liability chart card */}
+              <div className="p-5 bg-brand-navy-dark border border-slate-900 rounded-2xl space-y-4">
+                <h4 className="text-sm font-bold text-slate-400">Balance Sheet Ratios</h4>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span>Assets (Total)</span>
+                      <span className="font-bold text-brand-lime">$120,400</span>
+                    </div>
+                    <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                      <div className="bg-brand-lime h-full w-[70%]"></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span>Liabilities (Total)</span>
+                      <span className="font-bold text-sky-400">$84,000</span>
+                    </div>
+                    <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                      <div className="bg-sky-400 h-full w-[45%]"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Profit & loss chart card */}
+              <div className="p-5 bg-brand-navy-dark border border-slate-900 rounded-2xl space-y-4">
+                <h4 className="text-sm font-bold text-slate-400">Income & Expense summary</h4>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span>Direct Income</span>
+                      <span className="font-bold text-emerald-400">$45,000</span>
+                    </div>
+                    <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                      <div className="bg-emerald-400 h-full w-[60%]"></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span>Operating Expenses</span>
+                      <span className="font-bold text-rose-400">$18,200</span>
+                    </div>
+                    <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                      <div className="bg-rose-400 h-full w-[25%]"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Floating Calculator Popover (F4 / Click) */}
+      {isCalculatorOpen && (
+        <div className="fixed bottom-6 right-6 z-30 w-72 bg-brand-navy-light border border-slate-800 rounded-3xl p-4 shadow-2xl flex flex-col gap-3 backdrop-blur-xl animate-fade-in-up">
+          <div className="flex items-center justify-between border-b border-slate-900 pb-2">
+            <span className="text-xs font-bold text-slate-400 flex items-center gap-1.5">
+              <CalcIcon className="w-4 h-4 text-brand-lime" />
+              Calculator Panel
+            </span>
+            <button
+              onClick={() => setIsCalculatorOpen(false)}
+              className="text-slate-400 hover:text-white p-0.5 rounded-full hover:bg-slate-900"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Calculator screen */}
+          <div className="bg-brand-navy-dark border border-slate-900 rounded-2xl p-3 text-right">
+            <p className="text-xs text-slate-500 font-mono h-4 truncate">
+              {calcEquation || " "}
+            </p>
+            <p className="text-2xl font-black text-brand-lime font-mono truncate select-all">
+              {calcDisplay}
+            </p>
+          </div>
+
+          {/* Calculator buttons grid */}
+          <div className="grid grid-cols-4 gap-2 text-sm font-semibold font-mono">
+            <button onClick={handleCalcClear} className="p-3 bg-slate-900 hover:bg-slate-850 text-brand-lime rounded-xl">C</button>
+            <button onClick={handleCalcBackspace} className="p-3 bg-slate-900 hover:bg-slate-850 text-slate-300 rounded-xl">←</button>
+            <button onClick={() => handleCalcInput("/")} className="p-3 bg-slate-900 hover:bg-slate-850 text-sky-400 rounded-xl">/</button>
+            <button onClick={() => handleCalcInput("*")} className="p-3 bg-slate-900 hover:bg-slate-850 text-sky-400 rounded-xl">*</button>
+
+            <button onClick={() => handleCalcInput("7")} className="p-3 bg-slate-900/40 hover:bg-slate-850 text-slate-200 rounded-xl">7</button>
+            <button onClick={() => handleCalcInput("8")} className="p-3 bg-slate-900/40 hover:bg-slate-850 text-slate-200 rounded-xl">8</button>
+            <button onClick={() => handleCalcInput("9")} className="p-3 bg-slate-900/40 hover:bg-slate-850 text-slate-200 rounded-xl">9</button>
+            <button onClick={() => handleCalcInput("-")} className="p-3 bg-slate-900 hover:bg-slate-850 text-sky-400 rounded-xl">-</button>
+
+            <button onClick={() => handleCalcInput("4")} className="p-3 bg-slate-900/40 hover:bg-slate-850 text-slate-200 rounded-xl">4</button>
+            <button onClick={() => handleCalcInput("5")} className="p-3 bg-slate-900/40 hover:bg-slate-850 text-slate-200 rounded-xl">5</button>
+            <button onClick={() => handleCalcInput("6")} className="p-3 bg-slate-900/40 hover:bg-slate-850 text-slate-200 rounded-xl">6</button>
+            <button onClick={() => handleCalcInput("+")} className="p-3 bg-slate-900 hover:bg-slate-850 text-sky-400 rounded-xl">+</button>
+
+            <button onClick={() => handleCalcInput("1")} className="p-3 bg-slate-900/40 hover:bg-slate-850 text-slate-200 rounded-xl">1</button>
+            <button onClick={() => handleCalcInput("2")} className="p-3 bg-slate-900/40 hover:bg-slate-850 text-slate-200 rounded-xl">2</button>
+            <button onClick={() => handleCalcInput("3")} className="p-3 bg-slate-900/40 hover:bg-slate-850 text-slate-200 rounded-xl">3</button>
+            <button onClick={handleCalcEvaluate} className="row-span-2 p-3 bg-brand-lime text-brand-navy-dark hover:bg-white rounded-xl flex items-center justify-center font-bold text-lg">=</button>
+
+            <button onClick={() => handleCalcInput("0")} className="col-span-2 p-3 bg-slate-900/40 hover:bg-slate-850 text-slate-200 rounded-xl text-left pl-6">0</button>
+            <button onClick={() => handleCalcInput(".")} className="p-3 bg-slate-900/40 hover:bg-slate-850 text-slate-200 rounded-xl">.</button>
+          </div>
+          <p className="text-[10px] text-center text-slate-500 font-mono">
+            Or type directly. Press ESC to close.
+          </p>
+        </div>
+      )}
+
+      {/* Period Modal (F2) */}
+      {isPeriodModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="w-full max-w-md bg-brand-navy-dark border border-slate-800 rounded-3xl p-6 space-y-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-brand-lime" />
+                Change Period
+              </h3>
+              <button onClick={() => setIsPeriodModalOpen(false)} className="text-slate-400 hover:text-white p-0.5 rounded-full hover:bg-slate-900">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSavePeriod} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Financial Year Start</label>
+                <input
+                  type="date"
+                  required
+                  value={fyStart}
+                  onChange={(e) => setFyStart(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-800 rounded-xl text-white outline-none focus:border-brand-lime"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Financial Year End</label>
+                <input
+                  type="date"
+                  required
+                  value={fyEnd}
+                  onChange={(e) => setFyEnd(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-800 rounded-xl text-white outline-none focus:border-brand-lime"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-900">
+                <button
+                  type="button"
+                  onClick={() => setIsPeriodModalOpen(false)}
+                  className="px-5 py-2.5 rounded-xl border border-slate-800 text-slate-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl font-bold text-brand-navy-dark bg-brand-lime hover:bg-white"
+                >
+                  Update Period
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Company Info Modal (F3) */}
+      {isCompanyInfoOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="w-full max-w-lg bg-brand-navy-dark border border-slate-800 rounded-3xl p-6 space-y-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-brand-lime" />
+                Company Information
+              </h3>
+              <button onClick={() => setIsCompanyInfoOpen(false)} className="text-slate-400 hover:text-white p-0.5 rounded-full hover:bg-slate-900">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4 text-sm text-slate-300">
+              <div className="grid grid-cols-3 gap-2 py-1.5 border-b border-slate-900/50">
+                <span className="font-bold text-slate-500">Name</span>
+                <span className="col-span-2 text-white font-semibold">{company?.name}</span>
+              </div>
+
+              {company?.gst_number && (
+                <div className="grid grid-cols-3 gap-2 py-1.5 border-b border-slate-900/50">
+                  <span className="font-bold text-slate-500">GSTIN</span>
+                  <span className="col-span-2 font-mono text-brand-lime">{company.gst_number}</span>
+                </div>
+              )}
+
+              {company?.contact_email && (
+                <div className="grid grid-cols-3 gap-2 py-1.5 border-b border-slate-900/50">
+                  <span className="font-bold text-slate-500">Contact Email</span>
+                  <span className="col-span-2">{company.contact_email}</span>
+                </div>
+              )}
+
+              {company?.contact_phone && (
+                <div className="grid grid-cols-3 gap-2 py-1.5 border-b border-slate-900/50">
+                  <span className="font-bold text-slate-500">Phone</span>
+                  <span className="col-span-2">{company.contact_phone}</span>
+                </div>
+              )}
+
+              {company?.state && (
+                <div className="grid grid-cols-3 gap-2 py-1.5 border-b border-slate-900/50">
+                  <span className="font-bold text-slate-500">State</span>
+                  <span className="col-span-2">{company.state}</span>
+                </div>
+              )}
+
+              {company?.address && (
+                <div className="grid grid-cols-3 gap-2 py-1.5 border-b border-slate-900/50">
+                  <span className="font-bold text-slate-500">Address</span>
+                  <span className="col-span-2 text-xs leading-relaxed">{company.address}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end pt-4 border-t border-slate-900">
+              <button
+                onClick={() => setIsCompanyInfoOpen(false)}
+                className="px-6 py-2 bg-brand-navy-light/40 border border-slate-800 rounded-xl hover:text-white"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
