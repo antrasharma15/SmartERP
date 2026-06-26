@@ -75,8 +75,9 @@ export default function CompaniesPage() {
       const list = data.companies || [];
       setCompanies(list);
       
-      // Auto-select and redirect to dashboard if there is exactly 1 company
-      if (list.length === 1) {
+      // Auto-select and redirect to dashboard if there is exactly 1 company and none is currently active
+      const hasActiveCompany = localStorage.getItem("activeCompany");
+      if (list.length === 1 && !hasActiveCompany) {
         localStorage.setItem("activeCompany", JSON.stringify(list[0]));
         router.push("/dashboard");
       }
@@ -171,6 +172,19 @@ export default function CompaniesPage() {
       await apiFetch(`/companies/${id}`, {
         method: "DELETE",
       });
+
+      const activeCompanyStr = localStorage.getItem("activeCompany");
+      if (activeCompanyStr) {
+        try {
+          const activeCompany = JSON.parse(activeCompanyStr);
+          if (activeCompany.id === id) {
+            localStorage.removeItem("activeCompany");
+          }
+        } catch (e) {
+          localStorage.removeItem("activeCompany");
+        }
+      }
+
       fetchCompanies();
     } catch (err: any) {
       alert(err.message || "Failed to delete company");
