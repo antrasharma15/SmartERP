@@ -56,10 +56,15 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
 
     // 4. Save inactive user in database
-    await UserModel.createUser(name, normalizedEmail, hashedPassword, verificationToken, tokenExpires);
+    const newUser = await UserModel.createUser(name, normalizedEmail, hashedPassword, verificationToken, tokenExpires);
 
     // 5. Send verification email
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const host = process.env.SMTP_HOST;
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS;
+    const isMockEmail = !host || !smtpUser || !smtpPass;
+
+    const frontendUrl = process.env.FRONTEND_URL || req.headers.origin || 'http://localhost:3000';
     const verifyLink = `${frontendUrl}/verify-email?token=${verificationToken}`;
     
     await sendMail({
@@ -68,6 +73,14 @@ const register = async (req, res) => {
       text: `Hello ${name},\n\nPlease verify your email by clicking: ${verifyLink}\n\nThis link is active for 24 hours.`,
       html: `<p>Hello <strong>${name}</strong>,</p><p>Please verify your email by clicking the link below:</p><p><a href="${verifyLink}">${verifyLink}</a></p><p>This link is active for 24 hours.</p>`
     });
+
+    if (isMockEmail) {
+      // Auto-verify in development / mock email environment to improve developer onboarding UX
+      await UserModel.verifyUser(newUser.id);
+      return res.status(201).json({ 
+        message: 'Registration successful. In development mode (no SMTP), your account has been auto-verified.' 
+      });
+    }
 
     res.status(201).json({ 
       message: 'Registration successful. A verification link has been sent to your email.' 
@@ -198,7 +211,7 @@ const forgotPassword = async (req, res) => {
     await UserModel.setResetToken(normalizedEmail, resetToken, tokenExpires);
 
     // Send email
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const frontendUrl = process.env.FRONTEND_URL || req.headers.origin || 'http://localhost:3000';
     const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
 
     await sendMail({

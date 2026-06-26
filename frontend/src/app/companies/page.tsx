@@ -72,7 +72,14 @@ export default function CompaniesPage() {
     setError("");
     try {
       const data = await apiFetch("/companies");
-      setCompanies(data.companies || []);
+      const list = data.companies || [];
+      setCompanies(list);
+      
+      // Auto-select and redirect to dashboard if there is exactly 1 company
+      if (list.length === 1) {
+        localStorage.setItem("activeCompany", JSON.stringify(list[0]));
+        router.push("/dashboard");
+      }
     } catch (err: any) {
       setError(err.message || "Failed to load companies");
     } finally {

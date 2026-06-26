@@ -45,6 +45,12 @@ export default function DashboardPage() {
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const [isPeriodModalOpen, setIsPeriodModalOpen] = useState(false);
   const [isCompanyInfoOpen, setIsCompanyInfoOpen] = useState(false);
+  const [isCommandSearchOpen, setIsCommandSearchOpen] = useState(false);
+  const [commandSearchQuery, setCommandSearchQuery] = useState("");
+  const [selectedCommandIndex, setSelectedCommandIndex] = useState(0);
+
+  // Toast notifications state
+  const [toasts, setToasts] = useState<{ id: string; text: string }[]>([]);
 
   // Period state
   const [fyStart, setFyStart] = useState("");
@@ -55,25 +61,89 @@ export default function DashboardPage() {
   const [calcEquation, setCalcEquation] = useState("");
   const [shouldResetDisplay, setShouldResetDisplay] = useState(false);
 
+  // Toast Trigger Helper
+  const triggerToast = (text: string) => {
+    const id = Math.random().toString();
+    setToasts((prev) => [...prev, { id, text }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 3000);
+  };
+
   // Menu items (Gateway of SmartERP)
-  // Bold capital letters highlight the hotkey characters.
+  // Expanded for all Day 5 / doc specifications
   const menuItems = [
     { label: "Masters", isHeader: true },
-    { label: "Ledgers", hotkey: "L", action: () => alert("Navigating to Ledgers Management...") },
-    { label: "Groups", hotkey: "G", action: () => alert("Navigating to Groups Management...") },
-    { label: "Stock Items", hotkey: "S", action: () => alert("Navigating to Stock Items...") },
-    { label: "Units of Measure", hotkey: "U", action: () => alert("Navigating to Units...") },
+    { label: "Ledgers", hotkey: "L", action: () => triggerToast("Shortcut: ALT+L (Create Ledger) / Navigate to Ledgers") },
+    { label: "Groups", hotkey: "G", action: () => triggerToast("Shortcut: ALT+G (Create Group) / Navigate to Groups") },
+    { label: "Stock Items", hotkey: "S", action: () => triggerToast("Shortcut: ALT+S (Create Stock Item) / Navigate to Stock Items") },
+    { label: "Units of Measure", hotkey: "U", action: () => triggerToast("Shortcut: ALT+U (Unit Creation) / Navigate to Units") },
 
     { label: "Transactions", isHeader: true },
-    { label: "Vouchers Entry", hotkey: "V", action: () => alert("Opening Voucher Entries page...") },
-    { label: "Banking module", hotkey: "B", action: () => alert("Opening Banking panel...") },
+    { label: "Vouchers Entry", hotkey: "V", action: () => triggerToast("Shortcut: V (Voucher Entries) / F6 Receipt, F7 Journal, F8 Sales, F9 Purchase") },
+    { label: "Banking module", hotkey: "B", action: () => triggerToast("Shortcut: B (Banking panel)") },
+
+    { label: "Inventory", isHeader: true },
+    { label: "Inventory Dashboard", hotkey: "I", action: () => triggerToast("Shortcut: CTRL+I (Inventory Dashboard)") },
+    { label: "Stock Transfer", hotkey: "E", action: () => triggerToast("Shortcut: CTRL+T (Stock Transfer)") },
+    { label: "Stock Report", hotkey: "K", action: () => triggerToast("Shortcut: CTRL+R (Stock Report)") },
+
+    { label: "Accounting", isHeader: true },
+    { label: "Cash/Bank Book", hotkey: "C", action: () => triggerToast("Shortcut: C (Cash/Bank Book)") },
+    { label: "Day Book", hotkey: "D", action: () => triggerToast("Shortcut: D (Day Book)") },
+
+    { label: "Banking", isHeader: true },
+    { label: "Fund Transfers", hotkey: "F", action: () => triggerToast("Shortcut: F (Fund Transfers)") },
+    { label: "Cheque Management", hotkey: "Q", action: () => triggerToast("Shortcut: Q (Cheque Management)") },
+
+    { label: "Payroll", isHeader: true },
+    { label: "Employee Directory", hotkey: "M", action: () => triggerToast("Shortcut: M (Employee Directory)") },
+    { label: "Attendance", hotkey: "N", action: () => triggerToast("Shortcut: N (Attendance)") },
+
+    { label: "GST", isHeader: true },
+    { label: "Tax Calculation", hotkey: "O", action: () => triggerToast("Shortcut: O (Tax Calculation)") },
+    { label: "GSTR Summary", hotkey: "W", action: () => triggerToast("Shortcut: W (GSTR Summary)") },
 
     { label: "Reports", isHeader: true },
-    { label: "Balance Sheet", hotkey: "A", action: () => alert("Generating Balance Sheet...") },
-    { label: "Profit & Loss", hotkey: "P", action: () => alert("Generating Profit & Loss statement...") },
-    { label: "Trial Balance", hotkey: "T", action: () => alert("Generating Trial Balance...") },
-    { label: "GST Register", hotkey: "X", action: () => alert("Generating GST Reports...") }
+    { label: "Balance Sheet", hotkey: "A", action: () => triggerToast("Shortcut: ALT+B (Balance Sheet)") },
+    { label: "Profit & Loss", hotkey: "P", action: () => triggerToast("Shortcut: ALT+P (Profit & Loss)") },
+    { label: "Trial Balance", hotkey: "T", action: () => triggerToast("Shortcut: ALT+T (Trial Balance)") },
+    { label: "Stock Summary", hotkey: "R", action: () => triggerToast("Shortcut: ALT+R (Stock Summary)") },
+    { label: "GST Register", hotkey: "X", action: () => triggerToast("Shortcut: ALT+X (GST Register)") },
+
+    { label: "Utilities", isHeader: true },
+    { label: "Calculator", hotkey: "Z", action: () => setIsCalculatorOpen((prev) => !prev) },
+    { label: "Settings", hotkey: "Y", action: () => triggerToast("Shortcut: Y (Settings)") },
+
+    { label: "Administration", isHeader: true },
+    { label: "Audit Logs", hotkey: "H", action: () => triggerToast("Shortcut: H (Audit Logs)") },
+    { label: "User Controls", hotkey: "J", action: () => triggerToast("Shortcut: J (User Controls)") }
   ];
+
+  // List of all command search palette items
+  const commandsList = [
+    // Menu items
+    ...menuItems.filter(item => !item.isHeader).map(item => ({
+      name: item.label,
+      category: "Navigation",
+      shortcut: item.hotkey,
+      action: item.action
+    })),
+    // Global actions
+    { name: "Company Selection Screen", category: "Global", shortcut: "F1", action: () => router.push("/companies") },
+    { name: "Change Financial Year Period", category: "Global", shortcut: "F2", action: () => setIsPeriodModalOpen(true) },
+    { name: "Show Company Information", category: "Global", shortcut: "F3", action: () => setIsCompanyInfoOpen(true) },
+    { name: "Toggle Arithmetic Calculator", category: "Global", shortcut: "F4", action: () => setIsCalculatorOpen(prev => !prev) },
+    { name: "Refresh Application Cache", category: "Global", shortcut: "F5", action: () => { triggerToast("Refreshing page..."); window.location.reload(); } },
+    { name: "Global Command Search Palette", category: "Global", shortcut: "Ctrl+K", action: () => setIsCommandSearchOpen(prev => !prev) },
+    { name: "Logout from Session", category: "Global", shortcut: "Ctrl+Q", action: () => handleLogout() }
+  ];
+
+  // Filter commands based on input
+  const filteredCommands = commandsList.filter(cmd =>
+    cmd.name.toLowerCase().includes(commandSearchQuery.toLowerCase()) ||
+    cmd.category.toLowerCase().includes(commandSearchQuery.toLowerCase())
+  );
 
   // Filter out headers for arrow key index mapping
   const navigableIndices = menuItems
@@ -104,12 +174,46 @@ export default function DashboardPage() {
   // Global Keyboard listener hook
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Prevent browser default search, help, refresh keys where applicable
-      if (["F1", "F2", "F3", "F4"].includes(e.key)) {
+      // 1. Command Search Mode key handling
+      if (isCommandSearchOpen) {
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          setSelectedCommandIndex(prev => (prev + 1) % filteredCommands.length);
+          return;
+        }
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          setSelectedCommandIndex(prev => (prev - 1 + filteredCommands.length) % filteredCommands.length);
+          return;
+        }
+        if (e.key === "Enter") {
+          e.preventDefault();
+          if (filteredCommands[selectedCommandIndex]) {
+            filteredCommands[selectedCommandIndex].action?.();
+            setIsCommandSearchOpen(false);
+            setCommandSearchQuery("");
+            setSelectedCommandIndex(0);
+          }
+          return;
+        }
+        if (e.key === "Escape") {
+          e.preventDefault();
+          setIsCommandSearchOpen(false);
+          setCommandSearchQuery("");
+          setSelectedCommandIndex(0);
+          return;
+        }
+      }
+
+      // 2. Prevent browser default actions for F-keys and Ctrl combos
+      if (["F1", "F2", "F3", "F4", "F5"].includes(e.key)) {
+        e.preventDefault();
+      }
+      if (e.ctrlKey && ["q", "Q", "h", "H", "k", "K", "f", "F", "c", "C", "s", "S", "b", "B", "p", "P", "m", "M", "i", "I", "n", "N", "e", "E", "d", "D", "t", "T", "r", "R"].includes(e.key)) {
         e.preventDefault();
       }
 
-      // 1. Calculator input handling when calculator is open
+      // 3. Calculator input handling when calculator is open
       if (isCalculatorOpen) {
         if (/^[0-9.+\-*/]$/.test(e.key)) {
           e.preventDefault();
@@ -133,32 +237,199 @@ export default function DashboardPage() {
         }
       }
 
-      // 2. Global Shortcuts
+      // 4. Command Palette Trigger (Ctrl + K)
+      if (e.ctrlKey && (e.key === "k" || e.key === "K")) {
+        e.preventDefault();
+        setIsCommandSearchOpen((prev) => !prev);
+        setCommandSearchQuery("");
+        setSelectedCommandIndex(0);
+        return;
+      }
+
+      // 5. Global Logout (Ctrl + Q)
+      if (e.ctrlKey && (e.key === "q" || e.key === "Q")) {
+        e.preventDefault();
+        triggerToast("Logging out...");
+        handleLogout();
+        return;
+      }
+
+      // 6. Global Home (Ctrl + H)
+      if (e.ctrlKey && (e.key === "h" || e.key === "H")) {
+        e.preventDefault();
+        triggerToast("Navigating to Home Dashboard");
+        router.push("/dashboard");
+        return;
+      }
+
+      // 7. Master Shortcuts (Alt + Key)
+      if (e.altKey && !e.ctrlKey) {
+        const key = e.key.toUpperCase();
+        switch (key) {
+          case "L":
+            e.preventDefault();
+            triggerToast("Shortcut Triggered: Create Ledger (ALT+L)");
+            break;
+          case "A":
+            e.preventDefault();
+            triggerToast("Shortcut Triggered: Alter Ledger (ALT+A)");
+            break;
+          case "G":
+            e.preventDefault();
+            triggerToast("Shortcut Triggered: Create Group (ALT+G)");
+            break;
+          case "S":
+            e.preventDefault();
+            triggerToast("Shortcut Triggered: Create Stock Item (ALT+S)");
+            break;
+          case "U":
+            e.preventDefault();
+            triggerToast("Shortcut Triggered: Unit Creation (ALT+U)");
+            break;
+          case "B":
+            e.preventDefault();
+            triggerToast("Shortcut Triggered: Balance Sheet (ALT+B)");
+            break;
+          case "P":
+            e.preventDefault();
+            triggerToast("Shortcut Triggered: Profit & Loss (ALT+P)");
+            break;
+          case "T":
+            e.preventDefault();
+            triggerToast("Shortcut Triggered: Trial Balance (ALT+T)");
+            break;
+          case "C":
+            e.preventDefault();
+            triggerToast("Shortcut Triggered: Cash Flow (ALT+C)");
+            break;
+          case "R":
+            e.preventDefault();
+            triggerToast("Shortcut Triggered: Stock Summary (ALT+R)");
+            break;
+          case "X":
+            e.preventDefault();
+            triggerToast("Shortcut Triggered: GST Report (ALT+X)");
+            break;
+        }
+      }
+
+      // 8. Inventory / Billing / Customer Shortcuts (Ctrl + Key combinations)
+      if (e.ctrlKey && !e.altKey) {
+        const key = e.key.toUpperCase();
+        if (e.shiftKey) {
+          // Ctrl + Shift + Key
+          switch (key) {
+            case "P":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: PDF Download (CTRL+SHIFT+P)");
+              break;
+            case "C":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: Customer Ledger (CTRL+SHIFT+C)");
+              break;
+            case "S":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: Supplier Ledger (CTRL+SHIFT+S)");
+              break;
+            case "F":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: Global Search (CTRL+SHIFT+F)");
+              break;
+          }
+        } else {
+          // Ctrl + Key
+          switch (key) {
+            case "I":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: Inventory Dashboard (CTRL+I)");
+              break;
+            case "N":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: New Item (CTRL+N)");
+              break;
+            case "E":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: Edit Item (CTRL+E)");
+              break;
+            case "D":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: Delete Item (CTRL+D)");
+              break;
+            case "T":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: Stock Transfer (CTRL+T)");
+              break;
+            case "R":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: Stock Report (CTRL+R)");
+              break;
+            case "B":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: New Invoice (CTRL+B)");
+              break;
+            case "P":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: Print Invoice (CTRL+P)");
+              break;
+            case "M":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: Email Invoice (CTRL+M)");
+              break;
+            case "C":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: New Customer (CTRL+C)");
+              break;
+            case "S":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: New Supplier (CTRL+S)");
+              break;
+            case "F":
+              e.preventDefault();
+              triggerToast("Shortcut Triggered: Search (CTRL+F)");
+              break;
+          }
+        }
+      }
+
+      // 9. Standard F-key triggers & Menu Arrows
       switch (e.key) {
         case "F1":
-          // F1 = Company Selection
           router.push("/companies");
           break;
         case "F2":
-          // F2 = Change Financial Year
           setIsPeriodModalOpen(true);
           break;
         case "F3":
-          // F3 = Company Information
           setIsCompanyInfoOpen(true);
           break;
         case "F4":
-          // F4 = Calculator Panel
           setIsCalculatorOpen((prev) => !prev);
           break;
+        case "F5":
+          triggerToast("Refreshing page...");
+          window.location.reload();
+          break;
+        case "F6":
+          triggerToast("Shortcut Triggered: Receipt Voucher (F6)");
+          break;
+        case "F7":
+          triggerToast("Shortcut Triggered: Journal Voucher (F7)");
+          break;
+        case "F8":
+          triggerToast("Shortcut Triggered: Sales Voucher (F8)");
+          break;
+        case "F9":
+          triggerToast("Shortcut Triggered: Purchase Voucher (F9)");
+          break;
+        case "F10":
+          triggerToast("Shortcut Triggered: Reversing Journal (F10)");
+          break;
         case "Escape":
-          // ESC = Previous Screen / Close modals
           if (isCalculatorOpen) setIsCalculatorOpen(false);
           else if (isPeriodModalOpen) setIsPeriodModalOpen(false);
           else if (isCompanyInfoOpen) setIsCompanyInfoOpen(false);
           break;
         case "ArrowDown":
-          // Navigate Menu
           e.preventDefault();
           setSelectedMenuIndex((prev) => {
             const currentPos = navigableIndices.indexOf(prev);
@@ -167,7 +438,6 @@ export default function DashboardPage() {
           });
           break;
         case "ArrowUp":
-          // Navigate Menu
           e.preventDefault();
           setSelectedMenuIndex((prev) => {
             const currentPos = navigableIndices.indexOf(prev);
@@ -176,23 +446,9 @@ export default function DashboardPage() {
           });
           break;
         case "Enter":
-          // Select Menu Item
           e.preventDefault();
-          if (!isCalculatorOpen && !isPeriodModalOpen && !isCompanyInfoOpen) {
+          if (!isCalculatorOpen && !isPeriodModalOpen && !isCompanyInfoOpen && !isCommandSearchOpen) {
             menuItems[selectedMenuIndex].action?.();
-          }
-          break;
-        default:
-          // Check for Hotkey navigation (single-key shortcuts like L, G, S, etc.)
-          if (!isCalculatorOpen && !isPeriodModalOpen && !isCompanyInfoOpen && !e.ctrlKey && !e.altKey && !e.metaKey) {
-            const pressedKey = e.key.toUpperCase();
-            const matchingItem = menuItems.find(
-              (item) => !item.isHeader && item.hotkey === pressedKey
-            );
-            if (matchingItem) {
-              e.preventDefault();
-              matchingItem.action?.();
-            }
           }
           break;
       }
@@ -200,7 +456,7 @@ export default function DashboardPage() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isCalculatorOpen, isPeriodModalOpen, isCompanyInfoOpen, selectedMenuIndex]);
+  }, [isCalculatorOpen, isPeriodModalOpen, isCompanyInfoOpen, isCommandSearchOpen, selectedMenuIndex, filteredCommands, selectedCommandIndex]);
 
   // Calculator Functions
   const handleCalcInput = (val: string) => {
@@ -307,25 +563,25 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Body */}
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Side: Navigation Menu (Gateway of Tally style) */}
-        <section className="lg:col-span-4 rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-6 shadow-2xl backdrop-blur-xl">
+      <main className="flex-1 max-w-[1400px] mx-auto px-6 py-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Navigation Menu (Gateway of Tally style) - 3 span */}
+        <section className="lg:col-span-3 rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-5 shadow-2xl backdrop-blur-xl">
           <div className="border-b border-slate-900 pb-3 mb-4 flex items-center justify-between">
-            <h2 className="text-sm font-extrabold uppercase tracking-widest text-slate-400">
+            <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">
               Gateway of SmartERP
             </h2>
-            <span className="text-[10px] bg-slate-900 border border-slate-800 px-2 py-0.5 rounded font-mono text-slate-500">
-              Use ↑↓ & Enter
+            <span className="text-[9px] bg-slate-900 border border-slate-800 px-1.5 py-0.5 rounded font-mono text-slate-500">
+              ↑↓ & Enter
             </span>
           </div>
 
-          <nav className="flex flex-col gap-0.5 text-sm">
+          <nav className="flex flex-col gap-0.5 text-xs">
             {menuItems.map((item, idx) => {
               if (item.isHeader) {
                 return (
                   <h3
                     key={idx}
-                    className="text-xs font-bold text-sky-400/80 uppercase tracking-wider pt-4 pb-1 select-none border-t border-slate-900/40 first:border-0 first:pt-1"
+                    className="text-[10px] font-black text-sky-400/80 uppercase tracking-wider pt-3 pb-1 select-none border-t border-slate-900/40 first:border-0 first:pt-1"
                   >
                     {item.label}
                   </h3>
@@ -376,18 +632,18 @@ export default function DashboardPage() {
                     setSelectedMenuIndex(idx);
                     item.action?.();
                   }}
-                  className={`w-full py-2.5 px-4 flex items-center justify-between rounded-xl transition-all duration-150 text-left ${
+                  className={`w-full py-2 px-3 flex items-center justify-between rounded-lg transition-all duration-150 text-left ${
                     isSelected
                       ? "bg-brand-lime text-brand-navy-dark font-extrabold shadow-lg shadow-brand-lime/10"
                       : "text-slate-300 hover:bg-brand-navy-light/40 hover:text-white"
                   }`}
                 >
                   <span className="flex items-center gap-2">
-                    {isSelected && <ChevronRight className="w-4 h-4 shrink-0" />}
+                    {isSelected && <ChevronRight className="w-3.5 h-3.5 shrink-0" />}
                     {formattedLabel()}
                   </span>
                   {!isSelected && (
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 bg-slate-900 border border-slate-800/60 text-slate-500 rounded font-semibold group-hover:text-brand-lime">
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 bg-slate-900 border border-slate-800/60 text-slate-500 rounded font-semibold group-hover:text-brand-lime">
                       {item.hotkey}
                     </span>
                   )}
@@ -397,37 +653,37 @@ export default function DashboardPage() {
           </nav>
         </section>
 
-        {/* Right Side: Key widgets / Charts & Live Overview */}
-        <section className="lg:col-span-8 space-y-6">
+        {/* Middle Column: Key metrics / Charts & Live Overview - 6 span */}
+        <section className="lg:col-span-6 space-y-6">
           {/* Quick Metrics */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="p-5 rounded-2xl bg-brand-navy-light/10 border border-slate-950 flex items-center gap-4">
-              <div className="p-3 bg-brand-lime/10 border border-brand-lime/20 text-brand-lime rounded-xl">
-                <FileText className="w-6 h-6" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-4 rounded-2xl bg-brand-navy-light/10 border border-slate-950 flex items-center gap-3">
+              <div className="p-2.5 bg-brand-lime/10 border border-brand-lime/20 text-brand-lime rounded-xl">
+                <FileText className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Voucher Count</p>
-                <p className="text-2xl font-black text-white mt-1">24</p>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Voucher Count</p>
+                <p className="text-xl font-black text-white mt-0.5">24</p>
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-brand-navy-light/10 border border-slate-950 flex items-center gap-4">
-              <div className="p-3 bg-sky-500/10 border border-sky-500/20 text-sky-400 rounded-xl">
-                <Package className="w-6 h-6" />
+            <div className="p-4 rounded-2xl bg-brand-navy-light/10 border border-slate-950 flex items-center gap-3">
+              <div className="p-2.5 bg-sky-500/10 border border-sky-500/20 text-sky-400 rounded-xl">
+                <Package className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Stock Items</p>
-                <p className="text-2xl font-black text-white mt-1">118</p>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Stock Items</p>
+                <p className="text-xl font-black text-white mt-0.5">118</p>
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-brand-navy-light/10 border border-slate-950 flex items-center gap-4">
-              <div className="p-3 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-xl">
-                <Users className="w-6 h-6" />
+            <div className="p-4 rounded-2xl bg-brand-navy-light/10 border border-slate-950 flex items-center gap-3">
+              <div className="p-2.5 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-xl">
+                <Users className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Active Ledgers</p>
-                <p className="text-2xl font-black text-white mt-1">15</p>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Active Ledgers</p>
+                <p className="text-xl font-black text-white mt-0.5">15</p>
               </div>
             </div>
           </div>
@@ -435,17 +691,17 @@ export default function DashboardPage() {
           {/* Quick Stats overview panel */}
           <div className="p-6 rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 space-y-6 shadow-2xl backdrop-blur-xl">
             <div className="flex items-center justify-between border-b border-slate-900 pb-4">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-brand-lime" />
                 Financial Overview (FY 2026-27)
               </h3>
-              <span className="text-xs text-slate-400">Mock metrics powered by active ledgers</span>
+              <span className="text-[10px] text-slate-400">Mock metrics powered by active ledgers</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Asset & Liability chart card */}
               <div className="p-5 bg-brand-navy-dark border border-slate-900 rounded-2xl space-y-4">
-                <h4 className="text-sm font-bold text-slate-400">Balance Sheet Ratios</h4>
+                <h4 className="text-xs font-bold text-slate-400">Balance Sheet Ratios</h4>
                 <div className="space-y-3">
                   <div>
                     <div className="flex justify-between text-xs mb-1">
@@ -471,7 +727,7 @@ export default function DashboardPage() {
 
               {/* Profit & loss chart card */}
               <div className="p-5 bg-brand-navy-dark border border-slate-900 rounded-2xl space-y-4">
-                <h4 className="text-sm font-bold text-slate-400">Income & Expense summary</h4>
+                <h4 className="text-xs font-bold text-slate-400">Income & Expense summary</h4>
                 <div className="space-y-3">
                   <div>
                     <div className="flex justify-between text-xs mb-1">
@@ -493,6 +749,88 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Right Column: Shortcut Reference Legend (Tally-style button bar) - 3 span */}
+        <section className="lg:col-span-3 rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-5 shadow-2xl backdrop-blur-xl space-y-4">
+          <div className="border-b border-slate-900 pb-3 flex items-center justify-between">
+            <h2 className="text-xs font-black uppercase tracking-widest text-brand-lime">
+              Keyboard Reference
+            </h2>
+            <span className="text-[9px] bg-slate-900 border border-slate-800 px-1.5 py-0.5 rounded font-mono text-slate-500">
+              Quick Guide
+            </span>
+          </div>
+
+          <div className="space-y-3 text-[11px]">
+            {/* Global Group */}
+            <div className="space-y-1.5">
+              <h4 className="font-bold text-sky-400 uppercase text-[9px] tracking-wider">Global Controls</h4>
+              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
+                <span className="text-slate-400">Search Commands</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-brand-lime font-mono rounded font-extrabold">Ctrl + K</span>
+              </div>
+              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
+                <span className="text-slate-400">Select Company</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-white font-mono rounded font-bold">F1</span>
+              </div>
+              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
+                <span className="text-slate-400">Change Period</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-white font-mono rounded font-bold">F2</span>
+              </div>
+              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
+                <span className="text-slate-400">Toggle Calculator</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-white font-mono rounded font-bold">F4</span>
+              </div>
+            </div>
+
+            {/* Masters Group */}
+            <div className="space-y-1.5 pt-2">
+              <h4 className="font-bold text-sky-400 uppercase text-[9px] tracking-wider">Masters (Alt)</h4>
+              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
+                <span className="text-slate-400">Create Ledger</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">Alt + L</span>
+              </div>
+              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
+                <span className="text-slate-400">Create Group</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">Alt + G</span>
+              </div>
+              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
+                <span className="text-slate-400">Create Stock Item</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">Alt + S</span>
+              </div>
+            </div>
+
+            {/* Vouchers Group */}
+            <div className="space-y-1.5 pt-2">
+              <h4 className="font-bold text-sky-400 uppercase text-[9px] tracking-wider">Vouchers</h4>
+              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
+                <span className="text-slate-400">Receipt Voucher</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">F6</span>
+              </div>
+              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
+                <span className="text-slate-400">Sales Voucher</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">F8</span>
+              </div>
+              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
+                <span className="text-slate-400">Purchase Voucher</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">F9</span>
+              </div>
+            </div>
+
+            {/* Inventory Group */}
+            <div className="space-y-1.5 pt-2">
+              <h4 className="font-bold text-sky-400 uppercase text-[9px] tracking-wider">Inventory (Ctrl)</h4>
+              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
+                <span className="text-slate-400">Dashboard</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">Ctrl + I</span>
+              </div>
+              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
+                <span className="text-slate-400">New Item</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">Ctrl + N</span>
               </div>
             </div>
           </div>
@@ -680,6 +1018,103 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Spotlight Command Search Modal (Ctrl + K) */}
+      {isCommandSearchOpen && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 md:p-12 bg-black/80 backdrop-blur-sm">
+          <div className="w-full max-w-2xl bg-brand-navy-light border border-slate-800 rounded-3xl overflow-hidden shadow-2xl mt-12 flex flex-col max-h-[80vh] animate-fade-in">
+            {/* Search Input */}
+            <div className="p-4 border-b border-slate-900 flex items-center gap-3">
+              <span className="text-slate-400 font-mono text-sm px-1.5 py-0.5 bg-slate-900 border border-slate-850 rounded">Ctrl+K</span>
+              <input
+                type="text"
+                autoFocus
+                placeholder="Search any menu, shortcut, report, or command..."
+                value={commandSearchQuery}
+                onChange={(e) => {
+                  setCommandSearchQuery(e.target.value);
+                  setSelectedCommandIndex(0);
+                }}
+                className="w-full bg-transparent text-white placeholder-slate-500 outline-none text-base font-semibold"
+              />
+              <button
+                onClick={() => {
+                  setIsCommandSearchOpen(false);
+                  setCommandSearchQuery("");
+                }}
+                className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-slate-900"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Commands List */}
+            <div className="flex-1 overflow-y-auto p-2 text-sm divide-y divide-slate-900/30">
+              {filteredCommands.length === 0 ? (
+                <div className="p-6 text-center text-slate-500">
+                  No matching commands found.
+                </div>
+              ) : (
+                filteredCommands.map((cmd, idx) => {
+                  const isSelected = selectedCommandIndex === idx;
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        cmd.action?.();
+                        setIsCommandSearchOpen(false);
+                        setCommandSearchQuery("");
+                      }}
+                      className={`w-full p-3 flex items-center justify-between rounded-xl text-left transition-all ${
+                        isSelected
+                          ? "bg-brand-lime text-brand-navy-dark font-extrabold shadow"
+                          : "text-slate-300 hover:bg-brand-navy-dark/40 hover:text-white"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className={`px-2 py-0.5 text-[9px] font-bold rounded uppercase tracking-wider ${
+                          isSelected ? "bg-brand-navy-dark text-brand-lime" : "bg-slate-900 text-slate-400"
+                        }`}>
+                          {cmd.category}
+                        </span>
+                        <span>{cmd.name}</span>
+                      </div>
+                      {cmd.shortcut && (
+                        <span className={`font-mono text-xs px-1.5 py-0.5 rounded ${
+                          isSelected ? "bg-brand-navy-dark/20 text-brand-navy-dark" : "bg-slate-950/80 text-slate-500"
+                        }`}>
+                          {cmd.shortcut}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-3 bg-slate-950/40 border-t border-slate-900 flex items-center justify-between text-[10px] text-slate-500 font-mono">
+              <span>Use ↑↓ keys to navigate, Enter to select</span>
+              <span>ESC to close</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Toast Notification Container */}
+      <div className="fixed top-24 right-6 z-50 flex flex-col gap-2.5 max-w-sm pointer-events-none">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className="p-4 rounded-2xl bg-brand-navy-light/90 border border-slate-800 text-xs font-semibold text-white shadow-2xl backdrop-blur-md flex items-center gap-3 animate-fade-in-left pointer-events-auto"
+          >
+            <div className="p-1 bg-brand-lime/10 border border-brand-lime/20 text-brand-lime rounded-lg shrink-0">
+              <HelpCircle className="w-4 h-4" />
+            </div>
+            <span>{toast.text}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
