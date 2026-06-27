@@ -74,7 +74,7 @@ export default function DashboardPage() {
   // Expanded for all Day 5 / doc specifications
   const menuItems = [
     { label: "Masters", isHeader: true },
-    { label: "Ledgers", hotkey: "L", action: () => triggerToast("Shortcut: ALT+L (Create Ledger) / Navigate to Ledgers") },
+    { label: "Ledgers", hotkey: "L", action: () => router.push("/ledgers") },
     { label: "Groups", hotkey: "G", action: () => triggerToast("Shortcut: ALT+G (Create Group) / Navigate to Groups") },
     { label: "Stock Items", hotkey: "S", action: () => triggerToast("Shortcut: ALT+S (Create Stock Item) / Navigate to Stock Items") },
     { label: "Units of Measure", hotkey: "U", action: () => triggerToast("Shortcut: ALT+U (Unit Creation) / Navigate to Units") },
@@ -268,11 +268,11 @@ export default function DashboardPage() {
         switch (key) {
           case "L":
             e.preventDefault();
-            triggerToast("Shortcut Triggered: Create Ledger (ALT+L)");
+            router.push("/ledgers");
             break;
           case "A":
             e.preventDefault();
-            triggerToast("Shortcut Triggered: Alter Ledger (ALT+A)");
+            router.push("/ledgers");
             break;
           case "G":
             e.preventDefault();
