@@ -75,7 +75,7 @@ export default function DashboardPage() {
   const menuItems = [
     { label: "Masters", isHeader: true },
     { label: "Ledgers", hotkey: "L", action: () => router.push("/ledgers") },
-    { label: "Groups", hotkey: "G", action: () => triggerToast("Shortcut: ALT+G (Create Group) / Navigate to Groups") },
+    { label: "Groups", hotkey: "G", action: () => router.push("/groups") },
     { label: "Stock Items", hotkey: "S", action: () => triggerToast("Shortcut: ALT+S (Create Stock Item) / Navigate to Stock Items") },
     { label: "Units of Measure", hotkey: "U", action: () => triggerToast("Shortcut: ALT+U (Unit Creation) / Navigate to Units") },
 
@@ -276,7 +276,7 @@ export default function DashboardPage() {
             break;
           case "G":
             e.preventDefault();
-            triggerToast("Shortcut Triggered: Create Group (ALT+G)");
+            router.push("/groups");
             break;
           case "S":
             e.preventDefault();

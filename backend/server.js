@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/authRoutes');
 const companyRoutes = require('./routes/companyRoutes');
 const ledgerRoutes = require('./routes/ledgerRoutes');
+const groupRoutes = require('./routes/groupRoutes');
 const { protect } = require('./Middleware/authMiddleware');
 
 const app = express();
@@ -55,6 +56,7 @@ app.use((req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/ledgers', ledgerRoutes);
+app.use('/api/groups', groupRoutes);
 
 app.get('/', (req, res) => {
   res.send('SmartERP backend is running');
