@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getCurrentUser, logout } from "../utils/api";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+import { useShortcutContext } from "../context/ShortcutContext";
 import {
   Building2,
   Calendar,
@@ -36,6 +37,7 @@ interface Company {
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { setIsHelpOpen } = useShortcutContext();
   const [user, setUser] = useState<any>(null);
   const [company, setCompany] = useState<Company | null>(null);
 
@@ -395,6 +397,9 @@ export default function DashboardPage() {
               <span className="px-2 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 rounded cursor-pointer hover:border-brand-lime" onClick={() => setIsPeriodModalOpen(true)}>F2 Period</span>
               <span className="px-2 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 rounded cursor-pointer hover:border-brand-lime" onClick={() => setIsCompanyInfoOpen(true)}>F3 Info</span>
               <span className="px-2 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 rounded cursor-pointer hover:border-brand-lime" onClick={() => setIsCalculatorOpen(!isCalculatorOpen)}>F4 Calc</span>
+              <span className="px-2 py-0.5 bg-slate-900 border border border-slate-800 text-brand-lime rounded cursor-pointer hover:border-brand-lime flex items-center gap-1 font-sans font-bold" onClick={() => setIsHelpOpen(true)}>
+                <span className="text-white font-mono bg-brand-navy-dark px-1 py-0.2 rounded border border-slate-800 font-black">?</span> Keyboard Help
+              </span>
             </div>
 
             <button
