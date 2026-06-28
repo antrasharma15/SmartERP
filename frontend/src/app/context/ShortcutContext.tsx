@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { X, HelpCircle, Keyboard } from "lucide-react";
 
 export interface ShortcutDefinition {
@@ -29,18 +29,18 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [shortcuts, setShortcuts] = useState<ShortcutDefinition[]>([]);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
-  const registerShortcut = (def: ShortcutDefinition) => {
+  const registerShortcut = useCallback((def: ShortcutDefinition) => {
     setShortcuts((prev) => {
       // Avoid duplicate registrations
       const exists = prev.some((item) => item.keys === def.keys && item.description === def.description);
       if (exists) return prev;
       return [...prev, def];
     });
-  };
+  }, []);
 
-  const unregisterShortcut = (keys: string) => {
+  const unregisterShortcut = useCallback((keys: string) => {
     setShortcuts((prev) => prev.filter((item) => item.keys !== keys));
-  };
+  }, []);
 
   // Register "?" key globally (except when typing in form controls)
   useEffect(() => {

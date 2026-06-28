@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useShortcutContext, ShortcutDefinition } from "../context/ShortcutContext";
 
 export interface ShortcutConfig {
@@ -12,10 +12,20 @@ export interface ShortcutConfig {
 
 export const useKeyboardShortcuts = (configs: ShortcutConfig[]) => {
   const { registerShortcut, unregisterShortcut } = useShortcutContext();
+  
+  // Use a ref to store the latest configs so that the keydown event listener
+  // always has access to the newest action closures without re-subscribing.
+  const configsRef = useRef<ShortcutConfig[]>(configs);
 
   useEffect(() => {
+    configsRef.current = configs;
+  });
+
+  useEffect(() => {
+    const registeredConfigs = configsRef.current;
+
     // 1. Register with global context for "?" cheat sheet display
-    configs.forEach((cfg) => {
+    registeredConfigs.forEach((cfg) => {
       registerShortcut({
         keys: cfg.keys,
         description: cfg.description,
@@ -32,7 +42,7 @@ export const useKeyboardShortcuts = (configs: ShortcutConfig[]) => {
         document.activeElement?.getAttribute("contenteditable") === "true";
 
       // Parse and match each registered config
-      for (const cfg of configs) {
+      for (const cfg of configsRef.current) {
         const parts = cfg.keys.toLowerCase().split("+");
         const hasAlt = parts.includes("alt");
         const hasCtrl = parts.includes("ctrl");
@@ -75,12 +85,14 @@ export const useKeyboardShortcuts = (configs: ShortcutConfig[]) => {
 
     window.addEventListener("keydown", handleKeyDown);
 
-    // Cleanup: remove listener & unregister descriptions
+    // Cleanup: remove listener & unregister descriptions using captured original configs
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      configs.forEach((cfg) => {
+      registeredConfigs.forEach((cfg) => {
         unregisterShortcut(cfg.keys);
       });
     };
-  }, [configs, registerShortcut, unregisterShortcut]);
+    // stable context methods don't change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registerShortcut, unregisterShortcut]);
 };
