@@ -166,6 +166,14 @@ export default function VouchersListPage() {
         return;
       }
 
+      // ALT + P (New Purchase Voucher)
+      if (e.altKey && (e.key === "p" || e.key === "P")) {
+        e.preventDefault();
+        console.log("[VouchersList Keyboard] ALT+P pressed. Routing to Purchase Voucher creation.");
+        router.push("/vouchers/purchase");
+        return;
+      }
+
       // CTRL + F Focus search
       if (e.ctrlKey && (e.key === "f" || e.key === "F")) {
         e.preventDefault();
