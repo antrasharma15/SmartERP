@@ -63,6 +63,7 @@ const createVoucher = async (req, res) => {
     narration,
     party_ledger_id,
     purchase_ledger_id,
+    sales_ledger_id,
     items,
     tax_entries
   } = req.body;
@@ -71,27 +72,41 @@ const createVoucher = async (req, res) => {
 
   if (!company_id) return res.status(400).json({ message: 'company_id is required' });
   if (!voucher_type) return res.status(400).json({ message: 'voucher_type is required' });
-  if (voucher_type !== 'purchase') {
-    return res.status(400).json({ message: 'Only purchase vouchers are supported at this time' });
+  if (voucher_type !== 'purchase' && voucher_type !== 'sales') {
+    return res.status(400).json({ message: 'Only purchase and sales vouchers are supported at this time' });
   }
 
   try {
-    const result = await VoucherModel.createPurchaseVoucher(userId, company_id, {
-      voucher_date,
-      reference,
-      narration,
-      party_ledger_id,
-      purchase_ledger_id,
-      items,
-      tax_entries
-    });
+    let result;
+    if (voucher_type === 'purchase') {
+      result = await VoucherModel.createPurchaseVoucher(userId, company_id, {
+        voucher_date,
+        reference,
+        narration,
+        party_ledger_id,
+        purchase_ledger_id: purchase_ledger_id || sales_ledger_id,
+        items,
+        tax_entries
+      });
+    } else {
+      result = await VoucherModel.createSalesVoucher(userId, company_id, {
+        voucher_date,
+        reference,
+        narration,
+        party_ledger_id,
+        sales_ledger_id: sales_ledger_id || purchase_ledger_id,
+        items,
+        tax_entries
+      });
+    }
+
     res.status(201).json({
-      message: 'Purchase voucher created successfully',
+      message: `${voucher_type.toUpperCase()} voucher created successfully`,
       voucher: result.voucher,
       voucher_number: result.voucherNumber
     });
   } catch (err) {
-    console.error(`[VoucherController Error] Error creating purchase voucher:`, err);
+    console.error(`[VoucherController Error] Error creating voucher:`, err);
     if (err.message.includes('Unauthorized')) {
       return res.status(403).json({ message: err.message });
     }
@@ -99,7 +114,8 @@ const createVoucher = async (req, res) => {
       err.message.includes('required') || 
       err.message.includes('must be greater than zero') ||
       err.message.includes('not found') ||
-      err.message.includes('same company')
+      err.message.includes('same company') ||
+      err.message.includes('stock not available')
     ) {
       return res.status(400).json({ message: err.message });
     }

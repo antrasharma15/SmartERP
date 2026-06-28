@@ -174,6 +174,14 @@ export default function VouchersListPage() {
         return;
       }
 
+      // ALT + S (New Sales Voucher)
+      if (e.altKey && (e.key === "s" || e.key === "S")) {
+        e.preventDefault();
+        console.log("[VouchersList Keyboard] ALT+S pressed. Routing to Sales Voucher creation.");
+        router.push("/vouchers/sales");
+        return;
+      }
+
       // CTRL + F Focus search
       if (e.ctrlKey && (e.key === "f" || e.key === "F")) {
         e.preventDefault();
@@ -284,13 +292,22 @@ export default function VouchersListPage() {
               </p>
             </div>
 
-            <button
-              onClick={() => router.push("/vouchers/purchase")}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-brand-navy-dark bg-brand-lime hover:bg-white transition duration-200 text-xs shadow-lg shadow-brand-lime/10"
-            >
-              <Plus className="w-4 h-4" />
-              New Purchase Voucher (Alt+P)
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => router.push("/vouchers/purchase")}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-brand-navy-dark bg-brand-lime hover:bg-white transition duration-200 text-xs shadow-lg shadow-brand-lime/10"
+              >
+                <Plus className="w-4 h-4" />
+                Purchase (Alt+P)
+              </button>
+              <button
+                onClick={() => router.push("/vouchers/sales")}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-slate-300 bg-slate-900 border border-slate-800 hover:bg-slate-850 transition duration-200 text-xs"
+              >
+                <Plus className="w-4 h-4" />
+                Sales (Alt+S)
+              </button>
+            </div>
           </div>
 
           {/* Search bar */}
@@ -406,7 +423,7 @@ export default function VouchersListPage() {
           {/* Guide Legend */}
           <div className="flex justify-between items-center bg-slate-950/20 border border-slate-900/60 p-3 rounded-2xl text-[10px] text-slate-400 font-mono">
             <span>Use ↑↓ keys to select, Enter to view ledger entries, Delete to void</span>
-            <span>ALT+P = Create Purchase Voucher | ESC = Home</span>
+            <span>ALT+P = Purchase | ALT+S = Sales | ESC = Home</span>
           </div>
         </section>
 

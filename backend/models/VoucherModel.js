@@ -173,6 +173,145 @@ const createPurchaseVoucher = async (userId, companyId, data) => {
 };
 
 /**
+ * Create a new Sales Voucher.
+ */
+const createSalesVoucher = async (userId, companyId, data) => {
+  const {
+    voucher_date,
+    reference,
+    narration,
+    party_ledger_id,
+    sales_ledger_id,
+    items,
+    tax_entries = []
+  } = data;
+
+  console.log(`[VoucherModel Debug] Creating sales voucher in company ${companyId}. Items count: ${items ? items.length : 0}`);
+
+  const hasAccess = await checkUserCompanyAccess(companyId, userId);
+  if (!hasAccess) {
+    throw new Error('Unauthorized: You do not have access to this company');
+  }
+
+  // Basic validation
+  if (!voucher_date) throw new Error('Voucher date is required');
+  if (!party_ledger_id) throw new Error('Party ledger account is required');
+  if (!sales_ledger_id) throw new Error('Sales ledger account is required');
+  if (!items || items.length === 0) throw new Error('At least one stock item is required for sale');
+
+  const client = await pool.connect();
+  try {
+    console.log(`[VoucherModel Debug] Beginning transaction for sales...`);
+    await client.query('BEGIN');
+
+    // 1. Calculate values & Check stock levels
+    let itemsTotal = 0;
+    for (const item of items) {
+      const qty = parseFloat(item.quantity) || 0;
+      const rate = parseFloat(item.rate) || 0;
+      if (qty <= 0 || rate <= 0) {
+        throw new Error(`Quantity and Rate must be greater than zero for item ID ${item.stock_item_id}`);
+      }
+      itemsTotal += qty * rate;
+
+      // Stock check validation
+      const stockRes = await client.query(
+        `SELECT name, quantity FROM stock_items WHERE id = $1`,
+        [item.stock_item_id]
+      );
+      if (stockRes.rows.length === 0) {
+        throw new Error(`Stock item not found: ${item.stock_item_id}`);
+      }
+      const availableStock = parseFloat(stockRes.rows[0].quantity) || 0;
+      if (availableStock < qty) {
+        console.warn(`[VoucherModel Warning] Insufficient stock for ${stockRes.rows[0].name}. Available: ${availableStock}, Requested: ${qty}`);
+        throw new Error(`Sufficient stock not available for ${stockRes.rows[0].name}. Available: ${availableStock}, Requested: ${qty}`);
+      }
+    }
+
+    let taxesTotal = 0;
+    for (const tax of tax_entries) {
+      taxesTotal += parseFloat(tax.amount) || 0;
+    }
+
+    const totalInvoiceAmount = itemsTotal + taxesTotal;
+    console.log(`[VoucherModel Debug] Sales Calculations - Items Total: ${itemsTotal}, Taxes Total: ${taxesTotal}, Invoice Grand Total: ${totalInvoiceAmount}`);
+
+    // 2. Generate sequential number
+    const voucherNumber = await generateVoucherNumber(companyId, 'sales', client);
+
+    // 3. Insert Voucher Header
+    console.log(`[VoucherModel Debug] Inserting sales voucher header...`);
+    const voucherHeaderRes = await client.query(
+      `INSERT INTO vouchers (company_id, voucher_type, voucher_number, voucher_date, reference, narration, created_by)
+       VALUES ($1, 'sales', $2, $3, $4, $5, $6) RETURNING *`,
+      [companyId, voucherNumber, voucher_date, reference || null, narration || null, userId]
+    );
+    const voucher = voucherHeaderRes.rows[0];
+    const voucherId = voucher.id;
+
+    // 4. Double-Entry postings
+    console.log(`[VoucherModel Debug] Posting accounting entries for sales voucher ID ${voucherId}...`);
+    
+    // Debit Entry: Party (Customer/Cash/Bank) Account
+    await client.query(
+      `INSERT INTO voucher_entries (voucher_id, ledger_id, credit_amount, debit_amount)
+       VALUES ($1, $2, 0, $3)`,
+      [voucherId, party_ledger_id, totalInvoiceAmount]
+    );
+
+    // Credit Entry: Sales Account
+    await client.query(
+      `INSERT INTO voucher_entries (voucher_id, ledger_id, credit_amount, debit_amount)
+       VALUES ($1, $2, $3, 0)`,
+      [voucherId, sales_ledger_id, itemsTotal]
+    );
+
+    // Credit Entries: GST Taxes accounts
+    for (const tax of tax_entries) {
+      if (parseFloat(tax.amount) > 0) {
+        await client.query(
+          `INSERT INTO voucher_entries (voucher_id, ledger_id, credit_amount, debit_amount)
+           VALUES ($1, $2, $3, 0)`,
+          [voucherId, tax.ledger_id, tax.amount]
+        );
+      }
+    }
+
+    // 5. Stock items logging & update quantities
+    console.log(`[VoucherModel Debug] Deducting stock levels for sale...`);
+    for (const item of items) {
+      const qty = parseFloat(item.quantity);
+      const rate = parseFloat(item.rate);
+      const itemNotes = JSON.stringify({ rate, amount: qty * rate });
+
+      // Insert transaction log
+      await client.query(
+        `INSERT INTO inventory_transactions (company_id, stock_item_id, transaction_type, quantity, reference_voucher_id, transaction_date, notes)
+         VALUES ($1, $2, 'out', $3, $4, $5, $6)`,
+        [companyId, item.stock_item_id, qty, voucherId, voucher_date, itemNotes]
+      );
+
+      // Decrement stock_items table quantity
+      await client.query(
+        `UPDATE stock_items SET quantity = quantity - $1 WHERE id = $2`,
+        [qty, item.stock_item_id]
+      );
+    }
+
+    console.log(`[VoucherModel Debug] Committing Sales SQL transaction...`);
+    await client.query('COMMIT');
+    return { voucher, voucherNumber };
+  } catch (err) {
+    console.error(`[VoucherModel Error] Failed to create sales voucher, rolling back. Error:`, err);
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+/**
  * Retrieve list of vouchers for a company with filters.
  */
 const getVouchersByCompanyId = async (userId, companyId, filters = {}) => {
@@ -340,6 +479,7 @@ const deleteVoucher = async (userId, voucherId) => {
 
 module.exports = {
   createPurchaseVoucher,
+  createSalesVoucher,
   getVouchersByCompanyId,
   getVoucherById,
   deleteVoucher

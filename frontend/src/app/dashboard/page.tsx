@@ -81,6 +81,8 @@ export default function DashboardPage() {
 
     { label: "Transactions", isHeader: true },
     { label: "Vouchers Entry", hotkey: "V", action: () => router.push("/vouchers") },
+    { label: "Purchase Voucher", hotkey: "F9", action: () => router.push("/vouchers/purchase") },
+    { label: "Sales Voucher", hotkey: "F8", action: () => router.push("/vouchers/sales") },
     { label: "Banking module", hotkey: "B", action: () => triggerToast("Shortcut: B (Banking panel)") },
 
     { label: "Inventory", isHeader: true },
@@ -417,7 +419,7 @@ export default function DashboardPage() {
           triggerToast("Shortcut Triggered: Journal Voucher (F7)");
           break;
         case "F8":
-          triggerToast("Shortcut Triggered: Sales Voucher (F8)");
+          router.push("/vouchers/sales");
           break;
         case "F9":
           router.push("/vouchers/purchase");
