@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch, getCurrentUser } from "../../utils/api";
+import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
 import {
   Building2,
   Calendar,
@@ -218,53 +219,7 @@ export default function CreateInvoicePage() {
 
   const hasStockAlert = checkStockAlerts();
 
-  // Keyboard shortcut listener
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const isTypingInText = 
-        document.activeElement?.tagName === "INPUT" && 
-        (document.activeElement as HTMLInputElement).type !== "number";
-
-      if (isCustomerModalOpen) {
-        if (e.key === "Escape") {
-          e.preventDefault();
-          setIsCustomerModalOpen(false);
-        }
-        return;
-      }
-
-      // ALT + A: Add item row
-      if (e.altKey && (e.key === "a" || e.key === "A")) {
-        e.preventDefault();
-        addItemRow();
-        return;
-      }
-
-      // ALT + N: Open Customer Modal
-      if (e.altKey && (e.key === "n" || e.key === "N")) {
-        e.preventDefault();
-        setIsCustomerModalOpen(true);
-        return;
-      }
-
-      // CTRL + Enter / ALT + C: Save Invoice
-      if ((e.ctrlKey && e.key === "Enter") || (e.altKey && (e.key === "c" || e.key === "C"))) {
-        e.preventDefault();
-        submitInvoice();
-        return;
-      }
-
-      // Escape: return to list
-      if (e.key === "Escape") {
-        e.preventDefault();
-        router.push("/billing");
-        return;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [itemRows, customerId, invoiceDate, invoiceType, isCustomerModalOpen]);
+  // Keyboard shortcuts are registered below.
 
   // Create Customer on the fly
   const handleCreateCustomer = async (e: React.FormEvent) => {
@@ -359,6 +314,40 @@ export default function CreateInvoicePage() {
       setSubmitting(false);
     }
   };
+
+  // Register Invoicing specific shortcuts
+  useKeyboardShortcuts([
+    {
+      keys: "Alt+A",
+      action: () => addItemRow(),
+      description: "Add Item Line Row",
+      category: "Page Actions"
+    },
+    {
+      keys: "Alt+N",
+      action: () => setIsCustomerModalOpen(true),
+      description: "Create New Customer On-the-Fly",
+      category: "Page Actions"
+    },
+    {
+      keys: "Ctrl+Enter",
+      action: () => submitInvoice(),
+      description: "Submit & Post Tax Invoice",
+      category: "Page Actions"
+    },
+    {
+      keys: "Escape",
+      action: () => {
+        if (isCustomerModalOpen) {
+          setIsCustomerModalOpen(false);
+        } else {
+          router.push("/billing");
+        }
+      },
+      description: "Close Modal / Return to Invoices",
+      category: "Page Actions"
+    }
+  ]);
 
   return (
     <div className="min-h-screen bg-brand-navy-dark text-slate-100 flex flex-col select-none relative overflow-hidden font-sans">

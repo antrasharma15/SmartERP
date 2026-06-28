@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getCurrentUser, logout } from "../utils/api";
+import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 import {
   Building2,
   Calendar,
@@ -173,297 +174,7 @@ export default function DashboardPage() {
     setFyEnd(activeCompany.financial_year_end ? activeCompany.financial_year_end.split("T")[0] : "2027-03-31");
   }, [router]);
 
-  // Global Keyboard listener hook
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // 1. Command Search Mode key handling
-      if (isCommandSearchOpen) {
-        if (e.key === "ArrowDown") {
-          e.preventDefault();
-          setSelectedCommandIndex(prev => (prev + 1) % filteredCommands.length);
-          return;
-        }
-        if (e.key === "ArrowUp") {
-          e.preventDefault();
-          setSelectedCommandIndex(prev => (prev - 1 + filteredCommands.length) % filteredCommands.length);
-          return;
-        }
-        if (e.key === "Enter") {
-          e.preventDefault();
-          if (filteredCommands[selectedCommandIndex]) {
-            filteredCommands[selectedCommandIndex].action?.();
-            setIsCommandSearchOpen(false);
-            setCommandSearchQuery("");
-            setSelectedCommandIndex(0);
-          }
-          return;
-        }
-        if (e.key === "Escape") {
-          e.preventDefault();
-          setIsCommandSearchOpen(false);
-          setCommandSearchQuery("");
-          setSelectedCommandIndex(0);
-          return;
-        }
-      }
-
-      // 2. Prevent browser default actions for F-keys and Ctrl combos
-      if (["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10"].includes(e.key)) {
-        e.preventDefault();
-      }
-      if (e.ctrlKey && ["q", "Q", "h", "H", "k", "K", "f", "F", "c", "C", "s", "S", "b", "B", "p", "P", "m", "M", "i", "I", "n", "N", "e", "E", "d", "D", "t", "T", "r", "R"].includes(e.key)) {
-        e.preventDefault();
-      }
-
-      // 3. Calculator input handling when calculator is open
-      if (isCalculatorOpen) {
-        if (/^[0-9.+\-*/]$/.test(e.key)) {
-          e.preventDefault();
-          handleCalcInput(e.key);
-          return;
-        }
-        if (e.key === "Enter" || e.key === "=") {
-          e.preventDefault();
-          handleCalcEvaluate();
-          return;
-        }
-        if (e.key === "Backspace") {
-          e.preventDefault();
-          handleCalcBackspace();
-          return;
-        }
-        if (e.key === "c" || e.key === "C") {
-          e.preventDefault();
-          handleCalcClear();
-          return;
-        }
-      }
-
-      // 4. Command Palette Trigger (Ctrl + K)
-      if (e.ctrlKey && (e.key === "k" || e.key === "K")) {
-        e.preventDefault();
-        setIsCommandSearchOpen((prev) => !prev);
-        setCommandSearchQuery("");
-        setSelectedCommandIndex(0);
-        return;
-      }
-
-      // 5. Global Logout (Ctrl + Q)
-      if (e.ctrlKey && (e.key === "q" || e.key === "Q")) {
-        e.preventDefault();
-        triggerToast("Logging out...");
-        handleLogout();
-        return;
-      }
-
-      // 6. Global Home (Ctrl + H)
-      if (e.ctrlKey && (e.key === "h" || e.key === "H")) {
-        e.preventDefault();
-        triggerToast("Navigating to Home Dashboard");
-        router.push("/dashboard");
-        return;
-      }
-
-      // 7. Master Shortcuts (Alt + Key)
-      if (e.altKey && !e.ctrlKey) {
-        const key = e.key.toUpperCase();
-        switch (key) {
-          case "L":
-            e.preventDefault();
-            router.push("/ledgers");
-            break;
-          case "A":
-            e.preventDefault();
-            router.push("/reports/balance-sheet");
-            break;
-          case "G":
-          case "N":
-            e.preventDefault();
-            router.push("/groups");
-            break;
-          case "S":
-            e.preventDefault();
-            router.push("/inventory");
-            break;
-          case "U":
-            e.preventDefault();
-            router.push("/inventory");
-            break;
-          case "B":
-            e.preventDefault();
-            router.push("/billing");
-            break;
-          case "D":
-            e.preventDefault();
-            router.push("/reports/day-book");
-            break;
-          case "P":
-            e.preventDefault();
-            router.push("/reports/profit-loss");
-            break;
-          case "T":
-            e.preventDefault();
-            router.push("/reports/trial-balance");
-            break;
-          case "C":
-            e.preventDefault();
-            triggerToast("Shortcut Triggered: Cash Flow (ALT+C)");
-            break;
-          case "R":
-            e.preventDefault();
-            router.push("/reports/stock-summary");
-            break;
-          case "X":
-            e.preventDefault();
-            triggerToast("Shortcut Triggered: GST Report (ALT+X)");
-            break;
-        }
-      }
-
-      // 8. Inventory / Billing / Customer Shortcuts (Ctrl + Key combinations)
-      if (e.ctrlKey && !e.altKey) {
-        const key = e.key.toUpperCase();
-        if (e.shiftKey) {
-          // Ctrl + Shift + Key
-          switch (key) {
-            case "P":
-              e.preventDefault();
-              triggerToast("Shortcut Triggered: PDF Download (CTRL+SHIFT+P)");
-              break;
-            case "C":
-              e.preventDefault();
-              triggerToast("Shortcut Triggered: Customer Ledger (CTRL+SHIFT+C)");
-              break;
-            case "S":
-              e.preventDefault();
-              triggerToast("Shortcut Triggered: Supplier Ledger (CTRL+SHIFT+S)");
-              break;
-            case "F":
-              e.preventDefault();
-              triggerToast("Shortcut Triggered: Global Search (CTRL+SHIFT+F)");
-              break;
-          }
-        } else {
-          // Ctrl + Key
-          switch (key) {
-            case "I":
-              e.preventDefault();
-              router.push("/inventory");
-              break;
-            case "N":
-              e.preventDefault();
-              triggerToast("Shortcut Triggered: New Item (CTRL+N)");
-              break;
-            case "E":
-              e.preventDefault();
-              triggerToast("Shortcut Triggered: Edit Item (CTRL+E)");
-              break;
-            case "D":
-              e.preventDefault();
-              triggerToast("Shortcut Triggered: Delete Item (CTRL+D)");
-              break;
-            case "T":
-              e.preventDefault();
-              triggerToast("Shortcut Triggered: Stock Transfer (CTRL+T)");
-              break;
-            case "R":
-              e.preventDefault();
-              triggerToast("Shortcut Triggered: Stock Report (CTRL+R)");
-              break;
-            case "B":
-              e.preventDefault();
-              triggerToast("Shortcut Triggered: New Invoice (CTRL+B)");
-              break;
-            case "P":
-              e.preventDefault();
-              triggerToast("Shortcut Triggered: Print Invoice (CTRL+P)");
-              break;
-            case "M":
-              e.preventDefault();
-              triggerToast("Shortcut Triggered: Email Invoice (CTRL+M)");
-              break;
-            case "C":
-              e.preventDefault();
-              triggerToast("Shortcut Triggered: New Customer (CTRL+C)");
-              break;
-            case "S":
-              e.preventDefault();
-              triggerToast("Shortcut Triggered: New Supplier (CTRL+S)");
-              break;
-            case "F":
-              e.preventDefault();
-              triggerToast("Shortcut Triggered: Search (CTRL+F)");
-              break;
-          }
-        }
-      }
-
-      // 9. Standard F-key triggers & Menu Arrows
-      switch (e.key) {
-        case "F1":
-          router.push("/companies");
-          break;
-        case "F2":
-          setIsPeriodModalOpen(true);
-          break;
-        case "F3":
-          setIsCompanyInfoOpen(true);
-          break;
-        case "F4":
-          setIsCalculatorOpen((prev) => !prev);
-          break;
-        case "F5":
-          triggerToast("Refreshing page...");
-          window.location.reload();
-          break;
-        case "F6":
-          triggerToast("Shortcut Triggered: Receipt Voucher (F6)");
-          break;
-        case "F7":
-          triggerToast("Shortcut Triggered: Journal Voucher (F7)");
-          break;
-        case "F8":
-          router.push("/vouchers/sales");
-          break;
-        case "F9":
-          router.push("/vouchers/purchase");
-          break;
-        case "F10":
-          triggerToast("Shortcut Triggered: Reversing Journal (F10)");
-          break;
-        case "Escape":
-          if (isCalculatorOpen) setIsCalculatorOpen(false);
-          else if (isPeriodModalOpen) setIsPeriodModalOpen(false);
-          else if (isCompanyInfoOpen) setIsCompanyInfoOpen(false);
-          break;
-        case "ArrowDown":
-          e.preventDefault();
-          setSelectedMenuIndex((prev) => {
-            const currentPos = navigableIndices.indexOf(prev);
-            const nextPos = (currentPos + 1) % navigableIndices.length;
-            return navigableIndices[nextPos];
-          });
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          setSelectedMenuIndex((prev) => {
-            const currentPos = navigableIndices.indexOf(prev);
-            const prevPos = (currentPos - 1 + navigableIndices.length) % navigableIndices.length;
-            return navigableIndices[prevPos];
-          });
-          break;
-        case "Enter":
-          e.preventDefault();
-          if (!isCalculatorOpen && !isPeriodModalOpen && !isCompanyInfoOpen && !isCommandSearchOpen) {
-            menuItems[selectedMenuIndex].action?.();
-          }
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isCalculatorOpen, isPeriodModalOpen, isCompanyInfoOpen, isCommandSearchOpen, selectedMenuIndex, filteredCommands, selectedCommandIndex]);
+  // System shortcuts and modal listeners are initialized below.
 
   // Calculator Functions
   const handleCalcInput = (val: string) => {
@@ -522,6 +233,134 @@ export default function DashboardPage() {
     logout();
     router.push("/login");
   };
+
+  // Register System Keyboard Shortcuts
+  useKeyboardShortcuts([
+    { keys: "Ctrl+K", action: () => { setIsCommandSearchOpen(prev => !prev); setCommandSearchQuery(""); setSelectedCommandIndex(0); }, description: "Toggle Command Search", category: "Global" },
+    { keys: "Ctrl+Q", action: () => handleLogout(), description: "Logout Session", category: "Global" },
+    { keys: "Ctrl+H", action: () => router.push("/dashboard"), description: "Navigate Home", category: "Global" },
+    
+    // Alt-key triggers
+    { keys: "Alt+L", action: () => router.push("/ledgers"), description: "Ledgers Directory", category: "Global" },
+    { keys: "Alt+A", action: () => router.push("/reports/balance-sheet"), description: "Balance Sheet Report", category: "Global" },
+    { keys: "Alt+G", action: () => router.push("/groups"), description: "Account Groups Directory", category: "Global" },
+    { keys: "Alt+N", action: () => router.push("/groups"), description: "Account Groups Directory", category: "Global" },
+    { keys: "Alt+S", action: () => router.push("/inventory"), description: "Stock Items Directory", category: "Global" },
+    { keys: "Alt+U", action: () => router.push("/inventory"), description: "Units Directory", category: "Global" },
+    { keys: "Alt+B", action: () => router.push("/billing"), description: "Billing Register", category: "Global" },
+    { keys: "Alt+D", action: () => router.push("/reports/day-book"), description: "Day Book Register", category: "Global" },
+    { keys: "Alt+P", action: () => router.push("/reports/profit-loss"), description: "Profit & Loss Statement", category: "Global" },
+    { keys: "Alt+T", action: () => router.push("/reports/trial-balance"), description: "Trial Balance Sheet", category: "Global" },
+    { keys: "Alt+R", action: () => router.push("/reports/stock-summary"), description: "Stock Summary Valuation", category: "Global" },
+
+    // Function keys
+    { keys: "F1", action: () => router.push("/companies"), description: "Change Active Company", category: "Global" },
+    { keys: "F2", action: () => setIsPeriodModalOpen(true), description: "Change Financial Period", category: "Global" },
+    { keys: "F3", action: () => setIsCompanyInfoOpen(true), description: "View Company Details", category: "Global" },
+    { keys: "F4", action: () => setIsCalculatorOpen(prev => !prev), description: "Toggle Calculator", category: "Global" },
+    { keys: "F8", action: () => router.push("/vouchers/sales"), description: "Sales Voucher Entry", category: "Global" },
+    { keys: "F9", action: () => router.push("/vouchers/purchase"), description: "Purchase Voucher Entry", category: "Global" },
+
+    // Menu Navigation Keys (active only when modals are closed)
+    {
+      keys: "ArrowDown",
+      action: () => {
+        if (!isCalculatorOpen && !isPeriodModalOpen && !isCompanyInfoOpen && !isCommandSearchOpen) {
+          setSelectedMenuIndex((prev) => {
+            const currentPos = navigableIndices.indexOf(prev);
+            const nextPos = (currentPos + 1) % navigableIndices.length;
+            return navigableIndices[nextPos];
+          });
+        }
+      },
+      description: "Next Menu Option",
+      category: "Global"
+    },
+    {
+      keys: "ArrowUp",
+      action: () => {
+        if (!isCalculatorOpen && !isPeriodModalOpen && !isCompanyInfoOpen && !isCommandSearchOpen) {
+          setSelectedMenuIndex((prev) => {
+            const currentPos = navigableIndices.indexOf(prev);
+            const prevPos = (currentPos - 1 + navigableIndices.length) % navigableIndices.length;
+            return navigableIndices[prevPos];
+          });
+        }
+      },
+      description: "Previous Menu Option",
+      category: "Global"
+    },
+    {
+      keys: "Enter",
+      action: () => {
+        if (!isCalculatorOpen && !isPeriodModalOpen && !isCompanyInfoOpen && !isCommandSearchOpen) {
+          menuItems[selectedMenuIndex].action?.();
+        }
+      },
+      description: "Execute Highlighted Menu",
+      category: "Global"
+    },
+    {
+      keys: "Escape",
+      action: () => {
+        if (isCalculatorOpen) setIsCalculatorOpen(false);
+        else if (isPeriodModalOpen) setIsPeriodModalOpen(false);
+        else if (isCompanyInfoOpen) setIsCompanyInfoOpen(false);
+      },
+      description: "Close Modal Overlay",
+      category: "Global"
+    }
+  ]);
+
+  // Modal Specific Key Handler Effect
+  useEffect(() => {
+    if (!isCommandSearchOpen && !isCalculatorOpen) return;
+
+    const handleModalKeys = (e: KeyboardEvent) => {
+      if (isCommandSearchOpen) {
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          setSelectedCommandIndex((prev) => (prev + 1) % filteredCommands.length);
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          setSelectedCommandIndex((prev) => (prev - 1 + filteredCommands.length) % filteredCommands.length);
+        } else if (e.key === "Enter") {
+          e.preventDefault();
+          if (filteredCommands[selectedCommandIndex]) {
+            filteredCommands[selectedCommandIndex].action?.();
+            setIsCommandSearchOpen(false);
+            setCommandSearchQuery("");
+            setSelectedCommandIndex(0);
+          }
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          setIsCommandSearchOpen(false);
+          setCommandSearchQuery("");
+          setSelectedCommandIndex(0);
+        }
+      } else if (isCalculatorOpen) {
+        if (/^[0-9.+\-*/]$/.test(e.key)) {
+          e.preventDefault();
+          handleCalcInput(e.key);
+        } else if (e.key === "Enter" || e.key === "=") {
+          e.preventDefault();
+          handleCalcEvaluate();
+        } else if (e.key === "Backspace") {
+          e.preventDefault();
+          handleCalcBackspace();
+        } else if (e.key === "c" || e.key === "C") {
+          e.preventDefault();
+          handleCalcClear();
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          setIsCalculatorOpen(false);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleModalKeys);
+    return () => window.removeEventListener("keydown", handleModalKeys);
+  }, [isCommandSearchOpen, isCalculatorOpen, filteredCommands, selectedCommandIndex]);
 
   return (
     <div className="min-h-screen bg-brand-navy-dark text-slate-100 flex flex-col select-none relative overflow-hidden">
