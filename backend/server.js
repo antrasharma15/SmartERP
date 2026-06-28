@@ -7,6 +7,9 @@ const authRoutes = require('./routes/authRoutes');
 const companyRoutes = require('./routes/companyRoutes');
 const ledgerRoutes = require('./routes/ledgerRoutes');
 const groupRoutes = require('./routes/groupRoutes');
+const unitRoutes = require('./routes/unitRoutes');
+const stockGroupRoutes = require('./routes/stockGroupRoutes');
+const stockItemRoutes = require('./routes/stockItemRoutes');
 const { protect } = require('./Middleware/authMiddleware');
 
 const app = express();
@@ -57,6 +60,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/ledgers', ledgerRoutes);
 app.use('/api/groups', groupRoutes);
+app.use('/api/units', unitRoutes);
+app.use('/api/stock-groups', stockGroupRoutes);
+app.use('/api/stock-items', stockItemRoutes);
 
 app.get('/', (req, res) => {
   res.send('SmartERP backend is running');

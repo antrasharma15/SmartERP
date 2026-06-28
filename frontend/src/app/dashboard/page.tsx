@@ -84,7 +84,7 @@ export default function DashboardPage() {
     { label: "Banking module", hotkey: "B", action: () => triggerToast("Shortcut: B (Banking panel)") },
 
     { label: "Inventory", isHeader: true },
-    { label: "Inventory Dashboard", hotkey: "I", action: () => triggerToast("Shortcut: CTRL+I (Inventory Dashboard)") },
+    { label: "Inventory Dashboard", hotkey: "I", action: () => router.push("/inventory") },
     { label: "Stock Transfer", hotkey: "E", action: () => triggerToast("Shortcut: CTRL+T (Stock Transfer)") },
     { label: "Stock Report", hotkey: "K", action: () => triggerToast("Shortcut: CTRL+R (Stock Report)") },
 
@@ -281,11 +281,11 @@ export default function DashboardPage() {
             break;
           case "S":
             e.preventDefault();
-            triggerToast("Shortcut Triggered: Create Stock Item (ALT+S)");
+            router.push("/inventory");
             break;
           case "U":
             e.preventDefault();
-            triggerToast("Shortcut Triggered: Unit Creation (ALT+U)");
+            router.push("/inventory");
             break;
           case "B":
             e.preventDefault();
@@ -342,7 +342,7 @@ export default function DashboardPage() {
           switch (key) {
             case "I":
               e.preventDefault();
-              triggerToast("Shortcut Triggered: Inventory Dashboard (CTRL+I)");
+              router.push("/inventory");
               break;
             case "N":
               e.preventDefault();
