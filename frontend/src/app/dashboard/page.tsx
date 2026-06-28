@@ -275,6 +275,7 @@ export default function DashboardPage() {
             router.push("/ledgers");
             break;
           case "G":
+          case "N":
             e.preventDefault();
             router.push("/groups");
             break;

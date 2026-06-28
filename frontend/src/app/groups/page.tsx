@@ -174,10 +174,10 @@ export default function GroupsPage() {
         return;
       }
 
-      // ALT + G (Create Group)
-      if (e.altKey && (e.key === "g" || e.key === "G")) {
+      // ALT + N / ALT + G (Create Group)
+      if (e.altKey && (e.key === "n" || e.key === "N" || e.key === "g" || e.key === "G")) {
         e.preventDefault();
-        console.log("[GroupsPage Keyboard] ALT+G pressed. Opening Create Group form.");
+        console.log("[GroupsPage Keyboard] Create Group shortcut triggered.");
         handleOpenCreateModal();
         return;
       }
@@ -408,7 +408,7 @@ export default function GroupsPage() {
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-brand-navy-dark bg-brand-lime hover:bg-white transition duration-200 text-xs shadow-lg shadow-brand-lime/10"
             >
               <Plus className="w-4 h-4" />
-              Create Group (Alt+G)
+              Create Group (Alt+N)
             </button>
           </div>
 
@@ -536,7 +536,7 @@ export default function GroupsPage() {
           {/* Guide Legend */}
           <div className="flex justify-between items-center bg-slate-950/20 border border-slate-900/60 p-3 rounded-2xl text-[10px] text-slate-400 font-mono">
             <span>Use ↑↓ keys to select, Enter to edit</span>
-            <span>ALT+G = Create | ALT+A = Alter | Delete = Remove | ESC = Exit</span>
+            <span>ALT+N = Create | ALT+A = Alter | Delete = Remove | ESC = Exit</span>
           </div>
         </section>
 
@@ -582,7 +582,7 @@ export default function GroupsPage() {
             <div className="space-y-2.5 pt-3 text-[10px] font-mono text-slate-400">
               <div className="flex justify-between items-center">
                 <span>Create Group</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 border border-slate-800 text-brand-lime rounded">Alt + G</span>
+                <span className="px-1.5 py-0.5 bg-slate-950 border border-slate-800 text-brand-lime rounded">Alt + N</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Alter Group</span>
