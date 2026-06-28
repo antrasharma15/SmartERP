@@ -83,7 +83,7 @@ export default function DashboardPage() {
     { label: "Vouchers Entry", hotkey: "V", action: () => router.push("/vouchers") },
     { label: "Purchase Voucher", hotkey: "F9", action: () => router.push("/vouchers/purchase") },
     { label: "Sales Voucher", hotkey: "F8", action: () => router.push("/vouchers/sales") },
-    { label: "Banking module", hotkey: "B", action: () => triggerToast("Shortcut: B (Banking panel)") },
+    { label: "Billing & Invoices", hotkey: "B", action: () => router.push("/billing") },
 
     { label: "Inventory", isHeader: true },
     { label: "Inventory Dashboard", hotkey: "I", action: () => router.push("/inventory") },
@@ -291,7 +291,7 @@ export default function DashboardPage() {
             break;
           case "B":
             e.preventDefault();
-            triggerToast("Shortcut Triggered: Balance Sheet (ALT+B)");
+            router.push("/billing");
             break;
           case "P":
             e.preventDefault();
