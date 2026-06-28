@@ -80,7 +80,7 @@ export default function DashboardPage() {
     { label: "Units of Measure", hotkey: "U", action: () => triggerToast("Shortcut: ALT+U (Unit Creation) / Navigate to Units") },
 
     { label: "Transactions", isHeader: true },
-    { label: "Vouchers Entry", hotkey: "V", action: () => triggerToast("Shortcut: V (Voucher Entries) / F6 Receipt, F7 Journal, F8 Sales, F9 Purchase") },
+    { label: "Vouchers Entry", hotkey: "V", action: () => router.push("/vouchers") },
     { label: "Banking module", hotkey: "B", action: () => triggerToast("Shortcut: B (Banking panel)") },
 
     { label: "Inventory", isHeader: true },
@@ -90,7 +90,7 @@ export default function DashboardPage() {
 
     { label: "Accounting", isHeader: true },
     { label: "Cash/Bank Book", hotkey: "C", action: () => triggerToast("Shortcut: C (Cash/Bank Book)") },
-    { label: "Day Book", hotkey: "D", action: () => triggerToast("Shortcut: D (Day Book)") },
+    { label: "Day Book", hotkey: "D", action: () => router.push("/vouchers") },
 
     { label: "Banking", isHeader: true },
     { label: "Fund Transfers", hotkey: "F", action: () => triggerToast("Shortcut: F (Fund Transfers)") },
@@ -206,7 +206,7 @@ export default function DashboardPage() {
       }
 
       // 2. Prevent browser default actions for F-keys and Ctrl combos
-      if (["F1", "F2", "F3", "F4", "F5"].includes(e.key)) {
+      if (["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10"].includes(e.key)) {
         e.preventDefault();
       }
       if (e.ctrlKey && ["q", "Q", "h", "H", "k", "K", "f", "F", "c", "C", "s", "S", "b", "B", "p", "P", "m", "M", "i", "I", "n", "N", "e", "E", "d", "D", "t", "T", "r", "R"].includes(e.key)) {
@@ -420,7 +420,7 @@ export default function DashboardPage() {
           triggerToast("Shortcut Triggered: Sales Voucher (F8)");
           break;
         case "F9":
-          triggerToast("Shortcut Triggered: Purchase Voucher (F9)");
+          router.push("/vouchers/purchase");
           break;
         case "F10":
           triggerToast("Shortcut Triggered: Reversing Journal (F10)");
