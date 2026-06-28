@@ -13,6 +13,7 @@ const stockItemRoutes = require('./routes/stockItemRoutes');
 const voucherRoutes = require('./routes/voucherRoutes');
 const customerRoutes = require('./routes/customerRoutes');
 const invoiceRoutes = require('./routes/invoiceRoutes');
+const reportRoutes = require('./routes/reportRoutes');
 const { protect } = require('./Middleware/authMiddleware');
 
 const app = express();
@@ -69,6 +70,7 @@ app.use('/api/stock-items', stockItemRoutes);
 app.use('/api/vouchers', voucherRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/invoices', invoiceRoutes);
+app.use('/api/reports', reportRoutes);
 
 app.get('/', (req, res) => {
   res.send('SmartERP backend is running');

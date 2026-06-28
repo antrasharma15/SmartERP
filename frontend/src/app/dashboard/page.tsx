@@ -92,7 +92,7 @@ export default function DashboardPage() {
 
     { label: "Accounting", isHeader: true },
     { label: "Cash/Bank Book", hotkey: "C", action: () => triggerToast("Shortcut: C (Cash/Bank Book)") },
-    { label: "Day Book", hotkey: "D", action: () => router.push("/vouchers") },
+    { label: "Day Book", hotkey: "D", action: () => router.push("/reports/day-book") },
 
     { label: "Banking", isHeader: true },
     { label: "Fund Transfers", hotkey: "F", action: () => triggerToast("Shortcut: F (Fund Transfers)") },
@@ -107,10 +107,10 @@ export default function DashboardPage() {
     { label: "GSTR Summary", hotkey: "W", action: () => triggerToast("Shortcut: W (GSTR Summary)") },
 
     { label: "Reports", isHeader: true },
-    { label: "Balance Sheet", hotkey: "A", action: () => triggerToast("Shortcut: ALT+B (Balance Sheet)") },
-    { label: "Profit & Loss", hotkey: "P", action: () => triggerToast("Shortcut: ALT+P (Profit & Loss)") },
-    { label: "Trial Balance", hotkey: "T", action: () => triggerToast("Shortcut: ALT+T (Trial Balance)") },
-    { label: "Stock Summary", hotkey: "R", action: () => triggerToast("Shortcut: ALT+R (Stock Summary)") },
+    { label: "Balance Sheet", hotkey: "A", action: () => router.push("/reports/balance-sheet") },
+    { label: "Profit & Loss", hotkey: "P", action: () => router.push("/reports/profit-loss") },
+    { label: "Trial Balance", hotkey: "T", action: () => router.push("/reports/trial-balance") },
+    { label: "Stock Summary", hotkey: "R", action: () => router.push("/reports/stock-summary") },
     { label: "GST Register", hotkey: "X", action: () => triggerToast("Shortcut: ALT+X (GST Register)") },
 
     { label: "Utilities", isHeader: true },
@@ -274,7 +274,7 @@ export default function DashboardPage() {
             break;
           case "A":
             e.preventDefault();
-            router.push("/ledgers");
+            router.push("/reports/balance-sheet");
             break;
           case "G":
           case "N":
@@ -293,13 +293,17 @@ export default function DashboardPage() {
             e.preventDefault();
             router.push("/billing");
             break;
+          case "D":
+            e.preventDefault();
+            router.push("/reports/day-book");
+            break;
           case "P":
             e.preventDefault();
-            triggerToast("Shortcut Triggered: Profit & Loss (ALT+P)");
+            router.push("/reports/profit-loss");
             break;
           case "T":
             e.preventDefault();
-            triggerToast("Shortcut Triggered: Trial Balance (ALT+T)");
+            router.push("/reports/trial-balance");
             break;
           case "C":
             e.preventDefault();
@@ -307,7 +311,7 @@ export default function DashboardPage() {
             break;
           case "R":
             e.preventDefault();
-            triggerToast("Shortcut Triggered: Stock Summary (ALT+R)");
+            router.push("/reports/stock-summary");
             break;
           case "X":
             e.preventDefault();
