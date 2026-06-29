@@ -240,7 +240,7 @@ export default function DashboardPage() {
   useKeyboardShortcuts([
     { keys: "Ctrl+K", action: () => { setIsCommandSearchOpen(prev => !prev); setCommandSearchQuery(""); setSelectedCommandIndex(0); }, description: "Toggle Command Search", category: "Global" },
     { keys: "Ctrl+Q", action: () => handleLogout(), description: "Logout Session", category: "Global" },
-    { keys: "Ctrl+H", action: () => router.push("/dashboard"), description: "Navigate Home", category: "Global" },
+    { keys: "Alt+H", action: () => router.push("/dashboard"), description: "Navigate Home", category: "Global" },
     
     // Alt-key triggers
     { keys: "Alt+L", action: () => router.push("/ledgers"), description: "Ledgers Directory", category: "Global" },
