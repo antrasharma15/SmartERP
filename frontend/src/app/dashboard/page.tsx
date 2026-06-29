@@ -497,7 +497,10 @@ export default function DashboardPage() {
                 if (firstChar.toUpperCase() === hotkey) {
                   return (
                     <span>
-                      <strong className="text-brand-lime underline pr-0.5 font-bold">
+                      <strong 
+                        className="underline font-bold"
+                        style={{ color: isSelected ? "#020617" : "#bef264" }}
+                      >
                         {firstChar}
                       </strong>
                       {label.slice(1)}
@@ -510,7 +513,10 @@ export default function DashboardPage() {
                   return (
                     <span>
                       {label.slice(0, index)}
-                      <strong className="text-brand-lime underline px-0.5 font-bold">
+                      <strong 
+                        className="underline font-bold"
+                        style={{ color: isSelected ? "#020617" : "#bef264" }}
+                      >
                         {label[index]}
                       </strong>
                       {label.slice(index + 1)}
@@ -520,7 +526,13 @@ export default function DashboardPage() {
                 // Fallback
                 return (
                   <span>
-                    {label} <strong className="text-brand-lime font-mono">[{hotkey}]</strong>
+                    {label}{" "}
+                    <strong 
+                      className="font-mono"
+                      style={{ color: isSelected ? "#020617" : "#bef264" }}
+                    >
+                      [{hotkey}]
+                    </strong>
                   </span>
                 );
               };
