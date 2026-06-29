@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { getCurrentUser, logout } from "../utils/api";
+import { getCurrentUser, logout, apiFetch } from "../utils/api";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 import { useShortcutContext } from "../context/ShortcutContext";
 import {
@@ -54,6 +54,15 @@ export default function DashboardPage() {
 
   // Toast notifications state
   const [toasts, setToasts] = useState<{ id: string; text: string }[]>([]);
+
+  // Dynamic Dashboard Metrics State
+  const [vouchersCount, setVouchersCount] = useState(0);
+  const [stockItemsCount, setStockItemsCount] = useState(0);
+  const [activeLedgersCount, setActiveLedgersCount] = useState(0);
+  const [totalAssets, setTotalAssets] = useState(0);
+  const [totalLiabilities, setTotalLiabilities] = useState(0);
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpenses, setTotalExpenses] = useState(0);
 
   // Period state
   const [fyStart, setFyStart] = useState("");
@@ -175,6 +184,46 @@ export default function DashboardPage() {
     setFyStart(activeCompany.financial_year_start ? activeCompany.financial_year_start.split("T")[0] : "2026-04-01");
     setFyEnd(activeCompany.financial_year_end ? activeCompany.financial_year_end.split("T")[0] : "2027-03-31");
   }, [router]);
+
+  // Load dynamic metrics when active company changes
+  useEffect(() => {
+    if (!company) return;
+
+    const loadDashboardMetrics = async () => {
+      console.log(`[Dashboard] Querying dynamic stats for company: ${company.name}`);
+      try {
+        // 1. Fetch ledgers count
+        const ledgers = await apiFetch(`/ledgers?company_id=${company.id}`);
+        setActiveLedgersCount(ledgers ? ledgers.length : 0);
+
+        // 2. Fetch Day Book (vouchers count)
+        const dayBookData = await apiFetch(`/reports/day-book?company_id=${company.id}&start_date=2026-04-01&end_date=2027-03-31`);
+        setVouchersCount(dayBookData.report ? dayBookData.report.length : 0);
+
+        // 3. Fetch Stock Summary (items count)
+        const stockData = await apiFetch(`/reports/stock-summary?company_id=${company.id}`);
+        setStockItemsCount(stockData?.report?.items ? stockData.report.items.length : 0);
+
+        // 4. Fetch Balance Sheet totals
+        const bsData = await apiFetch(`/reports/balance-sheet?company_id=${company.id}&start_date=2026-04-01&end_date=2027-03-31`);
+        if (bsData?.report?.totals) {
+          setTotalAssets(parseFloat(bsData.report.totals.assets_total) || 0);
+          setTotalLiabilities(parseFloat(bsData.report.totals.liabilities_total) || 0);
+        }
+
+        // 5. Fetch P&L totals
+        const plData = await apiFetch(`/reports/profit-loss?company_id=${company.id}&start_date=2026-04-01&end_date=2027-03-31`);
+        if (plData?.report?.totals) {
+          setTotalIncome(parseFloat(plData.report.totals.revenue_total) || 0);
+          setTotalExpenses(parseFloat(plData.report.totals.expense_total) || 0);
+        }
+      } catch (err) {
+        console.error("[Dashboard] Failed to load dynamic metrics:", err);
+      }
+    };
+
+    loadDashboardMetrics();
+  }, [company]);
 
   // System shortcuts and modal listeners are initialized below.
 
@@ -514,7 +563,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Voucher Count</p>
-                <p className="text-xl font-black text-white mt-0.5">24</p>
+                <p className="text-xl font-black text-white mt-0.5">{vouchersCount}</p>
               </div>
             </div>
 
@@ -524,7 +573,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Stock Items</p>
-                <p className="text-xl font-black text-white mt-0.5">118</p>
+                <p className="text-xl font-black text-white mt-0.5">{stockItemsCount}</p>
               </div>
             </div>
 
@@ -534,7 +583,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Active Ledgers</p>
-                <p className="text-xl font-black text-white mt-0.5">15</p>
+                <p className="text-xl font-black text-white mt-0.5">{activeLedgersCount}</p>
               </div>
             </div>
           </div>
@@ -546,7 +595,7 @@ export default function DashboardPage() {
                 <TrendingUp className="w-5 h-5 text-brand-lime" />
                 Financial Overview (FY 2026-27)
               </h3>
-              <span className="text-[10px] text-slate-400">Mock metrics powered by active ledgers</span>
+              <span className="text-[10px] text-slate-400">Real-time ledger audit summary</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -557,20 +606,20 @@ export default function DashboardPage() {
                   <div>
                     <div className="flex justify-between text-xs mb-1">
                       <span>Assets (Total)</span>
-                      <span className="font-bold text-brand-lime">$120,400</span>
+                      <span className="font-bold text-brand-lime">${totalAssets.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
-                      <div className="bg-brand-lime h-full w-[70%]"></div>
+                      <div className="bg-brand-lime h-full" style={{ width: `${totalAssets + totalLiabilities > 0 ? (totalAssets / (totalAssets + totalLiabilities)) * 100 : 0}%` }}></div>
                     </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between text-xs mb-1">
                       <span>Liabilities (Total)</span>
-                      <span className="font-bold text-sky-400">$84,000</span>
+                      <span className="font-bold text-sky-400">${totalLiabilities.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
-                      <div className="bg-sky-400 h-full w-[45%]"></div>
+                      <div className="bg-sky-400 h-full" style={{ width: `${totalAssets + totalLiabilities > 0 ? (totalLiabilities / (totalAssets + totalLiabilities)) * 100 : 0}%` }}></div>
                     </div>
                   </div>
                 </div>
@@ -583,20 +632,20 @@ export default function DashboardPage() {
                   <div>
                     <div className="flex justify-between text-xs mb-1">
                       <span>Direct Income</span>
-                      <span className="font-bold text-emerald-400">$45,000</span>
+                      <span className="font-bold text-emerald-400">${totalIncome.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
-                      <div className="bg-emerald-400 h-full w-[60%]"></div>
+                      <div className="bg-emerald-400 h-full" style={{ width: `${totalIncome + totalExpenses > 0 ? (totalIncome / (totalIncome + totalExpenses)) * 100 : 0}%` }}></div>
                     </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between text-xs mb-1">
                       <span>Operating Expenses</span>
-                      <span className="font-bold text-rose-400">$18,200</span>
+                      <span className="font-bold text-rose-400">${totalExpenses.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
-                      <div className="bg-rose-400 h-full w-[25%]"></div>
+                      <div className="bg-rose-400 h-full" style={{ width: `${totalIncome + totalExpenses > 0 ? (totalExpenses / (totalIncome + totalExpenses)) * 100 : 0}%` }}></div>
                     </div>
                   </div>
                 </div>
