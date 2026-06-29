@@ -553,8 +553,8 @@ export default function DashboardPage() {
           </nav>
         </section>
 
-        {/* Middle Column: Key metrics / Charts & Live Overview - 6 span */}
-        <section className="lg:col-span-6 space-y-6">
+        {/* Middle Column: Key metrics / Charts & Live Overview - 9 span */}
+        <section className="lg:col-span-9 space-y-6">
           {/* Quick Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="p-4 rounded-2xl bg-brand-navy-light/10 border border-slate-950 flex items-center gap-3">
@@ -654,87 +654,7 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* Right Column: Shortcut Reference Legend (Tally-style button bar) - 3 span */}
-        <section className="lg:col-span-3 rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-5 shadow-2xl backdrop-blur-xl space-y-4">
-          <div className="border-b border-slate-900 pb-3 flex items-center justify-between">
-            <h2 className="text-xs font-black uppercase tracking-widest text-brand-lime">
-              Keyboard Reference
-            </h2>
-            <span className="text-[9px] bg-slate-900 border border-slate-800 px-1.5 py-0.5 rounded font-mono text-slate-500">
-              Quick Guide
-            </span>
-          </div>
 
-          <div className="space-y-3 text-[11px]">
-            {/* Global Group */}
-            <div className="space-y-1.5">
-              <h4 className="font-bold text-sky-400 uppercase text-[9px] tracking-wider">Global Controls</h4>
-              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
-                <span className="text-slate-400">Search Commands</span>
-                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-brand-lime font-mono rounded font-extrabold">Ctrl + K</span>
-              </div>
-              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
-                <span className="text-slate-400">Select Company</span>
-                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-white font-mono rounded font-bold">F1</span>
-              </div>
-              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
-                <span className="text-slate-400">Change Period</span>
-                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-white font-mono rounded font-bold">F2</span>
-              </div>
-              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
-                <span className="text-slate-400">Toggle Calculator</span>
-                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-white font-mono rounded font-bold">F4</span>
-              </div>
-            </div>
-
-            {/* Masters Group */}
-            <div className="space-y-1.5 pt-2">
-              <h4 className="font-bold text-sky-400 uppercase text-[9px] tracking-wider">Masters (Alt)</h4>
-              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
-                <span className="text-slate-400">Create Ledger</span>
-                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">Alt + L</span>
-              </div>
-              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
-                <span className="text-slate-400">Create Group</span>
-                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">Alt + G</span>
-              </div>
-              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
-                <span className="text-slate-400">Create Stock Item</span>
-                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">Alt + S</span>
-              </div>
-            </div>
-
-            {/* Vouchers Group */}
-            <div className="space-y-1.5 pt-2">
-              <h4 className="font-bold text-sky-400 uppercase text-[9px] tracking-wider">Vouchers</h4>
-              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
-                <span className="text-slate-400">Receipt Voucher</span>
-                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">F6</span>
-              </div>
-              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
-                <span className="text-slate-400">Sales Voucher</span>
-                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">F8</span>
-              </div>
-              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
-                <span className="text-slate-400">Purchase Voucher</span>
-                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">F9</span>
-              </div>
-            </div>
-
-            {/* Inventory Group */}
-            <div className="space-y-1.5 pt-2">
-              <h4 className="font-bold text-sky-400 uppercase text-[9px] tracking-wider">Inventory (Ctrl)</h4>
-              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
-                <span className="text-slate-400">Dashboard</span>
-                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">Ctrl + I</span>
-              </div>
-              <div className="flex justify-between items-center py-0.5 border-b border-slate-900/50">
-                <span className="text-slate-400">New Item</span>
-                <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 text-slate-300 font-mono rounded">Ctrl + N</span>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
 
       {/* Floating Calculator Popover (F4 / Click) */}
