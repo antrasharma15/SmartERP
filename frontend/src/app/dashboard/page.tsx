@@ -73,6 +73,9 @@ export default function DashboardPage() {
   const [calcEquation, setCalcEquation] = useState("");
   const [shouldResetDisplay, setShouldResetDisplay] = useState(false);
 
+  // Currency selector state
+  const [currency, setCurrency] = useState("$");
+
   // Toast Trigger Helper
   const triggerToast = (text: string) => {
     const id = Math.random().toString();
@@ -127,11 +130,11 @@ export default function DashboardPage() {
 
     { label: "Utilities", isHeader: true },
     { label: "Calculator", hotkey: "Z", action: () => setIsCalculatorOpen((prev) => !prev) },
-    { label: "Settings", hotkey: "Y", action: () => triggerToast("Shortcut: Y (Settings)") },
+    { label: "Settings", hotkey: "Y", action: () => router.push("/settings") },
 
     { label: "Administration", isHeader: true },
-    { label: "Audit Logs", hotkey: "H", action: () => triggerToast("Shortcut: H (Audit Logs)") },
-    { label: "User Controls", hotkey: "J", action: () => triggerToast("Shortcut: J (User Controls)") }
+    { label: "Audit Logs", hotkey: "H", action: () => router.push("/settings?tab=audit") },
+    { label: "User Controls", hotkey: "J", action: () => router.push("/settings?tab=users") }
   ];
 
   // List of all command search palette items
@@ -181,9 +184,57 @@ export default function DashboardPage() {
 
     const activeCompany = JSON.parse(activeCompanyStr);
     setCompany(activeCompany);
+    setCurrency(activeCompany.currency || "$");
     setFyStart(activeCompany.financial_year_start ? activeCompany.financial_year_start.split("T")[0] : "2026-04-01");
     setFyEnd(activeCompany.financial_year_end ? activeCompany.financial_year_end.split("T")[0] : "2027-03-31");
   }, [router]);
+
+  // Synchronize currency when changed globally
+  useEffect(() => {
+    const updateCurrency = () => {
+      const activeCompanyStr = localStorage.getItem("activeCompany");
+      if (activeCompanyStr) {
+        try {
+          const comp = JSON.parse(activeCompanyStr);
+          setCurrency(comp.currency || "$");
+          setCompany(comp);
+        } catch (e) {}
+      }
+    };
+    window.addEventListener("activeCompanyChanged", updateCurrency);
+    return () => window.removeEventListener("activeCompanyChanged", updateCurrency);
+  }, []);
+
+  const handleCurrencyChange = async (newCurrency: string) => {
+    const activeCompanyStr = localStorage.getItem("activeCompany");
+    if (activeCompanyStr) {
+      try {
+        const comp = JSON.parse(activeCompanyStr);
+        comp.currency = newCurrency;
+        localStorage.setItem("activeCompany", JSON.stringify(comp));
+        setCurrency(newCurrency);
+        setCompany(comp);
+        window.dispatchEvent(new Event("activeCompanyChanged"));
+        triggerToast(`Currency changed to ${newCurrency}`);
+
+        // Persist to database silently
+        await apiFetch("/settings/company", {
+          method: "PUT",
+          body: JSON.stringify({
+            company_id: comp.id,
+            name: comp.name,
+            address: comp.address,
+            contact_email: comp.contact_email,
+            contact_phone: comp.contact_phone,
+            currency: newCurrency,
+            logo_url: comp.logo_url
+          })
+        });
+      } catch (e) {
+        console.error("Failed to persist currency to backend:", e);
+      }
+    }
+  };
 
   // Load dynamic metrics when active company changes
   useEffect(() => {
@@ -194,7 +245,7 @@ export default function DashboardPage() {
       try {
         // 1. Fetch ledgers count
         const ledgers = await apiFetch(`/ledgers?company_id=${company.id}`);
-        setActiveLedgersCount(ledgers ? ledgers.length : 0);
+        setActiveLedgersCount(ledgers && ledgers.ledgers ? ledgers.ledgers.length : 0);
 
         // 2. Fetch Day Book (vouchers count)
         const dayBookData = await apiFetch(`/reports/day-book?company_id=${company.id}&start_date=2026-04-01&end_date=2027-03-31`);
@@ -290,6 +341,9 @@ export default function DashboardPage() {
     { keys: "Ctrl+K", action: () => { setIsCommandSearchOpen(prev => !prev); setCommandSearchQuery(""); setSelectedCommandIndex(0); }, description: "Toggle Command Search", category: "Global" },
     { keys: "Ctrl+Q", action: () => handleLogout(), description: "Logout Session", category: "Global" },
     { keys: "Alt+H", action: () => router.push("/dashboard"), description: "Navigate Home", category: "Global" },
+    { keys: "y", action: () => router.push("/settings"), description: "Open Settings Panel", category: "Global" },
+    { keys: "h", action: () => router.push("/settings?tab=audit"), description: "Open Audit Logs", category: "Global" },
+    { keys: "j", action: () => router.push("/settings?tab=users"), description: "Open User Controls Settings", category: "Global" },
     
     // Alt-key triggers
     { keys: "Alt+L", action: () => router.push("/ledgers"), description: "Ledgers Directory", category: "Global" },
@@ -449,6 +503,22 @@ export default function DashboardPage() {
               <span className="px-2 py-0.5 bg-slate-900 border border border-slate-800 text-brand-lime rounded cursor-pointer hover:border-brand-lime flex items-center gap-1 font-sans font-bold" onClick={() => setIsHelpOpen(true)}>
                 <span className="text-white font-mono bg-brand-navy-dark px-1 py-0.2 rounded border border-slate-800 font-black">?</span> Keyboard Help
               </span>
+            </div>
+
+            {/* Currency Selector Dropdown */}
+            <div className="relative">
+              <select
+                value={currency}
+                onChange={(e) => handleCurrencyChange(e.target.value)}
+                className="px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-300 outline-none cursor-pointer hover:border-brand-lime transition duration-200"
+                title="Select Preferred Currency"
+              >
+                <option value="$">$ (USD)</option>
+                <option value="₹">₹ (INR)</option>
+                <option value="€">€ (EUR)</option>
+                <option value="£">£ (GBP)</option>
+                <option value="¥">¥ (JPY)</option>
+              </select>
             </div>
 
             <button
@@ -618,7 +688,7 @@ export default function DashboardPage() {
                   <div>
                     <div className="flex justify-between text-xs mb-1">
                       <span>Assets (Total)</span>
-                      <span className="font-bold text-brand-lime">${totalAssets.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      <span className="font-bold text-brand-lime">{currency}{totalAssets.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
                       <div className="bg-brand-lime h-full" style={{ width: `${totalAssets + totalLiabilities > 0 ? (totalAssets / (totalAssets + totalLiabilities)) * 100 : 0}%` }}></div>
@@ -628,7 +698,7 @@ export default function DashboardPage() {
                   <div>
                     <div className="flex justify-between text-xs mb-1">
                       <span>Liabilities (Total)</span>
-                      <span className="font-bold text-sky-400">${totalLiabilities.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      <span className="font-bold text-sky-400">{currency}{totalLiabilities.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
                       <div className="bg-sky-400 h-full" style={{ width: `${totalAssets + totalLiabilities > 0 ? (totalLiabilities / (totalAssets + totalLiabilities)) * 100 : 0}%` }}></div>
@@ -644,7 +714,7 @@ export default function DashboardPage() {
                   <div>
                     <div className="flex justify-between text-xs mb-1">
                       <span>Direct Income</span>
-                      <span className="font-bold text-emerald-400">${totalIncome.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      <span className="font-bold text-emerald-400">{currency}{totalIncome.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
                       <div className="bg-emerald-400 h-full" style={{ width: `${totalIncome + totalExpenses > 0 ? (totalIncome / (totalIncome + totalExpenses)) * 100 : 0}%` }}></div>
@@ -654,7 +724,7 @@ export default function DashboardPage() {
                   <div>
                     <div className="flex justify-between text-xs mb-1">
                       <span>Operating Expenses</span>
-                      <span className="font-bold text-rose-400">${totalExpenses.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      <span className="font-bold text-rose-400">{currency}{totalExpenses.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
                       <div className="bg-rose-400 h-full" style={{ width: `${totalIncome + totalExpenses > 0 ? (totalExpenses / (totalIncome + totalExpenses)) * 100 : 0}%` }}></div>

@@ -14,7 +14,9 @@ const voucherRoutes = require('./routes/voucherRoutes');
 const customerRoutes = require('./routes/customerRoutes');
 const invoiceRoutes = require('./routes/invoiceRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 const { protect } = require('./Middleware/authMiddleware');
+const { checkLock } = require('./Middleware/lockMiddleware');
 
 const app = express();
 
@@ -44,7 +46,7 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-company-id']
 }));
 
 app.use(express.json());
@@ -62,15 +64,17 @@ app.use((req, res, next) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/companies', companyRoutes);
-app.use('/api/ledgers', ledgerRoutes);
-app.use('/api/groups', groupRoutes);
-app.use('/api/units', unitRoutes);
-app.use('/api/stock-groups', stockGroupRoutes);
-app.use('/api/stock-items', stockItemRoutes);
-app.use('/api/vouchers', voucherRoutes);
-app.use('/api/customers', customerRoutes);
-app.use('/api/invoices', invoiceRoutes);
-app.use('/api/reports', reportRoutes);
+// Apply protect and checkLock to all business operations routers
+app.use('/api/ledgers', protect, checkLock, ledgerRoutes);
+app.use('/api/groups', protect, checkLock, groupRoutes);
+app.use('/api/units', protect, checkLock, unitRoutes);
+app.use('/api/stock-groups', protect, checkLock, stockGroupRoutes);
+app.use('/api/stock-items', protect, checkLock, stockItemRoutes);
+app.use('/api/vouchers', protect, checkLock, voucherRoutes);
+app.use('/api/customers', protect, checkLock, customerRoutes);
+app.use('/api/invoices', protect, checkLock, invoiceRoutes);
+app.use('/api/reports', protect, checkLock, reportRoutes);
+app.use('/api/settings', protect, checkLock, settingsRoutes);
 
 app.get('/', (req, res) => {
   res.send('SmartERP backend is running');

@@ -170,7 +170,7 @@ export default function CreatePurchaseVoucherPage() {
       const matched = stockItems.find(item => item.id === value);
       if (matched) {
         row.rate = Number(matched.purchase_price) || 0;
-        triggerToast(`Loaded purchase price: $${row.rate} for ${matched.name}`);
+        triggerToast(`Loaded purchase price: ${company?.currency || "$"}${row.rate} for ${matched.name}`);
       }
     } else if (field === "quantity") {
       row.quantity = parseFloat(value) || 0;
@@ -269,7 +269,7 @@ export default function CreatePurchaseVoucherPage() {
         { ledger_id: sgstLedger.id, amount: Number(sgstSum.toFixed(2)) }
       ];
       setTaxRows(calculatedTaxRows);
-      triggerToast(`Auto-calculated GST. CGST: $${cgstSum.toFixed(2)}, SGST: $${sgstSum.toFixed(2)}`);
+      triggerToast(`Auto-calculated GST. CGST: ${company?.currency || "$"}${cgstSum.toFixed(2)}, SGST: ${company?.currency || "$"}${sgstSum.toFixed(2)}`);
     } else {
       triggerToast("GST Tax accounts not found. Please select them manually in the tax table.");
     }
@@ -513,8 +513,8 @@ export default function CreatePurchaseVoucherPage() {
                         <th className="py-2.5 px-4 w-12">#</th>
                         <th className="py-2.5 px-4">Select Stock Item</th>
                         <th className="py-2.5 px-4 w-28 text-right">Quantity</th>
-                        <th className="py-2.5 px-4 w-36 text-right">Rate ($)</th>
-                        <th className="py-2.5 px-4 w-36 text-right">Total ($)</th>
+                        <th className="py-2.5 px-4 w-36 text-right">Rate ({company?.currency || "$"})</th>
+                        <th className="py-2.5 px-4 w-36 text-right">Total ({company?.currency || "$"})</th>
                         <th className="py-2.5 px-4 w-12 text-center"></th>
                       </tr>
                     </thead>
@@ -556,7 +556,7 @@ export default function CreatePurchaseVoucherPage() {
                             />
                           </td>
                           <td className="py-2 px-4 text-right font-mono text-slate-300">
-                            ${row.amount.toFixed(2)}
+                            {company?.currency || "$"}{row.amount.toFixed(2)}
                           </td>
                           <td className="py-2 px-2 text-center">
                             <button
@@ -606,7 +606,7 @@ export default function CreatePurchaseVoucherPage() {
                       <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[10px]">
                         <th className="py-2.5 px-4 w-12">#</th>
                         <th className="py-2.5 px-4">Select Tax Account Ledger</th>
-                        <th className="py-2.5 px-4 w-48 text-right">Debit Amount ($)</th>
+                        <th className="py-2.5 px-4 w-48 text-right">Debit Amount ({company?.currency || "$"})</th>
                         <th className="py-2.5 px-12 w-12 text-center"></th>
                       </tr>
                     </thead>
@@ -709,15 +709,15 @@ export default function CreatePurchaseVoucherPage() {
             <div className="space-y-3 pt-1 text-xs">
               <div className="flex justify-between items-center border-b border-slate-900/40 pb-1.5">
                 <span className="text-slate-400 font-bold">Party Credit:</span>
-                <span className="font-mono font-bold text-white">${totals.grandTotal.toFixed(2)}</span>
+                <span className="font-mono font-bold text-white">{company?.currency || "$"}{totals.grandTotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center border-b border-slate-900/40 pb-1.5">
                 <span className="text-slate-400 font-bold">Purchase Debit:</span>
-                <span className="font-mono font-bold text-white">${totals.itemsTotal.toFixed(2)}</span>
+                <span className="font-mono font-bold text-white">{company?.currency || "$"}{totals.itemsTotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center border-b border-slate-900/40 pb-1.5">
                 <span className="text-slate-400 font-bold">Taxes Debit:</span>
-                <span className="font-mono font-bold text-white">${totals.taxesTotal.toFixed(2)}</span>
+                <span className="font-mono font-bold text-white">{company?.currency || "$"}{totals.taxesTotal.toFixed(2)}</span>
               </div>
               
               <div className="pt-2 flex justify-between items-center">

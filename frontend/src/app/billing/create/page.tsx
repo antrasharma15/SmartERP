@@ -157,7 +157,7 @@ export default function CreateInvoicePage() {
         row.rate = Number(matched.selling_price) || 0;
         row.gst_percentage = Number(matched.gst_percentage) || 0;
         row.description = `Selling ${matched.name}`;
-        triggerToast(`Loaded unit rate: $${row.rate} for ${matched.name}`);
+        triggerToast(`Loaded unit rate: ${company?.currency || "$"}${row.rate} for ${matched.name}`);
       }
     } else if (field === "quantity") {
       row.quantity = parseFloat(value) || 0;
@@ -490,9 +490,9 @@ export default function CreateInvoicePage() {
                         <th className="py-2.5 px-4 w-[280px]">Select Product</th>
                         <th className="py-2.5 px-4">Description</th>
                         <th className="py-2.5 px-4 w-24 text-right">Qty</th>
-                        <th className="py-2.5 px-4 w-28 text-right">Rate ($)</th>
+                        <th className="py-2.5 px-4 w-28 text-right">Rate ({company?.currency || "$"})</th>
                         <th className="py-2.5 px-4 w-20 text-right">GST%</th>
-                        <th className="py-2.5 px-4 w-28 text-right">Amount ($)</th>
+                        <th className="py-2.5 px-4 w-28 text-right">Amount ({company?.currency || "$"})</th>
                         <th className="py-2.5 px-4 w-12 text-center"></th>
                       </tr>
                     </thead>
@@ -564,7 +564,7 @@ export default function CreateInvoicePage() {
                               />
                             </td>
                             <td className="py-2 px-4 text-right font-mono text-slate-300 text-xs">
-                              ${row.amount.toFixed(2)}
+                              {company?.currency || "$"}{row.amount.toFixed(2)}
                             </td>
                             <td className="py-2 px-2 text-center">
                               <button
@@ -628,15 +628,15 @@ export default function CreateInvoicePage() {
             <div className="space-y-3 pt-1 text-xs">
               <div className="flex justify-between items-center border-b border-slate-900/40 pb-1.5">
                 <span className="text-slate-400 font-bold">Taxable Base:</span>
-                <span className="font-mono font-bold text-white">${totals.subtotal.toFixed(2)}</span>
+                <span className="font-mono font-bold text-white">{company?.currency || "$"}{totals.subtotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between items-center border-b border-slate-900/40 pb-1.5">
-                <span className="text-slate-400 font-bold">Tax Total (GST):</span>
-                <span className="font-mono font-bold text-white">${totals.taxTotal.toFixed(2)}</span>
+              <div className="flex justify-between text-xs py-1 border-b border-slate-900/40">
+                <span className="text-slate-400">Tax Total (GST)</span>
+                <span className="font-mono font-bold text-white">{company?.currency || "$"}{totals.taxTotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between items-center border-b border-slate-900/40 pb-1.5">
-                <span className="text-slate-400 font-bold">Invoice Total:</span>
-                <span className="font-mono font-bold text-white text-sm">${totals.grandTotal.toFixed(2)}</span>
+              <div className="flex justify-between text-xs py-2">
+                <span className="text-brand-lime font-bold">Grand Total</span>
+                <span className="font-mono font-bold text-white text-sm">{company?.currency || "$"}{totals.grandTotal.toFixed(2)}</span>
               </div>
               
               <div className="pt-2 flex justify-between items-center">

@@ -221,7 +221,7 @@ export default function TrialBalanceReportPage() {
               )}
             </div>
             <div className="font-mono text-right font-black">
-              Diff: ${Math.abs(totals.closing_debit - totals.closing_credit).toFixed(2)}
+              Diff: {company?.currency || "$"}{Math.abs(totals.closing_debit - totals.closing_credit).toFixed(2)}
             </div>
           </div>
         )}
@@ -262,10 +262,10 @@ export default function TrialBalanceReportPage() {
                   <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[10px]">
                     <th className="py-3 px-4">Ledger Account</th>
                     <th className="py-3 px-4">Group Classification</th>
-                    <th className="py-3 px-4 text-right">Opening Balance ($)</th>
-                    <th className="py-3 px-4 text-right">Debit Movement ($)</th>
-                    <th className="py-3 px-4 text-right">Credit Movement ($)</th>
-                    <th className="py-3 px-4 text-right">Closing Balance ($)</th>
+                    <th className="py-3 px-4 text-right">Opening Balance ({company?.currency || "$"})</th>
+                    <th className="py-3 px-4 text-right">Debit Movement ({company?.currency || "$"})</th>
+                    <th className="py-3 px-4 text-right">Credit Movement ({company?.currency || "$"})</th>
+                    <th className="py-3 px-4 text-right">Closing Balance ({company?.currency || "$"})</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -296,22 +296,22 @@ export default function TrialBalanceReportPage() {
                     <tr className="bg-slate-950/60 font-black border-t-2 border-t-slate-800 text-white">
                       <td className="py-4 px-4 uppercase text-[10px] tracking-wider text-brand-lime">Total Movements</td>
                       <td className="py-4 px-4"></td>
-                      <td className="py-4 px-4 text-right font-mono">
+                      <td className="py-4 px-4 font-mono text-right">
                         <div className="flex flex-col text-[10px] leading-tight">
-                          <span>Dr: ${totals.opening_debit.toFixed(2)}</span>
-                          <span>Cr: ${totals.opening_credit.toFixed(2)}</span>
+                          <span>Dr: {company?.currency || "$"}{totals.opening_debit.toFixed(2)}</span>
+                          <span>Cr: {company?.currency || "$"}{totals.opening_credit.toFixed(2)}</span>
                         </div>
                       </td>
                       <td className="py-4 px-4 text-right font-mono text-slate-300">
-                        ${totals.debit_movements.toFixed(2)}
+                        {company?.currency || "$"}{totals.debit_movements.toFixed(2)}
                       </td>
                       <td className="py-4 px-4 text-right font-mono text-slate-300">
-                        ${totals.credit_movements.toFixed(2)}
+                        {company?.currency || "$"}{totals.credit_movements.toFixed(2)}
                       </td>
                       <td className="py-4 px-4 text-right font-mono text-brand-lime">
                         <div className="flex flex-col text-[10px] leading-tight">
-                          <span>Dr: ${totals.closing_debit.toFixed(2)}</span>
-                          <span>Cr: ${totals.closing_credit.toFixed(2)}</span>
+                          <span>Dr: {company?.currency || "$"}{totals.closing_debit.toFixed(2)}</span>
+                          <span>Cr: {company?.currency || "$"}{totals.closing_credit.toFixed(2)}</span>
                         </div>
                       </td>
                     </tr>

@@ -194,15 +194,15 @@ export default function ProfitLossReportPage() {
                 <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Net Operations Status</span>
                 <p className="text-white font-bold text-sm mt-0.5">
                   {isLoss 
-                    ? `Company is running a Net Loss of $${Math.abs(netProfit).toFixed(2)}`
-                    : `Company is generating a Net Profit of $${netProfit.toFixed(2)}`}
+                    ? `Company is running a Net Loss of ${company?.currency || "$"}${Math.abs(netProfit).toFixed(2)}`
+                    : `Company is generating a Net Profit of ${company?.currency || "$"}${netProfit.toFixed(2)}`}
                 </p>
               </div>
             </div>
             <div className="text-right">
               <span className="text-[10px] text-slate-500 uppercase font-black">Net Profit margin</span>
               <p className={`text-base font-black font-mono mt-0.5 ${isLoss ? "text-red-400" : "text-brand-lime"}`}>
-                ${netProfit.toFixed(2)}
+                {company?.currency || "$"}{netProfit.toFixed(2)}
               </p>
             </div>
           </div>
@@ -237,7 +237,7 @@ export default function ProfitLossReportPage() {
                     {expenseItems.map((item, idx) => (
                       <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-900/40 text-xs">
                         <span className="text-slate-300 font-bold">{item.name}</span>
-                        <span className="font-mono text-white font-semibold">${item.amount.toFixed(2)}</span>
+                        <span className="font-mono text-white font-semibold">{company?.currency || "$"}{item.amount.toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
@@ -245,7 +245,7 @@ export default function ProfitLossReportPage() {
               </div>
               <div className="flex justify-between items-center bg-slate-950/40 p-4 border border-slate-900 rounded-xl">
                 <span className="text-[10px] text-slate-400 uppercase font-black">Total Expenditure</span>
-                <span className="font-mono font-black text-white">${totals?.expense_total.toFixed(2)}</span>
+                <span className="font-mono font-black text-white">{company?.currency || "$"}{totals?.expense_total.toFixed(2)}</span>
               </div>
             </div>
 
@@ -262,7 +262,7 @@ export default function ProfitLossReportPage() {
                     {revenueItems.map((item, idx) => (
                       <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-900/40 text-xs">
                         <span className="text-slate-300 font-bold">{item.name}</span>
-                        <span className="font-mono text-white font-semibold">${item.amount.toFixed(2)}</span>
+                        <span className="font-mono text-white font-semibold">{company?.currency || "$"}{item.amount.toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
@@ -270,7 +270,7 @@ export default function ProfitLossReportPage() {
               </div>
               <div className="flex justify-between items-center bg-slate-950/40 p-4 border border-slate-900 rounded-xl">
                 <span className="text-[10px] text-slate-400 uppercase font-black">Total Revenues</span>
-                <span className="font-mono font-black text-white">${totals?.revenue_total.toFixed(2)}</span>
+                <span className="font-mono font-black text-white">{company?.currency || "$"}{totals?.revenue_total.toFixed(2)}</span>
               </div>
             </div>
 

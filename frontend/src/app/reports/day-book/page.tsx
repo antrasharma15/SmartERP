@@ -233,7 +233,7 @@ export default function DayBookReportPage() {
                     <th className="py-3 px-4 font-mono">Date</th>
                     <th className="py-3 px-4">Reference</th>
                     <th className="py-3 px-4">Narration</th>
-                    <th className="py-3 px-4 text-right">Debit Total ($)</th>
+                    <th className="py-3 px-4 text-right">Debit Total ({company?.currency || "$"})</th>
                     <th className="py-3 px-4 text-center">Audit</th>
                   </tr>
                 </thead>
@@ -249,7 +249,7 @@ export default function DayBookReportPage() {
                         <td className="py-3 px-4 font-mono text-slate-450">{v.reference || "-"}</td>
                         <td className="py-3 px-4 italic text-slate-400">{v.narration || "N/A"}</td>
                         <td className="py-3 px-4 text-right font-mono font-bold text-white">
-                          ${Number(v.total_amount).toFixed(2)}
+                          {company?.currency || "$"}{Number(v.total_amount).toFixed(2)}
                         </td>
                         <td className="py-3 px-4 text-center">
                           <button
@@ -324,8 +324,8 @@ export default function DayBookReportPage() {
                         <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[9px]">
                           <th className="py-2 px-4">Ledger Name</th>
                           <th className="py-2 px-4">Type</th>
-                          <th className="py-2 px-4 text-right">Debit ($)</th>
-                          <th className="py-2 px-4 text-right">Credit ($)</th>
+                          <th className="py-2 px-4 text-right">Debit ({company?.currency || "$"})</th>
+                          <th className="py-2 px-4 text-right">Credit ({company?.currency || "$"})</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -334,10 +334,10 @@ export default function DayBookReportPage() {
                             <td className="py-2 px-4 font-bold">{entry.ledger_name}</td>
                             <td className="py-2 px-4 uppercase text-[10px] text-slate-500">{entry.ledger_type}</td>
                             <td className="py-2 px-4 text-right font-mono">
-                              {Number(entry.debit_amount) > 0 ? `$${Number(entry.debit_amount).toFixed(2)}` : ""}
+                              {Number(entry.debit_amount) > 0 ? `${company?.currency || "$"}${Number(entry.debit_amount).toFixed(2)}` : ""}
                             </td>
                             <td className="py-2 px-4 text-right font-mono">
-                              {Number(entry.credit_amount) > 0 ? `$${Number(entry.credit_amount).toFixed(2)}` : ""}
+                              {Number(entry.credit_amount) > 0 ? `${company?.currency || "$"}${Number(entry.credit_amount).toFixed(2)}` : ""}
                             </td>
                           </tr>
                         ))}
@@ -357,8 +357,8 @@ export default function DayBookReportPage() {
                             <th className="py-2 px-4">Stock Name</th>
                             <th className="py-2 px-4">SKU</th>
                             <th className="py-2 px-4 text-right">Quantity</th>
-                            <th className="py-2 px-4 text-right">Rate ($)</th>
-                            <th className="py-2 px-4 text-right">Amount ($)</th>
+                            <th className="py-2 px-4 text-right">Rate ({company?.currency || "$"})</th>
+                            <th className="py-2 px-4 text-right">Amount ({company?.currency || "$"})</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -367,9 +367,9 @@ export default function DayBookReportPage() {
                               <td className="py-2 px-4 font-bold">{item.item_name}</td>
                               <td className="py-2 px-4 font-mono text-slate-500">{item.sku || "-"}</td>
                               <td className="py-2 px-4 text-right font-mono">{item.quantity}</td>
-                              <td className="py-2 px-4 text-right font-mono">${Number(item.rate).toFixed(2)}</td>
+                              <td className="py-2 px-4 text-right font-mono">{company?.currency || "$"}{Number(item.rate).toFixed(2)}</td>
                               <td className="py-2 px-4 text-right font-mono text-white">
-                                ${(Number(item.quantity) * Number(item.rate)).toFixed(2)}
+                                {company?.currency || "$"}{(Number(item.quantity) * Number(item.rate)).toFixed(2)}
                               </td>
                             </tr>
                           ))}

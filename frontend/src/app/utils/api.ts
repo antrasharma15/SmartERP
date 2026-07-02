@@ -15,8 +15,24 @@ const getBaseUrl = () => {
 const BASE_URL = getBaseUrl();
 
 export async function apiFetch(path: string, options: RequestInit = {}) {
+  let activeCompanyId = "";
+  if (typeof window !== "undefined") {
+    const activeCompanyStr = localStorage.getItem("activeCompany");
+    if (activeCompanyStr) {
+      try {
+        const activeCompany = JSON.parse(activeCompanyStr);
+        if (activeCompany && activeCompany.id) {
+          activeCompanyId = activeCompany.id;
+        }
+      } catch (e) {
+        // Ignore parsing error
+      }
+    }
+  }
+
   const headers = {
     "Content-Type": "application/json",
+    ...(activeCompanyId ? { "x-company-id": activeCompanyId } : {}),
     ...(options.headers || {}),
   };
 

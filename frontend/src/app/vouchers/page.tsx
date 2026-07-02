@@ -358,7 +358,7 @@ export default function VouchersListPage() {
                     <th className="py-3 px-4">Date</th>
                     <th className="py-3 px-4">Reference</th>
                     <th className="py-3 px-4">Party Account (Credited)</th>
-                    <th className="py-3 px-4 text-right">Grand Total ($)</th>
+                    <th className="py-3 px-4 text-right">Grand Total ({company?.currency || "$"})</th>
                     <th className="py-3 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -386,7 +386,7 @@ export default function VouchersListPage() {
                         <td className="py-3 px-4 text-slate-400 font-semibold">{voucher.reference || "N/A"}</td>
                         <td className="py-3 px-4 font-bold">{voucher.party_name || "PRIMARY"}</td>
                         <td className="py-3 px-4 text-right font-mono font-black">
-                          ${Number(voucher.total_amount).toFixed(2)}
+                          {company?.currency || "$"}{Number(voucher.total_amount).toFixed(2)}
                         </td>
                         <td className="py-3 px-4 text-right">
                           <div className="flex justify-end gap-1.5">
@@ -525,8 +525,8 @@ export default function VouchersListPage() {
                         <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[9px]">
                           <th className="py-2 px-4">Ledger Account</th>
                           <th className="py-2 px-4">Type</th>
-                          <th className="py-2 px-4 text-right">Debit Amount ($)</th>
-                          <th className="py-2 px-4 text-right">Credit Amount ($)</th>
+                          <th className="py-2 px-4 text-right">Debit Amount ({company?.currency || "$"})</th>
+                          <th className="py-2 px-4 text-right">Credit Amount ({company?.currency || "$"})</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -535,10 +535,10 @@ export default function VouchersListPage() {
                             <td className="py-2 px-4 font-bold">{entry.ledger_name}</td>
                             <td className="py-2 px-4 uppercase text-[10px] text-slate-500">{entry.account_type}</td>
                             <td className="py-2 px-4 text-right font-mono">
-                              {Number(entry.debit_amount) > 0 ? `$${Number(entry.debit_amount).toFixed(2)}` : ""}
+                              {Number(entry.debit_amount) > 0 ? `${company?.currency || "$"}${Number(entry.debit_amount).toFixed(2)}` : ""}
                             </td>
                             <td className="py-2 px-4 text-right font-mono">
-                              {Number(entry.credit_amount) > 0 ? `$${Number(entry.credit_amount).toFixed(2)}` : ""}
+                              {Number(entry.credit_amount) > 0 ? `${company?.currency || "$"}${Number(entry.credit_amount).toFixed(2)}` : ""}
                             </td>
                           </tr>
                         ))}
@@ -558,8 +558,8 @@ export default function VouchersListPage() {
                             <th className="py-2 px-4">Stock Item Name</th>
                             <th className="py-2 px-4">SKU</th>
                             <th className="py-2 px-4 text-right">Quantity</th>
-                            <th className="py-2 px-4 text-right">Purchase Rate ($)</th>
-                            <th className="py-2 px-4 text-right">Total Cost ($)</th>
+                            <th className="py-2 px-4 text-right">Purchase Rate ({company?.currency || "$"})</th>
+                            <th className="py-2 px-4 text-right">Total Cost ({company?.currency || "$"})</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -568,8 +568,8 @@ export default function VouchersListPage() {
                               <td className="py-2 px-4 font-bold">{item.item_name}</td>
                               <td className="py-2 px-4 font-mono text-slate-500">{item.sku || "N/A"}</td>
                               <td className="py-2 px-4 text-right font-mono">{item.quantity}</td>
-                              <td className="py-2 px-4 text-right font-mono">${Number(item.rate).toFixed(2)}</td>
-                              <td className="py-2 px-4 text-right font-mono text-white">${Number(item.amount).toFixed(2)}</td>
+                              <td className="py-2 px-4 text-right font-mono">{company?.currency || "$"}{Number(item.rate).toFixed(2)}</td>
+                              <td className="py-2 px-4 text-right font-mono text-white">{company?.currency || "$"}{Number(item.amount).toFixed(2)}</td>
                             </tr>
                           ))}
                         </tbody>

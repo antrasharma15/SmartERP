@@ -614,13 +614,13 @@ export default function LedgersPage() {
               <div>
                 <p className="text-[10px] text-slate-500 uppercase font-black">Total Debit Balances</p>
                 <p className="text-base font-black text-brand-lime font-mono">
-                  ${stats.netDebitBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  {company?.currency || "$"}{stats.netDebitBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </p>
               </div>
               <div>
                 <p className="text-[10px] text-slate-500 uppercase font-black">Total Credit Balances</p>
                 <p className="text-base font-black text-sky-400 font-mono">
-                  ${stats.netCreditBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  {company?.currency || "$"}{stats.netCreditBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </p>
               </div>
             </div>
@@ -740,7 +740,7 @@ export default function LedgersPage() {
               {/* Opening Balance */}
               <div className="grid grid-cols-3 gap-4">
                 <div className="col-span-2 space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Opening Balance ($)</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Opening Balance ({company?.currency || "$"})</label>
                   <input
                     type="number"
                     step="0.01"

@@ -165,10 +165,10 @@ export default function StockSummaryReportPage() {
                   <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[10px]">
                     <th className="py-3 px-4">Stock Item Name</th>
                     <th className="py-3 px-4">SKU</th>
-                    <th className="py-3 px-4 text-right">Cost Price ($)</th>
-                    <th className="py-3 px-4 text-right">Selling Price ($)</th>
+                    <th className="py-3 px-4 text-right">Cost Price ({company?.currency || "$"})</th>
+                    <th className="py-3 px-4 text-right">Selling Price ({company?.currency || "$"})</th>
                     <th className="py-3 px-4 text-right">Current Stock</th>
-                    <th className="py-3 px-4 text-right">Valuation ($)</th>
+                    <th className="py-3 px-4 text-right">Valuation ({company?.currency || "$"})</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -177,16 +177,16 @@ export default function StockSummaryReportPage() {
                       <td className="py-3 px-4 font-bold text-white">{row.name}</td>
                       <td className="py-3 px-4 font-mono text-slate-500">{row.sku || "-"}</td>
                       <td className="py-3 px-4 text-right font-mono text-slate-400">
-                        ${Number(row.purchase_price).toFixed(2)}
+                        {company?.currency || "$"}{Number(row.purchase_price).toFixed(2)}
                       </td>
                       <td className="py-3 px-4 text-right font-mono text-slate-400">
-                        ${Number(row.selling_price).toFixed(2)}
+                        {company?.currency || "$"}{Number(row.selling_price).toFixed(2)}
                       </td>
                       <td className="py-3 px-4 text-right font-mono font-bold text-slate-300">
                         {Number(row.quantity).toFixed(0)} PCS
                       </td>
                       <td className="py-3 px-4 text-right font-mono font-black text-white">
-                        ${Number(row.valuation).toFixed(2)}
+                        {company?.currency || "$"}{Number(row.valuation).toFixed(2)}
                       </td>
                     </tr>
                   ))}
@@ -230,7 +230,7 @@ export default function StockSummaryReportPage() {
                 </div>
                 <div>
                   <span className="text-[10px] text-slate-550 uppercase font-black">Net Asset Valuation</span>
-                  <p className="text-brand-lime font-black font-mono mt-0.5 text-sm">${totals?.total_valuation.toFixed(2)}</p>
+                  <p className="text-brand-lime font-black font-mono mt-0.5 text-sm">{company?.currency || "$"}{totals?.total_valuation.toFixed(2)}</p>
                 </div>
               </div>
             </div>

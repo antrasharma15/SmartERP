@@ -196,7 +196,7 @@ export default function BalanceSheetReportPage() {
               )}
             </div>
             <div className="font-mono text-right font-black">
-              Diff: ${totals.balance_difference.toFixed(2)}
+              Diff: {company?.currency || "$"}{totals.balance_difference.toFixed(2)}
             </div>
           </div>
         )}
@@ -231,7 +231,7 @@ export default function BalanceSheetReportPage() {
                       <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-900/40 text-xs">
                         <span className="text-slate-300 font-bold">{item.name}</span>
                         <span className="font-mono text-white font-semibold">
-                          {item.amount < 0 ? `-$${Math.abs(item.amount).toFixed(2)}` : `$${item.amount.toFixed(2)}`}
+                          {item.amount < 0 ? `-${company?.currency || "$"}${Math.abs(item.amount).toFixed(2)}` : `${company?.currency || "$"}${item.amount.toFixed(2)}`}
                         </span>
                       </div>
                     ))}
@@ -240,7 +240,7 @@ export default function BalanceSheetReportPage() {
               </div>
               <div className="flex justify-between items-center bg-slate-950/40 p-4 border border-slate-900 rounded-xl">
                 <span className="text-[10px] text-slate-400 uppercase font-black">Total Liabilities & Equity</span>
-                <span className="font-mono font-black text-white">${totals?.liabilities_total.toFixed(2)}</span>
+                <span className="font-mono font-black text-white">{company?.currency || "$"}{totals?.liabilities_total.toFixed(2)}</span>
               </div>
             </div>
 
@@ -257,7 +257,7 @@ export default function BalanceSheetReportPage() {
                     {assetItems.map((item, idx) => (
                       <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-900/40 text-xs">
                         <span className="text-slate-300 font-bold">{item.name}</span>
-                        <span className="font-mono text-white font-semibold">${item.amount.toFixed(2)}</span>
+                        <span className="font-mono text-white font-semibold">{company?.currency || "$"}{item.amount.toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
@@ -265,7 +265,7 @@ export default function BalanceSheetReportPage() {
               </div>
               <div className="flex justify-between items-center bg-slate-950/40 p-4 border border-slate-900 rounded-xl">
                 <span className="text-[10px] text-slate-400 uppercase font-black">Total Assets</span>
-                <span className="font-mono font-black text-white">${totals?.assets_total.toFixed(2)}</span>
+                <span className="font-mono font-black text-white">{company?.currency || "$"}{totals?.assets_total.toFixed(2)}</span>
               </div>
             </div>
 

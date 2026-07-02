@@ -3,16 +3,30 @@
 :root {
   --background: #020617;
   --foreground: #f8fafc;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --color-brand-lime: #bef264;
   --color-brand-navy-dark: #020617;
   --color-brand-navy-mid: #060c18;
   --color-brand-navy-light: #0b1528;
   --color-brand-navy-accent: #0f2249;
+}
+
+.light {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --color-brand-navy-dark: #f8fafc;
+  --color-brand-navy-mid: #f1f5f9;
+  --color-brand-navy-light: #e2e8f0;
+  --color-brand-navy-accent: #cbd5e1;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand-lime: var(--color-brand-lime);
+  --color-brand-navy-dark: var(--color-brand-navy-dark);
+  --color-brand-navy-mid: var(--color-brand-navy-mid);
+  --color-brand-navy-light: var(--color-brand-navy-light);
+  --color-brand-navy-accent: var(--color-brand-navy-accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
