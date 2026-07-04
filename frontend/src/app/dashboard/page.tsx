@@ -102,24 +102,15 @@ export default function DashboardPage() {
 
     { label: "Inventory", isHeader: true },
     { label: "Inventory Dashboard", hotkey: "I", action: () => router.push("/inventory") },
-    { label: "Stock Transfer", hotkey: "E", action: () => triggerToast("Shortcut: CTRL+T (Stock Transfer)") },
-    { label: "Stock Report", hotkey: "K", action: () => triggerToast("Shortcut: CTRL+R (Stock Report)") },
+    { label: "Stock Report", hotkey: "K", action: () => router.push("/reports/stock-summary") },
 
     { label: "Accounting", isHeader: true },
-    { label: "Cash/Bank Book", hotkey: "C", action: () => triggerToast("Shortcut: C (Cash/Bank Book)") },
+    { label: "Cash/Bank Book", hotkey: "C", action: () => router.push("/reports/cash-bank") },
     { label: "Day Book", hotkey: "D", action: () => router.push("/reports/day-book") },
-
-    { label: "Banking", isHeader: true },
-    { label: "Fund Transfers", hotkey: "F", action: () => triggerToast("Shortcut: F (Fund Transfers)") },
-    { label: "Cheque Management", hotkey: "Q", action: () => triggerToast("Shortcut: Q (Cheque Management)") },
 
     { label: "Payroll", isHeader: true },
     { label: "Employee Directory", hotkey: "M", action: () => triggerToast("Shortcut: M (Employee Directory)") },
     { label: "Attendance", hotkey: "N", action: () => triggerToast("Shortcut: N (Attendance)") },
-
-    { label: "GST", isHeader: true },
-    { label: "Tax Calculation", hotkey: "O", action: () => triggerToast("Shortcut: O (Tax Calculation)") },
-    { label: "GSTR Summary", hotkey: "W", action: () => triggerToast("Shortcut: W (GSTR Summary)") },
 
     { label: "Reports", isHeader: true },
     { label: "Balance Sheet", hotkey: "A", action: () => router.push("/reports/balance-sheet") },

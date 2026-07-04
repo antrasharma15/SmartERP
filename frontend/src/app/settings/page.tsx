@@ -602,7 +602,10 @@ export default function SettingsPage() {
     try {
       triggerToast("Generating CSV transaction export...");
       const link = document.createElement("a");
-      link.href = `http://localhost:5000/api/settings/export/csv?company_id=${activeCompany.id}`;
+      const apiHost = typeof window !== "undefined"
+        ? `${window.location.protocol}//${window.location.hostname}:5000`
+        : "http://localhost:5000";
+      link.href = `${apiHost}/api/settings/export/csv?company_id=${activeCompany.id}`;
       // In Next.js/Browser fetch we authenticate with credentials cookies automatically
       link.setAttribute("target", "_blank");
       document.body.appendChild(link);
@@ -825,7 +828,7 @@ export default function SettingsPage() {
                       <label className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Logo URL / Image Link</label>
                       <input
                         type="text"
-                        placeholder="https://example.com/logo.png"
+                        placeholder="Logo image URL"
                         value={companyFields.logo_url}
                         onChange={(e) => setCompanyFields({ ...companyFields, logo_url: e.target.value })}
                         className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs"
@@ -904,7 +907,7 @@ export default function SettingsPage() {
                       <input
                         type="email"
                         required
-                        placeholder="cooper@example.com"
+                        placeholder="Email address"
                         value={inviteEmail}
                         onChange={(e) => setInviteEmail(e.target.value)}
                         className="w-full px-3 py-2 bg-brand-navy-light/40 border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs font-semibold"
@@ -1085,7 +1088,7 @@ export default function SettingsPage() {
                       <input
                         type="text"
                         required
-                        placeholder="GST 18%"
+                        placeholder="Tax name (e.g. GST)"
                         value={taxName}
                         onChange={(e) => setTaxName(e.target.value)}
                         className="w-full px-3 py-2 bg-brand-navy-light/40 border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs font-semibold"
@@ -1098,7 +1101,7 @@ export default function SettingsPage() {
                         type="number"
                         required
                         step="0.01"
-                        placeholder="18"
+                        placeholder="Rate percentage"
                         value={taxPercent}
                         onChange={(e) => setTaxPercent(e.target.value)}
                         className="w-full px-3 py-2 bg-brand-navy-light/40 border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs font-mono font-bold"

@@ -106,7 +106,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="relative min-h-screen bg-brand-navy-dark overflow-x-hidden select-none">
+    <div className="relative min-h-screen bg-[#020617] text-slate-100 overflow-x-hidden select-none">
       {/* Decorative growth vectors in background */}
       <div className="absolute top-0 right-0 w-full h-[800px] pointer-events-none opacity-20 lg:opacity-40">
         <svg
@@ -148,7 +148,7 @@ export default function LandingPage() {
       </div>
 
       {/* Navigation Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-brand-navy-dark/75 border-b border-brand-navy-light/40 transition-all duration-300">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#020617]/75 border-b border-[#0b1528]/40 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
             {/* Logo Icon */}
@@ -206,7 +206,7 @@ export default function LandingPage() {
             </Link>
             <Link
               href="/login"
-              className="px-5 py-2 text-sm font-semibold rounded-full bg-brand-navy-accent border border-brand-navy-light text-slate-200 hover:text-white hover:bg-brand-navy-light hover:border-brand-lime/50 transition-all duration-300 shadow-lg shadow-brand-navy-dark/50"
+              className="px-5 py-2 text-sm font-semibold rounded-full bg-[#0f2249] border border-[#0b1528] text-slate-200 hover:text-white hover:bg-[#0b1528] hover:border-brand-lime/50 transition-all duration-300 shadow-lg shadow-[#020617]/50"
             >
               Request a Free Demo
             </Link>
@@ -225,7 +225,7 @@ export default function LandingPage() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-brand-navy-dark/95 backdrop-blur-xl flex flex-col justify-center px-8 md:hidden transition-all duration-300">
+        <div className="fixed inset-0 z-40 bg-[#020617]/95 backdrop-blur-xl flex flex-col justify-center px-8 md:hidden transition-all duration-300">
           <nav className="flex flex-col gap-6 text-2xl font-bold text-slate-100 mb-12">
             <Link
               href="#features"
@@ -307,7 +307,7 @@ export default function LandingPage() {
 
             <Link
               href="#features"
-              className="px-8 py-3.5 rounded-full font-bold text-slate-300 bg-brand-navy-light/60 hover:bg-brand-navy-light hover:text-white border border-slate-800 hover:border-slate-600 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0"
+              className="px-8 py-3.5 rounded-full font-bold text-slate-300 bg-[#0b1528]/60 hover:bg-[#0b1528] hover:text-white border border-slate-800 hover:border-slate-600 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0"
             >
               Learn more
             </Link>
@@ -316,7 +316,7 @@ export default function LandingPage() {
       </section>
 
       {/* FEATURES SECTION */}
-      <section id="features" className="bg-brand-navy-dark/45 border-t border-b border-brand-navy-light/45 py-24 scroll-mt-20">
+      <section id="features" className="bg-[#020617]/45 border-t border-b border-[#0b1528]/45 py-24 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="max-w-2xl mb-16">
             <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight">
@@ -328,9 +328,9 @@ export default function LandingPage() {
             {features.map((feature, idx) => (
               <div
                 key={idx}
-                className="group p-6 rounded-2xl bg-brand-navy-light/20 hover:bg-brand-navy-light/40 border border-slate-900 hover:border-slate-800 transition-all duration-300 transform hover:-translate-y-1"
+                className="group p-6 rounded-2xl bg-[#0b1528]/20 hover:bg-[#0b1528]/40 border border-slate-900 hover:border-slate-800 transition-all duration-300 transform hover:-translate-y-1"
               >
-                <div className="mb-6 p-3 w-14 h-14 flex items-center justify-center rounded-xl bg-brand-navy-accent/50 border border-brand-navy-light group-hover:border-brand-lime/30 transition-colors">
+                <div className="mb-6 p-3 w-14 h-14 flex items-center justify-center rounded-xl bg-[#0f2249]/50 border border-[#0b1528] group-hover:border-brand-lime/30 transition-colors">
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2 group-hover:text-brand-lime transition-colors">
@@ -389,7 +389,7 @@ export default function LandingPage() {
       </section>
 
       {/* FAQ SECTION */}
-      <section id="faq" className="bg-brand-navy-dark/45 border-t border-brand-navy-light/45 py-24 scroll-mt-20 relative">
+      <section id="faq" className="bg-[#020617]/45 border-t border-[#0b1528]/45 py-24 scroll-mt-20 relative">
         {/* Growth graphic left background */}
         <div className="absolute bottom-0 left-0 w-80 h-80 pointer-events-none opacity-10">
           <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
@@ -453,7 +453,7 @@ export default function LandingPage() {
       </section>
 
       {/* CONTACT / FOOTER SECTION */}
-      <footer id="contacts" className="bg-brand-navy-light/10 border-t border-brand-navy-light/40 py-16 scroll-mt-20">
+      <footer id="contacts" className="bg-[#0b1528]/10 border-t border-[#0b1528]/40 py-16 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Col 1 */}
           <div className="md:col-span-2 space-y-4">

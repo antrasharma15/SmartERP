@@ -710,8 +710,8 @@ export default function CreateInvoicePage() {
                   required
                   value={newCustName}
                   onChange={(e) => setNewCustName(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime"
-                  placeholder="e.g. Zenith Distributors"
+                  className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-855 rounded-xl text-white outline-none focus:border-brand-lime"
+                  placeholder="Customer Name"
                 />
               </div>
 
@@ -722,8 +722,8 @@ export default function CreateInvoicePage() {
                     type="text"
                     value={newCustMobile}
                     onChange={(e) => setNewCustMobile(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime font-mono"
-                    placeholder="9876543210"
+                    className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-855 rounded-xl text-white outline-none focus:border-brand-lime font-mono"
+                    placeholder="Mobile Phone"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -732,8 +732,8 @@ export default function CreateInvoicePage() {
                     type="text"
                     value={newCustGst}
                     onChange={(e) => setNewCustGst(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime font-mono"
-                    placeholder="27ABCDE1234F1Z1"
+                    className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-855 rounded-xl text-white outline-none focus:border-brand-lime font-mono"
+                    placeholder="GST Number"
                   />
                 </div>
               </div>
@@ -744,8 +744,8 @@ export default function CreateInvoicePage() {
                   type="email"
                   value={newCustEmail}
                   onChange={(e) => setNewCustEmail(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime"
-                  placeholder="name@example.com"
+                  className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-855 rounded-xl text-white outline-none focus:border-brand-lime"
+                  placeholder="Email Address"
                 />
               </div>
 
@@ -754,9 +754,9 @@ export default function CreateInvoicePage() {
                 <textarea
                   value={newCustAddr}
                   onChange={(e) => setNewCustAddr(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime"
+                  className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-855 rounded-xl text-white outline-none focus:border-brand-lime"
                   rows={2}
-                  placeholder="Enter full address..."
+                  placeholder="Billing Address"
                 />
               </div>
             </div>

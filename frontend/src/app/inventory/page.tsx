@@ -60,6 +60,26 @@ export default function InventoryDashboardPage() {
   const [user, setUser] = useState<any>(null);
   const [company, setCompany] = useState<any>(null);
 
+  // Currency State
+  const [currency, setCurrency] = useState("$");
+
+  // Synchronize currency when changed globally
+  useEffect(() => {
+    const updateCurrency = () => {
+      const activeCompanyStr = localStorage.getItem("activeCompany");
+      if (activeCompanyStr) {
+        try {
+          const comp = JSON.parse(activeCompanyStr);
+          setCurrency(comp.currency || "$");
+          setCompany(comp);
+        } catch (e) {}
+      }
+    };
+    updateCurrency();
+    window.addEventListener("activeCompanyChanged", updateCurrency);
+    return () => window.removeEventListener("activeCompanyChanged", updateCurrency);
+  }, []);
+
   // Active Tab
   const [activeTab, setActiveTab] = useState<TabType>("items");
 
@@ -698,8 +718,8 @@ export default function InventoryDashboardPage() {
                           </td>
                           <td className="py-3 px-4 font-mono font-bold text-slate-500">{item.sku || "N/A"}</td>
                           <td className="py-3 px-4 text-slate-400">{item.group_name || "Primary"}</td>
-                          <td className="py-3 px-4 text-right font-mono">${Number(item.purchase_price).toFixed(2)}</td>
-                          <td className="py-3 px-4 text-right font-mono">${Number(item.selling_price).toFixed(2)}</td>
+                          <td className="py-3 px-4 text-right font-mono">{currency}{Number(item.purchase_price).toFixed(2)}</td>
+                          <td className="py-3 px-4 text-right font-mono">{currency}{Number(item.selling_price).toFixed(2)}</td>
                           <td className="py-3 px-4 text-right font-mono text-slate-400">{item.gst_percentage}%</td>
                           <td className="py-3 px-4 text-right font-mono">
                             <span className={`px-2 py-0.5 rounded font-black ${isLowStock ? "bg-red-500/10 text-red-400" : "text-white"}`}>
@@ -856,7 +876,7 @@ export default function InventoryDashboardPage() {
             <div className="pt-2 border-t border-slate-900/60">
               <p className="text-[10px] text-slate-500 uppercase font-black">Stock Asset Valuation</p>
               <p className="text-xl font-black text-brand-lime font-mono mt-0.5">
-                ${stats.totalStockValue.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                {currency}{stats.totalStockValue.toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </p>
             </div>
           </div>
@@ -993,7 +1013,7 @@ export default function InventoryDashboardPage() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Purchase Price ($)</label>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Purchase Price ({currency})</label>
                       <input
                         type="number"
                         step="0.01"
@@ -1004,7 +1024,7 @@ export default function InventoryDashboardPage() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Selling Price ($)</label>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Selling Price ({currency})</label>
                       <input
                         type="number"
                         step="0.01"
