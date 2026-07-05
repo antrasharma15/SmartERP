@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant light (.light &);
+
 :root {
   --background: #020617;
   --foreground: #f8fafc;

@@ -186,24 +186,24 @@ export default function DayBookReportPage() {
           <div className="flex items-center gap-6">
             <button
               onClick={() => router.push("/dashboard")}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-brand-lime hover:border-brand-lime/40 transition duration-200"
+              className="p-2 rounded-xl bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 hover:border-brand-lime/40 transition duration-200"
               title="Return to Dashboard (ESC)"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/dashboard")}>
-              <span className="text-xl font-extrabold text-white tracking-wide">My smart</span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">ERP</span>
+              <span className="text-xl font-extrabold text-white light:text-slate-900 tracking-wide">KEY</span>
+              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">books</span>
             </div>
             <div className="h-6 w-[1px] bg-slate-800"></div>
-            <div className="flex items-center gap-2 text-brand-lime font-bold">
+            <div className="flex items-center gap-2 text-brand-lime light:text-lime-700 font-bold">
               <Building2 className="w-5 h-5" />
               <span>{company?.name}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-6">
-            <span className="text-xs font-mono bg-slate-900 border border-slate-800 px-3 py-1 rounded text-slate-400">
+            <span className="text-xs font-mono bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 px-3 py-1 rounded text-slate-400 light:text-slate-600">
               Esc to Back
             </span>
           </div>
@@ -211,24 +211,24 @@ export default function DayBookReportPage() {
       </header>
 
       {/* Filters Toolbar */}
-      <section className="bg-brand-navy-mid border-b border-slate-900/60 py-4 px-6">
+      <section className="bg-brand-navy-mid light:bg-slate-100 border-b border-slate-900 light:border-slate-200/60 light:border-slate-200 py-4 px-6">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs font-semibold">
           <div className="flex flex-wrap items-center gap-4">
             {/* Date Range picker */}
-            <div className="flex items-center gap-2 bg-slate-900/40 border border-slate-800 rounded-xl px-3 py-2">
-              <Calendar className="w-4 h-4 text-slate-400" />
+            <div className="flex items-center gap-2 bg-slate-900 light:bg-slate-200/80/40 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded-xl px-3 py-2">
+              <Calendar className="w-4 h-4 text-slate-400 light:text-slate-600" />
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="bg-transparent text-white outline-none font-mono"
+                className="bg-transparent text-white light:text-slate-900 outline-none font-mono"
               />
-              <span className="text-slate-500">to</span>
+              <span className="text-slate-500 light:text-slate-500">to</span>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="bg-transparent text-white outline-none font-mono"
+                className="bg-transparent text-white light:text-slate-900 outline-none font-mono"
               />
               <button
                 onClick={handleDateChange}
@@ -239,30 +239,30 @@ export default function DayBookReportPage() {
             </div>
 
             {/* Voucher Type filter */}
-            <div className="flex items-center gap-2 bg-slate-900/40 border border-slate-800 rounded-xl px-3 py-2">
-              <Filter className="w-4 h-4 text-slate-400" />
+            <div className="flex items-center gap-2 bg-slate-900 light:bg-slate-200/80/40 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded-xl px-3 py-2">
+              <Filter className="w-4 h-4 text-slate-400 light:text-slate-600" />
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
-                className="bg-transparent text-white outline-none cursor-pointer"
+                className="bg-transparent text-white light:text-slate-900 outline-none cursor-pointer"
               >
-                <option value="All" className="bg-slate-950 text-white">All Voucher Types</option>
-                <option value="Payment" className="bg-slate-955 text-white">Payment</option>
-                <option value="Receipt" className="bg-slate-955 text-white">Receipt</option>
-                <option value="Sales" className="bg-slate-955 text-white">Sales</option>
-                <option value="Purchase" className="bg-slate-955 text-white">Purchase</option>
+                <option value="All" className="bg-slate-950 light:bg-slate-100 text-white light:text-slate-900">All Voucher Types</option>
+                <option value="Payment" className="bg-slate-955 text-white light:text-slate-900">Payment</option>
+                <option value="Receipt" className="bg-slate-955 text-white light:text-slate-900">Receipt</option>
+                <option value="Sales" className="bg-slate-955 text-white light:text-slate-900">Sales</option>
+                <option value="Purchase" className="bg-slate-955 text-white light:text-slate-900">Purchase</option>
               </select>
             </div>
 
             {/* Particulars search */}
-            <div className="flex items-center gap-2 bg-slate-900/40 border border-slate-800 rounded-xl px-3 py-1.5 w-60">
-              <Search className="w-4 h-4 text-slate-400" />
+            <div className="flex items-center gap-2 bg-slate-900 light:bg-slate-200/80/40 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded-xl px-3 py-1.5 w-60">
+              <Search className="w-4 h-4 text-slate-400 light:text-slate-600" />
               <input
                 type="text"
                 placeholder="Search Particulars/Voucher No..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-transparent text-white outline-none w-full"
+                className="bg-transparent text-white light:text-slate-900 outline-none w-full"
               />
             </div>
           </div>
@@ -271,11 +271,11 @@ export default function DayBookReportPage() {
 
       {/* Main Tabs Navigation */}
       <div className="max-w-7xl mx-auto w-full px-6 pt-6">
-        <div className="flex border-b border-slate-900 gap-1 text-xs">
+        <div className="flex border-b border-slate-900 light:border-slate-200 gap-1 text-xs">
           <button
             onClick={() => setActiveTab("report")}
             className={`px-5 py-3 font-bold border-b-2 transition flex items-center gap-2 ${
-              activeTab === "report" ? "border-brand-lime text-brand-lime font-black" : "border-transparent text-slate-400 hover:text-white"
+              activeTab === "report" ? "border-brand-lime text-brand-lime light:text-lime-700 font-black" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
             }`}
           >
             <ClipboardList className="w-4 h-4" />
@@ -283,7 +283,7 @@ export default function DayBookReportPage() {
           </button>
           <button
             onClick={() => setActiveTab("spec")}
-            className={`ml-auto px-5 py-3 font-extrabold border-b-2 transition flex items-center gap-2 text-sky-400 border-transparent hover:text-white`}
+            className={`ml-auto px-5 py-3 font-extrabold border-b-2 transition flex items-center gap-2 text-sky-400 border-transparent hover:text-white light:text-slate-900 light:hover:text-black`}
           >
             <FileCode className="w-4 h-4 text-sky-400" />
             Systems Architect Specification
@@ -294,11 +294,11 @@ export default function DayBookReportPage() {
       {/* Main content grid */}
       <main className="flex-1 max-w-7xl mx-auto px-6 py-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Principal Table - 9 span */}
-        <section className="lg:col-span-9 rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-6 shadow-2xl backdrop-blur-xl space-y-6 min-h-[500px]">
+        <section className="lg:col-span-9 rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-6 shadow-2xl backdrop-blur-xl space-y-6 min-h-[500px]">
           
           {loading ? (
-            <div className="py-32 flex flex-col items-center justify-center gap-3 text-slate-400">
-              <Loader2 className="w-8 h-8 animate-spin text-brand-lime" />
+            <div className="py-32 flex flex-col items-center justify-center gap-3 text-slate-400 light:text-slate-600">
+              <Loader2 className="w-8 h-8 animate-spin text-brand-lime light:text-lime-700" />
               <p className="text-xs">Consolidating vouchers from transactional history...</p>
             </div>
           ) : error ? (
@@ -311,14 +311,14 @@ export default function DayBookReportPage() {
               {activeTab === "report" && (
                 <div className="space-y-4">
                   {filtered.length === 0 ? (
-                    <div className="py-24 border border-dashed border-slate-800 rounded-3xl text-center">
-                      <p className="text-slate-400 text-xs">No vouchers match the active filter criteria.</p>
+                    <div className="py-24 border border-dashed border-slate-800 light:border-slate-200 rounded-3xl text-center">
+                      <p className="text-slate-400 light:text-slate-600 text-xs">No vouchers match the active filter criteria.</p>
                     </div>
                   ) : (
-                    <div className="overflow-hidden border border-slate-900/50 rounded-2xl bg-brand-navy-dark/20">
+                    <div className="overflow-hidden border border-slate-900 light:border-slate-200/50 light:border-slate-200 rounded-2xl bg-brand-navy-dark/20 light:bg-white">
                       <table className="w-full text-left border-collapse text-xs">
                         <thead>
-                          <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[9px]">
+                          <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
                             <th className="py-3 px-4">Date</th>
                             <th className="py-3 px-4">Voucher No</th>
                             <th className="py-3 px-4">Voucher Type</th>
@@ -335,24 +335,24 @@ export default function DayBookReportPage() {
                             const { debit, credit } = getDebitCredit(v);
 
                             return (
-                              <tr key={v.voucher_id} className="border-b border-slate-900/30 hover:bg-slate-900/10 text-slate-300">
+                              <tr key={v.voucher_id} className="border-b border-slate-900 light:border-slate-200/30 light:border-slate-150 hover:bg-slate-900 light:bg-slate-200/80/10 text-slate-300 light:text-slate-700">
                                 <td className="py-3 px-4 font-mono">{localDate}</td>
-                                <td className="py-3 px-4 font-mono font-bold text-white">{v.voucher_number}</td>
+                                <td className="py-3 px-4 font-mono font-bold text-white light:text-slate-900">{v.voucher_number}</td>
                                 <td className="py-3 px-4">
                                   <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
                                     v.voucher_type.toLowerCase() === "receipt"
-                                      ? "bg-brand-lime/10 text-brand-lime"
+                                      ? "bg-brand-lime/10 light:bg-lime-100/60 text-brand-lime light:text-lime-700"
                                       : v.voucher_type.toLowerCase() === "sales"
-                                      ? "bg-emerald-500/10 text-emerald-400"
+                                      ? "bg-emerald-500/10 text-emerald-400 light:text-emerald-700"
                                       : v.voucher_type.toLowerCase() === "payment"
-                                      ? "bg-rose-500/10 text-rose-450"
+                                      ? "bg-rose-500/10 light:bg-rose-100/60 text-rose-450 light:text-rose-700"
                                       : "bg-sky-500/10 text-sky-400"
                                   }`}>
                                     {v.voucher_type}
                                   </span>
                                 </td>
                                 <td className="py-3 px-4 font-bold">{v.party_name || "Multiple Ledger Splits"}</td>
-                                <td className="py-3 px-4 text-right font-mono font-bold text-slate-200">
+                                <td className="py-3 px-4 text-right font-mono font-bold text-slate-200 light:text-slate-800">
                                   {debit > 0 ? `${currency}${debit.toFixed(2)}` : "-"}
                                 </td>
                                 <td className="py-3 px-4 text-right font-mono font-bold text-slate-350">
@@ -361,7 +361,7 @@ export default function DayBookReportPage() {
                                 <td className="py-3 px-4 text-center">
                                   <button
                                     onClick={() => setSelectedVoucherId(v.voucher_id)}
-                                    className="p-1 rounded bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
+                                    className="p-1 rounded bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
                                     title="View Double Entry Splits"
                                   >
                                     <Eye className="w-3.5 h-3.5" />
@@ -371,10 +371,10 @@ export default function DayBookReportPage() {
                             );
                           })}
                           {/* Aggregate totals row */}
-                          <tr className="bg-slate-950/60 font-black border-t border-slate-900 text-slate-200 uppercase tracking-wide">
+                          <tr className="bg-slate-950 light:bg-slate-100/60 font-black border-t border-slate-900 light:border-slate-200 text-slate-200 light:text-slate-800 uppercase tracking-wide">
                             <td className="py-4 px-4" colSpan={4}>Consolidated Day Book Total</td>
-                            <td className="py-4 px-4 text-right font-mono text-emerald-400">{currency}{totalDebit.toFixed(2)}</td>
-                            <td className="py-4 px-4 text-right font-mono text-white">{currency}{totalCredit.toFixed(2)}</td>
+                            <td className="py-4 px-4 text-right font-mono text-emerald-400 light:text-emerald-700">{currency}{totalDebit.toFixed(2)}</td>
+                            <td className="py-4 px-4 text-right font-mono text-white light:text-slate-900">{currency}{totalCredit.toFixed(2)}</td>
                             <td></td>
                           </tr>
                         </tbody>
@@ -386,39 +386,39 @@ export default function DayBookReportPage() {
 
               {/* Tab 2: Spec Document */}
               {activeTab === "spec" && (
-                <div className="space-y-6 text-xs text-slate-300 leading-relaxed font-semibold max-h-[700px] overflow-y-auto pr-2">
-                  <div className="border-b border-slate-900 pb-3">
-                    <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+                <div className="space-y-6 text-xs text-slate-300 light:text-slate-700 leading-relaxed font-semibold max-h-[700px] overflow-y-auto pr-2">
+                  <div className="border-b border-slate-900 light:border-slate-200 pb-3">
+                    <h3 className="text-base font-extrabold text-white light:text-slate-900 flex items-center gap-2">
                       <BookOpen className="w-5 h-5 text-sky-400" />
                       Day Book Systems Architect Design Spec
                     </h3>
-                    <p className="text-[10px] text-slate-500 mt-0.5">Reference documentation for chronological transactional aggregation.</p>
+                    <p className="text-[10px] text-slate-500 light:text-slate-500 mt-0.5">Reference documentation for chronological transactional aggregation.</p>
                   </div>
 
                   {/* Architecture Point 1 */}
-                  <div className="space-y-3 bg-slate-950/40 p-4 border border-slate-900 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime uppercase text-[10px] tracking-wider">1. Read-Only Transaction Aggregation</h4>
-                    <p className="text-[11px] text-slate-400">Day Book does not store transactions itself. It is a read-only consolidated ledger view that queries the existing `vouchers` and `voucher_entries` tables chronologically:</p>
-                    <pre className="p-3 bg-slate-950 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
+                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
+                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">1. Read-Only Transaction Aggregation</h4>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600">Day Book does not store transactions itself. It is a read-only consolidated ledger view that queries the existing `vouchers` and `voucher_entries` tables chronologically:</p>
+                    <pre className="p-3 bg-slate-950 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
 {`vouchers (voucher_id, voucher_number, voucher_type, voucher_date, narration)
 voucher_entries (entry_id, voucher_id, ledger_id, debit_amount, credit_amount)`}
                     </pre>
                   </div>
 
                   {/* Architecture Point 3 */}
-                  <div className="space-y-3 bg-slate-950/40 p-4 border border-slate-900 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime uppercase text-[10px] tracking-wider">2. Consolidated Voucher Row Logic</h4>
-                    <p className="text-[11px] text-slate-400">Voucher entry structures can have multiple lines (debits and credits). The Day Book collapses them into a single summary line by extracting:</p>
-                    <ul className="list-disc pl-5 space-y-1 text-slate-400 text-[11px]">
-                      <li><strong className="text-white">Particulars (Opposite Ledger)</strong>: The name of the primary credit ledger for receipts/sales, or the primary debit ledger for payments/purchases.</li>
-                      <li><strong className="text-white">Combined Voucher Amount</strong>: Calculated by taking the sum of credits (debits and credits must balance) for the voucher.</li>
+                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
+                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">2. Consolidated Voucher Row Logic</h4>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600">Voucher entry structures can have multiple lines (debits and credits). The Day Book collapses them into a single summary line by extracting:</p>
+                    <ul className="list-disc pl-5 space-y-1 text-slate-400 light:text-slate-600 text-[11px]">
+                      <li><strong className="text-white light:text-slate-900">Particulars (Opposite Ledger)</strong>: The name of the primary credit ledger for receipts/sales, or the primary debit ledger for payments/purchases.</li>
+                      <li><strong className="text-white light:text-slate-900">Combined Voucher Amount</strong>: Calculated by taking the sum of credits (debits and credits must balance) for the voucher.</li>
                     </ul>
                   </div>
 
                   {/* REST API response */}
-                  <div className="space-y-3 bg-slate-950/40 p-4 border border-slate-900 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime uppercase text-[10px] tracking-wider">3. REST API Output (JSON)</h4>
-                    <pre className="p-3 bg-slate-950 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
+                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
+                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">3. REST API Output (JSON)</h4>
+                    <pre className="p-3 bg-slate-950 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
 {`{
   "filters": {
     "start_date": "2026-07-04",
@@ -448,9 +448,9 @@ voucher_entries (entry_id, voucher_id, ledger_id, debit_amount, credit_amount)`}
                   </div>
 
                   {/* SQL query */}
-                  <div className="space-y-3 bg-slate-950/40 p-4 border border-slate-900 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime uppercase text-[10px] tracking-wider">4. SQL Query JOIN Consolidator</h4>
-                    <pre className="p-3 bg-slate-950 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
+                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
+                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">4. SQL Query JOIN Consolidator</h4>
+                    <pre className="p-3 bg-slate-950 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
 {`SELECT 
     v.id as voucher_id,
     v.voucher_number,
@@ -482,32 +482,32 @@ ORDER BY v.voucher_date DESC, v.created_at DESC;`}
 
         {/* Right Column: Sidebar - 3 span */}
         <section className="lg:col-span-3 space-y-6">
-          <div className="rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-5 shadow-2xl backdrop-blur-xl space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-widest text-brand-lime flex items-center gap-1.5 border-b border-slate-900 pb-2">
+          <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl space-y-4">
+            <h3 className="text-xs font-black uppercase tracking-widest text-brand-lime light:text-lime-700 flex items-center gap-1.5 border-b border-slate-900 light:border-slate-200 pb-2">
               Day Book Stats
             </h3>
 
             <div className="space-y-3 pt-1 text-xs">
-              <div className="flex items-center justify-between py-1 border-b border-slate-900/40">
-                <span className="text-slate-400 font-bold">Vouchers Count</span>
-                <span className="font-bold text-white font-mono">{filtered.length} Vouchers</span>
+              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+                <span className="text-slate-400 light:text-slate-600 font-bold">Vouchers Count</span>
+                <span className="font-bold text-white light:text-slate-900 font-mono">{filtered.length} Vouchers</span>
               </div>
-              <div className="flex items-center justify-between py-1 border-b border-slate-900/40">
-                <span className="text-slate-400 font-bold">Total Inflows (Dr)</span>
-                <span className="font-mono text-white font-bold">{currency}{totalDebit.toFixed(2)}</span>
+              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+                <span className="text-slate-400 light:text-slate-600 font-bold">Total Inflows (Dr)</span>
+                <span className="font-mono text-white light:text-slate-900 light:text-slate-900 font-bold">{currency}{totalDebit.toFixed(2)}</span>
               </div>
-              <div className="flex items-center justify-between py-1 border-b border-slate-900/40">
-                <span className="text-slate-400 font-bold">Total Outflows (Cr)</span>
-                <span className="font-mono text-white font-bold">{currency}{totalCredit.toFixed(2)}</span>
+              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+                <span className="text-slate-400 light:text-slate-600 font-bold">Total Outflows (Cr)</span>
+                <span className="font-mono text-white light:text-slate-900 light:text-slate-900 font-bold">{currency}{totalCredit.toFixed(2)}</span>
               </div>
             </div>
           </div>
 
-          <div className="rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-5 shadow-2xl backdrop-blur-xl">
-            <h3 className="text-xs font-black uppercase tracking-widest text-white flex items-center gap-1.5 border-b border-slate-900 pb-2">
+          <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl">
+            <h3 className="text-xs font-black uppercase tracking-widest text-white light:text-slate-900 flex items-center gap-1.5 border-b border-slate-900 light:border-slate-200 pb-2">
               Consolidation Rule
             </h3>
-            <div className="pt-3 text-[10px] text-slate-450 leading-relaxed space-y-2 font-bold">
+            <div className="pt-3 text-[10px] text-slate-450 light:text-slate-500 leading-relaxed space-y-2 font-bold">
               <p>Receipts & Sales represent business growth inflows (Debit).</p>
               <p>Payments & Purchases represent operational outflows (Credit).</p>
             </div>
@@ -518,56 +518,56 @@ ORDER BY v.voucher_date DESC, v.created_at DESC;`}
       {/* Drill-down Detail Modal Overlay */}
       {selectedVoucherId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-3xl bg-brand-navy-dark border border-slate-800 rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+          <div className="w-full max-w-3xl bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div className="flex items-center justify-between border-b border-slate-900 light:border-slate-200 pb-3">
               <h2 className="text-xl font-bold text-white flex items-center gap-2 font-mono">
                 Voucher Drill-down: {voucherDetail?.voucher_number || "Loading..."}
               </h2>
               <button
                 onClick={() => setSelectedVoucherId(null)}
-                className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-slate-900"
+                className="p-1 rounded-full text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black hover:bg-slate-900 light:bg-slate-200/80"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {detailLoading ? (
-              <div className="py-24 flex flex-col items-center justify-center gap-3 text-slate-400">
-                <Loader2 className="w-8 h-8 animate-spin text-brand-lime" />
+              <div className="py-24 flex flex-col items-center justify-center gap-3 text-slate-400 light:text-slate-600">
+                <Loader2 className="w-8 h-8 animate-spin text-brand-lime light:text-lime-700" />
                 <p className="text-xs">Loading ledger splits...</p>
               </div>
             ) : voucherDetail ? (
               <div className="space-y-6 text-xs font-semibold">
                 
                 {/* Meta details */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-950/20 p-4 border border-slate-900 rounded-2xl">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-950 light:bg-slate-100/20 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
                   <div>
-                    <p className="text-[10px] text-slate-500 uppercase font-black">Voucher Type</p>
-                    <p className="text-white uppercase mt-0.5 font-mono">{voucherDetail.voucher_type}</p>
+                    <p className="text-[10px] text-slate-500 light:text-slate-500 uppercase font-black">Voucher Type</p>
+                    <p className="text-white light:text-slate-900 uppercase mt-0.5 font-mono">{voucherDetail.voucher_type}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-500 uppercase font-black">Date</p>
-                    <p className="text-white font-mono mt-0.5">
+                    <p className="text-[10px] text-slate-500 light:text-slate-500 uppercase font-black">Date</p>
+                    <p className="text-white light:text-slate-900 font-mono mt-0.5">
                       {new Date(voucherDetail.voucher_date).toISOString().split("T")[0]}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-500 uppercase font-black">Reference ID</p>
-                    <p className="text-white font-mono mt-0.5">{voucherDetail.reference || "None"}</p>
+                    <p className="text-[10px] text-slate-500 light:text-slate-500 uppercase font-black">Reference ID</p>
+                    <p className="text-white light:text-slate-900 font-mono mt-0.5">{voucherDetail.reference || "None"}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-500 uppercase font-black">Narration</p>
+                    <p className="text-[10px] text-slate-500 light:text-slate-500 uppercase font-black">Narration</p>
                     <p className="text-slate-350 italic mt-0.5">{voucherDetail.narration || "No notes"}</p>
                   </div>
                 </div>
 
                 {/* Double Entry Ledger Splits */}
                 <div className="space-y-2">
-                  <h4 className="text-xs font-black uppercase tracking-wider text-brand-lime">Accounting Ledger Splits</h4>
-                  <div className="border border-slate-900 rounded-xl overflow-hidden">
+                  <h4 className="text-xs font-black uppercase tracking-wider text-brand-lime light:text-lime-700">Accounting Ledger Splits</h4>
+                  <div className="border border-slate-900 light:border-slate-200 rounded-xl overflow-hidden">
                     <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[9px]">
+                        <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
                           <th className="py-2 px-4">Ledger Name</th>
                           <th className="py-2 px-4">Type</th>
                           <th className="py-2 px-4 text-right">Debit ({currency})</th>
@@ -576,9 +576,9 @@ ORDER BY v.voucher_date DESC, v.created_at DESC;`}
                       </thead>
                       <tbody>
                         {voucherDetail.entries?.map((entry: any) => (
-                          <tr key={entry.id} className="border-b border-slate-900/40 text-slate-300">
+                          <tr key={entry.id} className="border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 text-slate-300 light:text-slate-700">
                             <td className="py-2 px-4 font-bold">{entry.ledger_name}</td>
-                            <td className="py-2 px-4 uppercase text-[10px] text-slate-500">{entry.ledger_type}</td>
+                            <td className="py-2 px-4 uppercase text-[10px] text-slate-500 light:text-slate-500">{entry.ledger_type}</td>
                             <td className="py-2 px-4 text-right font-mono">
                               {Number(entry.debit_amount) > 0 ? `${currency}${Number(entry.debit_amount).toFixed(2)}` : ""}
                             </td>
@@ -595,11 +595,11 @@ ORDER BY v.voucher_date DESC, v.created_at DESC;`}
                 {/* Itemized inventory rows */}
                 {voucherDetail.items && voucherDetail.items.length > 0 && (
                   <div className="space-y-2">
-                    <h4 className="text-xs font-black uppercase tracking-wider text-brand-lime">Inventory Movement Row Details</h4>
-                    <div className="border border-slate-900 rounded-xl overflow-hidden">
+                    <h4 className="text-xs font-black uppercase tracking-wider text-brand-lime light:text-lime-700">Inventory Movement Row Details</h4>
+                    <div className="border border-slate-900 light:border-slate-200 rounded-xl overflow-hidden">
                       <table className="w-full text-left border-collapse">
                         <thead>
-                          <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[9px]">
+                          <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
                             <th className="py-2 px-4">Stock Name</th>
                             <th className="py-2 px-4">SKU</th>
                             <th className="py-2 px-4 text-right">Quantity</th>
@@ -609,12 +609,12 @@ ORDER BY v.voucher_date DESC, v.created_at DESC;`}
                         </thead>
                         <tbody>
                           {voucherDetail.items.map((item: any) => (
-                            <tr key={item.id} className="border-b border-slate-900/40 text-slate-300">
+                            <tr key={item.id} className="border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 text-slate-300 light:text-slate-700">
                               <td className="py-2 px-4 font-bold">{item.item_name}</td>
-                              <td className="py-2 px-4 font-mono text-slate-500">{item.sku || "-"}</td>
+                              <td className="py-2 px-4 font-mono text-slate-500 light:text-slate-500">{item.sku || "-"}</td>
                               <td className="py-2 px-4 text-right font-mono">{item.quantity}</td>
                               <td className="py-2 px-4 text-right font-mono">{currency}{Number(item.rate).toFixed(2)}</td>
-                              <td className="py-2 px-4 text-right font-mono text-white">
+                              <td className="py-2 px-4 text-right font-mono text-white light:text-slate-900">
                                 {currency}{(Number(item.quantity) * Number(item.rate)).toFixed(2)}
                               </td>
                             </tr>
@@ -625,7 +625,7 @@ ORDER BY v.voucher_date DESC, v.created_at DESC;`}
                   </div>
                 )}
 
-                <div className="flex justify-end pt-4 border-t border-slate-900">
+                <div className="flex justify-end pt-4 border-t border-slate-900 light:border-slate-200">
                   <button
                     onClick={() => setSelectedVoucherId(null)}
                     className="px-6 py-2.5 bg-brand-lime text-brand-navy-dark hover:bg-white font-bold rounded-xl transition"
@@ -636,7 +636,7 @@ ORDER BY v.voucher_date DESC, v.created_at DESC;`}
 
               </div>
             ) : (
-              <p className="text-center py-12 text-slate-400 text-xs">Voucher data unavailable.</p>
+              <p className="text-center py-12 text-slate-400 light:text-slate-600 text-xs">Voucher data unavailable.</p>
             )}
           </div>
         </div>

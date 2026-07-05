@@ -542,24 +542,24 @@ export default function InventoryDashboardPage() {
           <div className="flex items-center gap-6">
             <button
               onClick={() => router.push("/dashboard")}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-brand-lime hover:border-brand-lime/40 transition duration-200"
+              className="p-2 rounded-xl bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 hover:border-brand-lime/40 transition duration-200"
               title="Return to Dashboard (ESC)"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/dashboard")}>
-              <span className="text-xl font-extrabold text-white tracking-wide">My smart</span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">ERP</span>
+              <span className="text-xl font-extrabold text-white light:text-slate-900 tracking-wide">KEY</span>
+              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">books</span>
             </div>
             <div className="h-6 w-[1px] bg-slate-800"></div>
-            <div className="flex items-center gap-2 text-brand-lime font-bold">
+            <div className="flex items-center gap-2 text-brand-lime light:text-lime-700 font-bold">
               <Building2 className="w-5 h-5" />
               <span>{company?.name}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-6">
-            <span className="text-xs font-mono bg-slate-900 border border-slate-800 px-3 py-1 rounded text-slate-400">
+            <span className="text-xs font-mono bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 px-3 py-1 rounded text-slate-400 light:text-slate-600">
               Esc to Back
             </span>
           </div>
@@ -569,16 +569,16 @@ export default function InventoryDashboardPage() {
       {/* Main Grid */}
       <main className="flex-1 max-w-[1450px] mx-auto px-6 py-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Inventory list & tab managers - 9 span */}
-        <section className="lg:col-span-9 rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-6 shadow-2xl backdrop-blur-xl space-y-6">
+        <section className="lg:col-span-9 rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-6 shadow-2xl backdrop-blur-xl space-y-6">
           
           {/* Header Row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900 light:border-slate-200 pb-4">
             <div>
-              <h1 className="text-2xl font-black text-white flex items-center gap-2">
-                <Package className="w-6 h-6 text-brand-lime" />
+              <h1 className="text-2xl font-black text-white light:text-slate-900 flex items-center gap-2">
+                <Package className="w-6 h-6 text-brand-lime light:text-lime-700" />
                 Inventory & Stock Management
               </h1>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-400 light:text-slate-600 mt-1">
                 Maintain stock items catalog, groups categories, units of measure, pricing lists, and tax rules.
               </p>
             </div>
@@ -593,13 +593,13 @@ export default function InventoryDashboardPage() {
               </button>
               <button
                 onClick={() => handleOpenCreateModal("group")}
-                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold rounded-xl text-xs transition duration-200"
+                className="px-4 py-2 bg-slate-900 light:bg-slate-200/80 hover:bg-slate-800 border border-slate-800 light:border-slate-200 text-slate-300 light:text-slate-700 font-bold rounded-xl text-xs transition duration-200"
               >
                 + Group (Alt+G)
               </button>
               <button
                 onClick={() => handleOpenCreateModal("unit")}
-                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold rounded-xl text-xs transition duration-200"
+                className="px-4 py-2 bg-slate-900 light:bg-slate-200/80 hover:bg-slate-800 border border-slate-800 light:border-slate-200 text-slate-300 light:text-slate-700 font-bold rounded-xl text-xs transition duration-200"
               >
                 + Unit (Alt+U)
               </button>
@@ -607,13 +607,13 @@ export default function InventoryDashboardPage() {
           </div>
 
           {/* Tab Selector */}
-          <div className="flex border-b border-slate-900 text-xs font-bold gap-1 pb-1">
+          <div className="flex border-b border-slate-900 light:border-slate-200 text-xs font-bold gap-1 pb-1">
             <button
               onClick={() => setActiveTab("items")}
               className={`px-6 py-2.5 rounded-xl flex items-center gap-2 transition ${
                 activeTab === "items"
-                  ? "bg-brand-lime/10 text-brand-lime border-b-2 border-brand-lime font-black"
-                  : "text-slate-400 hover:bg-slate-950/20 hover:text-white"
+                  ? "bg-brand-lime/10 light:bg-lime-100/60 text-brand-lime light:text-lime-700 border-b-2 border-brand-lime font-black"
+                  : "text-slate-400 light:text-slate-600 hover:bg-slate-950 light:bg-slate-100/20 light:bg-slate-100 hover:text-white light:text-slate-900 light:hover:text-black"
               }`}
             >
               <Package className="w-4 h-4" />
@@ -623,8 +623,8 @@ export default function InventoryDashboardPage() {
               onClick={() => setActiveTab("groups")}
               className={`px-6 py-2.5 rounded-xl flex items-center gap-2 transition ${
                 activeTab === "groups"
-                  ? "bg-brand-lime/10 text-brand-lime border-b-2 border-brand-lime font-black"
-                  : "text-slate-400 hover:bg-slate-950/20 hover:text-white"
+                  ? "bg-brand-lime/10 light:bg-lime-100/60 text-brand-lime light:text-lime-700 border-b-2 border-brand-lime font-black"
+                  : "text-slate-400 light:text-slate-600 hover:bg-slate-950 light:bg-slate-100/20 light:bg-slate-100 hover:text-white light:text-slate-900 light:hover:text-black"
               }`}
             >
               <Layers className="w-4 h-4" />
@@ -634,8 +634,8 @@ export default function InventoryDashboardPage() {
               onClick={() => setActiveTab("units")}
               className={`px-6 py-2.5 rounded-xl flex items-center gap-2 transition ${
                 activeTab === "units"
-                  ? "bg-brand-lime/10 text-brand-lime border-b-2 border-brand-lime font-black"
-                  : "text-slate-400 hover:bg-slate-950/20 hover:text-white"
+                  ? "bg-brand-lime/10 light:bg-lime-100/60 text-brand-lime light:text-lime-700 border-b-2 border-brand-lime font-black"
+                  : "text-slate-400 light:text-slate-600 hover:bg-slate-950 light:bg-slate-100/20 light:bg-slate-100 hover:text-white light:text-slate-900 light:hover:text-black"
               }`}
             >
               <Scale className="w-4 h-4" />
@@ -645,21 +645,21 @@ export default function InventoryDashboardPage() {
 
           {/* Search bar */}
           <div className="relative">
-            <Search className="absolute left-4 top-3.5 w-4 h-4 text-slate-500" />
+            <Search className="absolute left-4 top-3.5 w-4 h-4 text-slate-500 light:text-slate-500" />
             <input
               ref={searchInputRef}
               type="text"
               placeholder={`Search in ${activeTab}... (Press Ctrl+F to focus, Tab to swap tabs)`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-brand-navy-dark/60 border border-slate-850 rounded-2xl text-slate-200 placeholder-slate-500 outline-none focus:border-brand-lime transition text-xs font-semibold"
+              className="w-full pl-11 pr-4 py-3 bg-brand-navy-dark/60 border border-slate-850 rounded-2xl text-slate-200 light:text-slate-800 placeholder-slate-500 outline-none focus:border-brand-lime transition text-xs font-semibold"
             />
           </div>
 
           {/* Grid lists */}
           {loading ? (
-            <div className="py-24 flex flex-col items-center justify-center gap-3 text-slate-400">
-              <Loader2 className="w-8 h-8 animate-spin text-brand-lime" />
+            <div className="py-24 flex flex-col items-center justify-center gap-3 text-slate-400 light:text-slate-600">
+              <Loader2 className="w-8 h-8 animate-spin text-brand-lime light:text-lime-700" />
               <p className="text-xs">Fetching inventory inventory database...</p>
             </div>
           ) : error ? (
@@ -667,24 +667,24 @@ export default function InventoryDashboardPage() {
               <div className="inline-flex p-3 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
                 <AlertCircle className="w-6 h-6" />
               </div>
-              <p className="text-slate-300 text-sm">{error}</p>
+              <p className="text-slate-300 light:text-slate-700 text-sm">{error}</p>
               <button
                 onClick={() => fetchInventoryData(company.id)}
-                className="px-5 py-2 bg-brand-navy-light/40 border border-slate-800 text-xs rounded-xl hover:text-white"
+                className="px-5 py-2 bg-brand-navy-light/40 border border-slate-800 light:border-slate-200 text-xs rounded-xl hover:text-white light:text-slate-900 light:hover:text-black"
               >
                 Retry Request
               </button>
             </div>
           ) : filteredList.length === 0 ? (
-            <div className="py-24 border border-dashed border-slate-800 rounded-3xl text-center">
-              <p className="text-slate-500 text-xs">No records found matching query filter.</p>
+            <div className="py-24 border border-dashed border-slate-800 light:border-slate-200 rounded-3xl text-center">
+              <p className="text-slate-500 light:text-slate-500 text-xs">No records found matching query filter.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto border border-slate-900/50 rounded-2xl bg-brand-navy-dark/20">
+            <div className="overflow-x-auto border border-slate-900 light:border-slate-200/50 light:border-slate-200 rounded-2xl bg-brand-navy-dark/20 light:bg-white">
               {activeTab === "items" && (
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[10px]">
+                    <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[10px]">
                       <th className="py-3 px-4">Item Name</th>
                       <th className="py-3 px-4">SKU</th>
                       <th className="py-3 px-4">Group</th>
@@ -704,10 +704,10 @@ export default function InventoryDashboardPage() {
                           key={item.id}
                           onClick={() => setSelectedRowIndex(idx)}
                           onDoubleClick={() => handleOpenEditModal("items", item)}
-                          className={`border-b border-slate-900/40 transition ${
+                          className={`border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 transition ${
                             isSelected
-                              ? "bg-brand-lime/10 text-brand-lime font-bold border-l-4 border-l-brand-lime"
-                              : "text-slate-300 hover:bg-slate-900/30"
+                              ? "bg-brand-lime/10 light:bg-lime-100/60 text-brand-lime light:text-lime-700 font-bold border-l-4 border-l-brand-lime"
+                              : "text-slate-300 light:text-slate-700 hover:bg-slate-900 light:bg-slate-200/80/30"
                           }`}
                         >
                           <td className="py-3 px-4">
@@ -716,20 +716,20 @@ export default function InventoryDashboardPage() {
                               {item.name}
                             </span>
                           </td>
-                          <td className="py-3 px-4 font-mono font-bold text-slate-500">{item.sku || "N/A"}</td>
-                          <td className="py-3 px-4 text-slate-400">{item.group_name || "Primary"}</td>
+                          <td className="py-3 px-4 font-mono font-bold text-slate-500 light:text-slate-500">{item.sku || "N/A"}</td>
+                          <td className="py-3 px-4 text-slate-400 light:text-slate-600">{item.group_name || "Primary"}</td>
                           <td className="py-3 px-4 text-right font-mono">{currency}{Number(item.purchase_price).toFixed(2)}</td>
                           <td className="py-3 px-4 text-right font-mono">{currency}{Number(item.selling_price).toFixed(2)}</td>
-                          <td className="py-3 px-4 text-right font-mono text-slate-400">{item.gst_percentage}%</td>
+                          <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{item.gst_percentage}%</td>
                           <td className="py-3 px-4 text-right font-mono">
-                            <span className={`px-2 py-0.5 rounded font-black ${isLowStock ? "bg-red-500/10 text-red-400" : "text-white"}`}>
+                            <span className={`px-2 py-0.5 rounded font-black ${isLowStock ? "bg-red-500/10 text-red-400" : "text-white light:text-slate-900"}`}>
                               {item.quantity} {item.unit_symbol || "PCS"}
                             </span>
                           </td>
                           <td className="py-3 px-4 text-right">
                             <div className="flex justify-end gap-1">
-                              <button onClick={() => handleOpenEditModal("items", item)} className="p-1 bg-slate-900 rounded border border-slate-800 text-slate-400 hover:text-white"><Edit2 className="w-3 h-3" /></button>
-                              <button onClick={() => handleDeleteRow("items", item)} className="p-1 bg-slate-900 rounded border border-slate-800 text-slate-400 hover:text-red-400"><Trash2 className="w-3 h-3" /></button>
+                              <button onClick={() => handleOpenEditModal("items", item)} className="p-1 bg-slate-900 light:bg-slate-200/80 rounded border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"><Edit2 className="w-3 h-3" /></button>
+                              <button onClick={() => handleDeleteRow("items", item)} className="p-1 bg-slate-900 light:bg-slate-200/80 rounded border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-red-400"><Trash2 className="w-3 h-3" /></button>
                             </div>
                           </td>
                         </tr>
@@ -742,7 +742,7 @@ export default function InventoryDashboardPage() {
               {activeTab === "groups" && (
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[10px]">
+                    <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[10px]">
                       <th className="py-3 px-4">Stock Group Name</th>
                       <th className="py-3 px-4">Parent Group</th>
                       <th className="py-3 px-4 text-right">Actions</th>
@@ -756,10 +756,10 @@ export default function InventoryDashboardPage() {
                           key={group.id}
                           onClick={() => setSelectedRowIndex(idx)}
                           onDoubleClick={() => handleOpenEditModal("groups", group)}
-                          className={`border-b border-slate-900/40 transition ${
+                          className={`border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 transition ${
                             isSelected
-                              ? "bg-brand-lime/10 text-brand-lime font-bold border-l-4 border-l-brand-lime"
-                              : "text-slate-300 hover:bg-slate-900/30"
+                              ? "bg-brand-lime/10 light:bg-lime-100/60 text-brand-lime light:text-lime-700 font-bold border-l-4 border-l-brand-lime"
+                              : "text-slate-300 light:text-slate-700 hover:bg-slate-900 light:bg-slate-200/80/30"
                           }`}
                         >
                           <td className="py-3 px-4">
@@ -768,11 +768,11 @@ export default function InventoryDashboardPage() {
                               {group.name}
                             </span>
                           </td>
-                          <td className="py-3 px-4 text-slate-400 font-semibold">{group.parent_name || "PRIMARY"}</td>
+                          <td className="py-3 px-4 text-slate-400 light:text-slate-600 font-semibold">{group.parent_name || "PRIMARY"}</td>
                           <td className="py-3 px-4 text-right">
                             <div className="flex justify-end gap-1">
-                              <button onClick={() => handleOpenEditModal("groups", group)} className="p-1 bg-slate-900 rounded border border-slate-800 text-slate-400 hover:text-white"><Edit2 className="w-3 h-3" /></button>
-                              <button onClick={() => handleDeleteRow("groups", group)} className="p-1 bg-slate-900 rounded border border-slate-800 text-slate-400 hover:text-red-400"><Trash2 className="w-3 h-3" /></button>
+                              <button onClick={() => handleOpenEditModal("groups", group)} className="p-1 bg-slate-900 light:bg-slate-200/80 rounded border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"><Edit2 className="w-3 h-3" /></button>
+                              <button onClick={() => handleDeleteRow("groups", group)} className="p-1 bg-slate-900 light:bg-slate-200/80 rounded border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-red-400"><Trash2 className="w-3 h-3" /></button>
                             </div>
                           </td>
                         </tr>
@@ -785,7 +785,7 @@ export default function InventoryDashboardPage() {
               {activeTab === "units" && (
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[10px]">
+                    <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[10px]">
                       <th className="py-3 px-4">Symbol</th>
                       <th className="py-3 px-4">Formal Name</th>
                       <th className="py-3 px-4 text-right">Actions</th>
@@ -799,10 +799,10 @@ export default function InventoryDashboardPage() {
                           key={unit.id}
                           onClick={() => setSelectedRowIndex(idx)}
                           onDoubleClick={() => handleOpenEditModal("units", unit)}
-                          className={`border-b border-slate-900/40 transition ${
+                          className={`border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 transition ${
                             isSelected
-                              ? "bg-brand-lime/10 text-brand-lime font-bold border-l-4 border-l-brand-lime"
-                              : "text-slate-300 hover:bg-slate-900/30"
+                              ? "bg-brand-lime/10 light:bg-lime-100/60 text-brand-lime light:text-lime-700 font-bold border-l-4 border-l-brand-lime"
+                              : "text-slate-300 light:text-slate-700 hover:bg-slate-900 light:bg-slate-200/80/30"
                           }`}
                         >
                           <td className="py-3 px-4 font-mono font-bold text-sky-400">
@@ -811,11 +811,11 @@ export default function InventoryDashboardPage() {
                               {unit.symbol}
                             </span>
                           </td>
-                          <td className="py-3 px-4 text-slate-300">{unit.name}</td>
+                          <td className="py-3 px-4 text-slate-300 light:text-slate-700">{unit.name}</td>
                           <td className="py-3 px-4 text-right">
                             <div className="flex justify-end gap-1">
-                              <button onClick={() => handleOpenEditModal("units", unit)} className="p-1 bg-slate-900 rounded border border-slate-800 text-slate-400 hover:text-white"><Edit2 className="w-3 h-3" /></button>
-                              <button onClick={() => handleDeleteRow("units", unit)} className="p-1 bg-slate-900 rounded border border-slate-800 text-slate-400 hover:text-red-400"><Trash2 className="w-3 h-3" /></button>
+                              <button onClick={() => handleOpenEditModal("units", unit)} className="p-1 bg-slate-900 light:bg-slate-200/80 rounded border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"><Edit2 className="w-3 h-3" /></button>
+                              <button onClick={() => handleDeleteRow("units", unit)} className="p-1 bg-slate-900 light:bg-slate-200/80 rounded border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-red-400"><Trash2 className="w-3 h-3" /></button>
                             </div>
                           </td>
                         </tr>
@@ -828,7 +828,7 @@ export default function InventoryDashboardPage() {
           )}
 
           {/* Guide Legend */}
-          <div className="flex justify-between items-center bg-slate-950/20 border border-slate-900/60 p-3 rounded-2xl text-[10px] text-slate-400 font-mono">
+          <div className="flex justify-between items-center bg-slate-950 light:bg-slate-100/20 light:bg-slate-100 border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-3 rounded-2xl text-[10px] text-slate-400 light:text-slate-600 font-mono">
             <span>Use ↑↓ keys to select, Enter to edit, Tab to switch categories</span>
             <span>ALT+S = New Item | ALT+G = New Group | ALT+U = New Unit | ESC = Dashboard</span>
           </div>
@@ -837,88 +837,88 @@ export default function InventoryDashboardPage() {
         {/* Right Column: Statistics Summary - 3 span */}
         <section className="lg:col-span-3 space-y-6">
           {/* Inventory Stats card */}
-          <div className="rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-5 shadow-2xl backdrop-blur-xl space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-widest text-brand-lime flex items-center gap-1.5 border-b border-slate-900 pb-2">
+          <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl space-y-4">
+            <h3 className="text-xs font-black uppercase tracking-widest text-brand-lime light:text-lime-700 flex items-center gap-1.5 border-b border-slate-900 light:border-slate-200 pb-2">
               <TrendingUp className="w-4 h-4" />
               Stock Asset Summary
             </h3>
 
             <div className="space-y-3.5 text-xs">
-              <div className="flex items-center justify-between py-1 border-b border-slate-900/40">
-                <span className="text-slate-400">Total Items</span>
-                <span className="font-bold text-white font-mono">{items.length}</span>
+              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+                <span className="text-slate-400 light:text-slate-600">Total Items</span>
+                <span className="font-bold text-white light:text-slate-900 font-mono">{items.length}</span>
               </div>
-              <div className="flex items-center justify-between py-1 border-b border-slate-900/40">
-                <span className="text-slate-400">Stock Groups</span>
-                <span className="font-bold text-white font-mono">{groups.length}</span>
+              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+                <span className="text-slate-400 light:text-slate-600">Stock Groups</span>
+                <span className="font-bold text-white light:text-slate-900 font-mono">{groups.length}</span>
               </div>
-              <div className="flex items-center justify-between py-1 border-b border-slate-900/40">
-                <span className="text-slate-400">Units of Measure</span>
-                <span className="font-bold text-white font-mono">{units.length}</span>
+              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+                <span className="text-slate-400 light:text-slate-600">Units of Measure</span>
+                <span className="font-bold text-white light:text-slate-900 font-mono">{units.length}</span>
               </div>
               
-              <div className="flex items-center justify-between py-1 border-b border-slate-900/40">
-                <span className="text-slate-400">Low Stock items</span>
-                <span className={`font-mono font-bold ${stats.lowStockCount > 0 ? "text-rose-400" : "text-slate-400"}`}>
+              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+                <span className="text-slate-400 light:text-slate-600">Low Stock items</span>
+                <span className={`font-mono font-bold ${stats.lowStockCount > 0 ? "text-rose-400" : "text-slate-400 light:text-slate-600"}`}>
                   {stats.lowStockCount}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between py-1 border-b border-slate-900/40">
-                <span className="text-slate-400">Tax Warnings (0% GST)</span>
-                <span className={`font-mono font-bold ${stats.taxWarningCount > 0 ? "text-amber-400" : "text-slate-400"}`}>
+              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+                <span className="text-slate-400 light:text-slate-600">Tax Warnings (0% GST)</span>
+                <span className={`font-mono font-bold ${stats.taxWarningCount > 0 ? "text-amber-400" : "text-slate-400 light:text-slate-600"}`}>
                   {stats.taxWarningCount}
                 </span>
               </div>
             </div>
 
             {/* Total asset valuation */}
-            <div className="pt-2 border-t border-slate-900/60">
-              <p className="text-[10px] text-slate-500 uppercase font-black">Stock Asset Valuation</p>
-              <p className="text-xl font-black text-brand-lime font-mono mt-0.5">
+            <div className="pt-2 border-t border-slate-900 light:border-slate-200/60 light:border-slate-200">
+              <p className="text-[10px] text-slate-500 light:text-slate-500 uppercase font-black">Stock Asset Valuation</p>
+              <p className="text-xl font-black text-brand-lime light:text-lime-700 font-mono mt-0.5">
                 {currency}{stats.totalStockValue.toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </p>
             </div>
           </div>
 
           {/* Shortcuts guide card */}
-          <div className="rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-5 shadow-2xl backdrop-blur-xl">
-            <h3 className="text-xs font-black uppercase tracking-widest text-white flex items-center gap-1.5 border-b border-slate-900 pb-2">
+          <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl">
+            <h3 className="text-xs font-black uppercase tracking-widest text-white light:text-slate-900 flex items-center gap-1.5 border-b border-slate-900 light:border-slate-200 pb-2">
               <HelpCircle className="w-4 h-4 text-sky-400" />
               Keyboard Guides
             </h3>
-            <div className="space-y-2.5 pt-3 text-[10px] font-mono text-slate-400">
+            <div className="space-y-2.5 pt-3 text-[10px] font-mono text-slate-400 light:text-slate-600">
               <div className="flex justify-between items-center">
                 <span>Create Item</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 border border-slate-800 text-brand-lime rounded">Alt + S</span>
+                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-brand-lime light:text-lime-700 rounded">Alt + S</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Create Group</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 border border-slate-800 text-white rounded">Alt + G</span>
+                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">Alt + G</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Create Unit</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 border border-slate-800 text-white rounded">Alt + U</span>
+                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">Alt + U</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Alter selected</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 border border-slate-800 text-white rounded">Alt + A / Enter</span>
+                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">Alt + A / Enter</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Delete selected</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 border border-slate-800 text-white rounded">Delete / Ctrl+D</span>
+                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">Delete / Ctrl+D</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Focus search</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 border border-slate-800 text-white rounded">Ctrl + F</span>
+                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">Ctrl + F</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Switch tabs</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 border border-slate-800 text-white rounded">Tab</span>
+                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">Tab</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Return Home</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 border border-slate-800 text-white rounded">ESC</span>
+                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">ESC</span>
               </div>
             </div>
           </div>
@@ -928,10 +928,10 @@ export default function InventoryDashboardPage() {
       {/* Forms Modals */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-lg bg-brand-navy-dark border border-slate-800 rounded-3xl p-6 md:p-8 space-y-5 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+          <div className="w-full max-w-lg bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-3xl p-6 md:p-8 space-y-5 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div className="flex items-center justify-between border-b border-slate-900 light:border-slate-200 pb-3">
               <h2 className="text-xl font-bold text-white flex items-center gap-2 capitalize">
-                <Package className="w-5 h-5 text-brand-lime" />
+                <Package className="w-5 h-5 text-brand-lime light:text-lime-700" />
                 {modalMode} {modalType}
               </h2>
               <button
@@ -939,7 +939,7 @@ export default function InventoryDashboardPage() {
                   setIsModalOpen(false);
                   setFormError("");
                 }}
-                className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-slate-900"
+                className="p-1 rounded-full text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black hover:bg-slate-900 light:bg-slate-200/80"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -958,54 +958,54 @@ export default function InventoryDashboardPage() {
               {modalType === "item" && (
                 <>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Stock Item Name *</label>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Stock Item Name *</label>
                     <input
                       type="text"
                       required
                       autoFocus
                       value={itemFields.name}
                       onChange={(e) => setItemFields({ ...itemFields, name: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime transition"
+                      className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition"
                       placeholder="e.g. Dell Inspiron Laptop"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">SKU / Code</label>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">SKU / Code</label>
                     <input
                       type="text"
                       value={itemFields.sku}
                       onChange={(e) => setItemFields({ ...itemFields, sku: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime transition font-mono uppercase"
+                      className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition font-mono uppercase"
                       placeholder="e.g. LAP-DELL-123"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Stock Group</label>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Stock Group</label>
                       <select
                         value={itemFields.stock_group_id}
                         onChange={(e) => setItemFields({ ...itemFields, stock_group_id: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime transition cursor-pointer"
+                        className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition cursor-pointer"
                       >
-                        <option value="" className="bg-brand-navy-dark text-slate-400 font-bold">PRIMARY (No group)</option>
+                        <option value="" className="bg-brand-navy-dark text-slate-400 light:text-slate-600 font-bold">PRIMARY (No group)</option>
                         {groups.map(g => (
-                          <option key={g.id} value={g.id} className="bg-brand-navy-dark text-white">{g.name}</option>
+                          <option key={g.id} value={g.id} className="bg-brand-navy-dark text-white light:text-slate-900">{g.name}</option>
                         ))}
                       </select>
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Unit of Measure</label>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Unit of Measure</label>
                       <select
                         value={itemFields.unit_id}
                         onChange={(e) => setItemFields({ ...itemFields, unit_id: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime transition cursor-pointer"
+                        className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition cursor-pointer"
                       >
-                        <option value="" className="bg-brand-navy-dark text-slate-400 font-bold">PRIMARY (No unit)</option>
+                        <option value="" className="bg-brand-navy-dark text-slate-400 light:text-slate-600 font-bold">PRIMARY (No unit)</option>
                         {units.map(u => (
-                          <option key={u.id} value={u.id} className="bg-brand-navy-dark text-white">{u.symbol} ({u.name})</option>
+                          <option key={u.id} value={u.id} className="bg-brand-navy-dark text-white light:text-slate-900">{u.symbol} ({u.name})</option>
                         ))}
                       </select>
                     </div>
@@ -1013,33 +1013,33 @@ export default function InventoryDashboardPage() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Purchase Price ({currency})</label>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Purchase Price ({currency})</label>
                       <input
                         type="number"
                         step="0.01"
                         min="0"
                         value={itemFields.purchase_price}
                         onChange={(e) => setItemFields({ ...itemFields, purchase_price: parseFloat(e.target.value) || 0 })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime transition font-mono"
+                        className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition font-mono"
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Selling Price ({currency})</label>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Selling Price ({currency})</label>
                       <input
                         type="number"
                         step="0.01"
                         min="0"
                         value={itemFields.selling_price}
                         onChange={(e) => setItemFields({ ...itemFields, selling_price: parseFloat(e.target.value) || 0 })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime transition font-mono"
+                        className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition font-mono"
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">GST Rate (%)</label>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">GST Rate (%)</label>
                       <select
                         value={itemFields.gst_percentage}
                         onChange={(e) => setItemFields({ ...itemFields, gst_percentage: parseInt(e.target.value, 10) || 0 })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime transition cursor-pointer font-mono font-bold"
+                        className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition cursor-pointer font-mono font-bold"
                       >
                         {[0, 5, 12, 18, 28].map(r => (
                           <option key={r} value={r} className="bg-brand-navy-dark">{r}% GST</option>
@@ -1050,24 +1050,24 @@ export default function InventoryDashboardPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Opening Qty</label>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Opening Qty</label>
                       <input
                         type="number"
                         min="0"
                         value={itemFields.quantity}
                         onChange={(e) => setItemFields({ ...itemFields, quantity: parseFloat(e.target.value) || 0 })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime transition font-mono"
+                        className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition font-mono"
                         disabled={modalMode === "edit"} // Quantity changes should be done via voucher updates, not manual form edits!
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Reorder Alert Qty</label>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Reorder Alert Qty</label>
                       <input
                         type="number"
                         min="0"
                         value={itemFields.reorder_level}
                         onChange={(e) => setItemFields({ ...itemFields, reorder_level: parseFloat(e.target.value) || 0 })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime transition font-mono"
+                        className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition font-mono"
                       />
                     </div>
                   </div>
@@ -1078,28 +1078,28 @@ export default function InventoryDashboardPage() {
               {modalType === "group" && (
                 <>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Stock Group Name *</label>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Stock Group Name *</label>
                     <input
                       type="text"
                       required
                       autoFocus
                       value={groupFields.name}
                       onChange={(e) => setGroupFields({ ...groupFields, name: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime transition"
+                      className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition"
                       placeholder="e.g. Electronics, Office Hardware"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Parent Group (Under)</label>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Parent Group (Under)</label>
                     <select
                       value={groupFields.parent_id}
                       onChange={(e) => setGroupFields({ ...groupFields, parent_id: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime transition cursor-pointer"
+                      className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition cursor-pointer"
                     >
-                      <option value="" className="bg-brand-navy-dark text-slate-400 font-bold">PRIMARY (No parent)</option>
+                      <option value="" className="bg-brand-navy-dark text-slate-400 light:text-slate-600 font-bold">PRIMARY (No parent)</option>
                       {groups.filter(g => g.id !== groupFields.id).map(g => (
-                        <option key={g.id} value={g.id} className="bg-brand-navy-dark text-white">{g.name}</option>
+                        <option key={g.id} value={g.id} className="bg-brand-navy-dark text-white light:text-slate-900">{g.name}</option>
                       ))}
                     </select>
                   </div>
@@ -1110,26 +1110,26 @@ export default function InventoryDashboardPage() {
               {modalType === "unit" && (
                 <>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Unit Symbol *</label>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Unit Symbol *</label>
                     <input
                       type="text"
                       required
                       autoFocus
                       value={unitFields.symbol}
                       onChange={(e) => setUnitFields({ ...unitFields, symbol: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime transition font-mono uppercase"
+                      className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition font-mono uppercase"
                       placeholder="e.g. PCS, KG, BOX"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Formal Name *</label>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Formal Name *</label>
                     <input
                       type="text"
                       required
                       value={unitFields.name}
                       onChange={(e) => setUnitFields({ ...unitFields, name: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-brand-navy-light/10 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime transition"
+                      className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition"
                       placeholder="e.g. Pieces, Kilograms"
                     />
                   </div>
@@ -1137,14 +1137,14 @@ export default function InventoryDashboardPage() {
               )}
 
               {/* Submit Buttons */}
-              <div className="flex justify-end gap-3.5 border-t border-slate-900 pt-5">
+              <div className="flex justify-end gap-3.5 border-t border-slate-900 light:border-slate-200 pt-5">
                 <button
                   type="button"
                   onClick={() => {
                     setIsModalOpen(false);
                     setFormError("");
                   }}
-                  className="px-5 py-2.5 rounded-xl border border-slate-800 text-slate-400 hover:text-white"
+                  className="px-5 py-2.5 rounded-xl border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
                 >
                   Cancel
                 </button>
@@ -1173,9 +1173,9 @@ export default function InventoryDashboardPage() {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className="p-4 rounded-2xl bg-brand-navy-light/95 border border-slate-800 text-xs font-semibold text-white shadow-2xl backdrop-blur-md flex items-center gap-3 animate-fade-in-left pointer-events-auto"
+            className="p-4 rounded-2xl bg-brand-navy-light/95 border border-slate-800 light:border-slate-200 text-xs font-semibold text-white light:text-slate-900 shadow-2xl backdrop-blur-md flex items-center gap-3 animate-fade-in-left pointer-events-auto"
           >
-            <div className="p-1 bg-brand-lime/10 border border-brand-lime/20 text-brand-lime rounded-lg shrink-0">
+            <div className="p-1 bg-brand-lime/10 light:bg-lime-100/60 border border-brand-lime/20 text-brand-lime light:text-lime-700 rounded-lg shrink-0">
               <HelpCircle className="w-4 h-4" />
             </div>
             <span>{toast.text}</span>

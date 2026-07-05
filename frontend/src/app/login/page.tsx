@@ -54,7 +54,7 @@ export default function LoginPage() {
       <div className="w-full max-w-4xl bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(18,52,102,0.15)] overflow-hidden flex flex-col md:flex-row min-h-[580px] z-10">
         
         {/* Left Side: Deep Blue panel with abstract circles and cartoon illustration */}
-        <div className="md:w-1/2 bg-gradient-to-br from-[#0e2c6c] via-[#0f3d9b] to-[#1253d2] p-8 md:p-12 flex flex-col justify-between items-center text-center relative overflow-hidden text-white">
+        <div className="md:w-1/2 bg-gradient-to-br from-[#0e2c6c] via-[#0f3d9b] to-[#1253d2] p-8 md:p-12 flex flex-col justify-between items-center text-center relative overflow-hidden text-white light:text-slate-900">
           {/* Abstract circles */}
           <div className="absolute top-6 left-6 w-16 h-16 rounded-full bg-white/10"></div>
           <div className="absolute top-1/2 -left-4 w-6 h-6 rounded-full bg-white/20"></div>
@@ -144,7 +144,7 @@ export default function LoginPage() {
               <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
                 Sign In to your Account
               </h2>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-slate-400 light:text-slate-600">
                 Welcome back! Please enter your details.
               </p>
             </div>
@@ -159,7 +159,7 @@ export default function LoginPage() {
               {/* Username/Email Input */}
               <div className="space-y-1">
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 light:text-slate-600">
                     <User className="w-5 h-5" />
                   </div>
                   <input
@@ -176,7 +176,7 @@ export default function LoginPage() {
               {/* Password Input */}
               <div className="space-y-1">
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 light:text-slate-600">
                     <Lock className="w-5 h-5" />
                   </div>
                   <input
@@ -190,7 +190,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 light:text-slate-600 hover:text-slate-600"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -201,7 +201,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 flex items-center justify-center gap-2 rounded-2xl font-bold text-white bg-[#3b82f6] hover:bg-[#2563eb] active:scale-[0.99] disabled:bg-blue-400 transition duration-200 shadow-lg shadow-blue-500/10 text-sm mt-2"
+                className="w-full py-3.5 flex items-center justify-center gap-2 rounded-2xl font-bold text-white light:text-slate-900 bg-[#3b82f6] hover:bg-[#2563eb] active:scale-[0.99] disabled:bg-blue-400 transition duration-200 shadow-lg shadow-blue-500/10 text-sm mt-2"
               >
                 {loading ? (
                   <>
@@ -214,7 +214,7 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <div className="pt-4 text-center text-xs text-slate-400">
+            <div className="pt-4 text-center text-xs text-slate-400 light:text-slate-600">
               Don't have an account?{" "}
               <Link href="/register" className="text-[#3b82f6] hover:underline font-semibold">
                 Create one now

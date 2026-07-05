@@ -113,24 +113,24 @@ export default function ProfitLossReportPage() {
           <div className="flex items-center gap-6">
             <button
               onClick={() => router.push("/reports")}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-brand-lime hover:border-brand-lime/40 transition duration-200"
+              className="p-2 rounded-xl bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 hover:border-brand-lime/40 transition duration-200"
               title="Return to Reports Menu (ESC)"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/dashboard")}>
-              <span className="text-xl font-extrabold text-white tracking-wide">My smart</span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">ERP</span>
+              <span className="text-xl font-extrabold text-white light:text-slate-900 tracking-wide">KEY</span>
+              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">books</span>
             </div>
             <div className="h-6 w-[1px] bg-slate-800"></div>
-            <div className="flex items-center gap-2 text-brand-lime font-bold">
+            <div className="flex items-center gap-2 text-brand-lime light:text-lime-700 font-bold">
               <Building2 className="w-5 h-5" />
               <span>{company?.name}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-6">
-            <span className="text-xs font-mono bg-slate-900 border border-slate-800 px-3 py-1 rounded text-slate-400">
+            <span className="text-xs font-mono bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 px-3 py-1 rounded text-slate-400 light:text-slate-600">
               Esc to Back
             </span>
           </div>
@@ -139,33 +139,33 @@ export default function ProfitLossReportPage() {
 
       {/* Main content grid */}
       <main className="flex-1 max-w-[1400px] mx-auto px-6 py-8 w-full space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900 light:border-slate-200 pb-4">
           <div>
-            <h1 className="text-2xl font-black text-white flex items-center gap-2">
-              <TrendingUp className="w-6 h-6 text-brand-lime" />
+            <h1 className="text-2xl font-black text-white light:text-slate-900 flex items-center gap-2">
+              <TrendingUp className="w-6 h-6 text-brand-lime light:text-lime-700" />
               Profit & Loss Statement
             </h1>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-400 light:text-slate-600 mt-1">
               Summarizes financial revenues and operating expenses to calculate net business profit margins.
             </p>
           </div>
 
           {/* Date Picker Controls */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 bg-slate-950/40 border border-slate-900 px-3 py-1.5 rounded-xl text-xs font-semibold">
-              <Calendar className="w-4 h-4 text-slate-400" />
+            <div className="flex items-center gap-1.5 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 border border-slate-900 light:border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold">
+              <Calendar className="w-4 h-4 text-slate-400 light:text-slate-600" />
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="bg-transparent outline-none text-white font-mono"
+                className="bg-transparent outline-none text-white light:text-slate-900 font-mono"
               />
               <span className="text-slate-600">to</span>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="bg-transparent outline-none text-white font-mono"
+                className="bg-transparent outline-none text-white light:text-slate-900 font-mono"
               />
             </div>
             <button
@@ -182,7 +182,7 @@ export default function ProfitLossReportPage() {
           <div className={`p-5 rounded-2xl border text-xs font-semibold flex items-center justify-between ${
             isLoss 
               ? "bg-red-500/10 border-red-500/20 text-red-400"
-              : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+              : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 light:text-emerald-700"
           }`}>
             <div className="flex items-center gap-3">
               <div className={`p-2.5 rounded-xl border ${
@@ -191,8 +191,8 @@ export default function ProfitLossReportPage() {
                 {isLoss ? <TrendingDown className="w-5 h-5" /> : <TrendingUp className="w-5 h-5" />}
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Net Operations Status</span>
-                <p className="text-white font-bold text-sm mt-0.5">
+                <span className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Net Operations Status</span>
+                <p className="text-white light:text-slate-900 light:text-slate-900 font-bold text-sm mt-0.5">
                   {isLoss 
                     ? `Company is running a Net Loss of ${company?.currency || "$"}${Math.abs(netProfit).toFixed(2)}`
                     : `Company is generating a Net Profit of ${company?.currency || "$"}${netProfit.toFixed(2)}`}
@@ -200,8 +200,8 @@ export default function ProfitLossReportPage() {
               </div>
             </div>
             <div className="text-right">
-              <span className="text-[10px] text-slate-500 uppercase font-black">Net Profit margin</span>
-              <p className={`text-base font-black font-mono mt-0.5 ${isLoss ? "text-red-400" : "text-brand-lime"}`}>
+              <span className="text-[10px] text-slate-500 light:text-slate-500 uppercase font-black">Net Profit margin</span>
+              <p className={`text-base font-black font-mono mt-0.5 ${isLoss ? "text-red-400" : "text-brand-lime light:text-lime-700"}`}>
                 {company?.currency || "$"}{netProfit.toFixed(2)}
               </p>
             </div>
@@ -210,8 +210,8 @@ export default function ProfitLossReportPage() {
 
         {/* Dual Column Layout */}
         {loading ? (
-          <div className="py-24 flex flex-col items-center justify-center gap-3 text-slate-400">
-            <Loader2 className="w-8 h-8 animate-spin text-brand-lime" />
+          <div className="py-24 flex flex-col items-center justify-center gap-3 text-slate-400 light:text-slate-600">
+            <Loader2 className="w-8 h-8 animate-spin text-brand-lime light:text-lime-700" />
             <p className="text-xs">Computing Profit & Loss...</p>
           </div>
         ) : error ? (
@@ -219,58 +219,58 @@ export default function ProfitLossReportPage() {
             <div className="inline-flex p-3 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
               <AlertCircle className="w-6 h-6" />
             </div>
-            <p className="text-slate-300 text-sm">{error}</p>
+            <p className="text-slate-300 light:text-slate-700 text-sm">{error}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Left Column: Expenses & Costs */}
-            <div className="rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-6 shadow-2xl backdrop-blur-xl flex flex-col justify-between space-y-4">
+            <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-6 shadow-2xl backdrop-blur-xl flex flex-col justify-between space-y-4">
               <div className="space-y-4">
-                <h3 className="text-xs font-black uppercase tracking-wider text-red-400 border-b border-slate-900 pb-2">
+                <h3 className="text-xs font-black uppercase tracking-wider text-red-400 border-b border-slate-900 light:border-slate-200 pb-2">
                   Operating Expenses & Debits
                 </h3>
                 {expenseItems.length === 0 ? (
-                  <p className="text-slate-500 italic py-6 text-center text-xs">No active expense entries.</p>
+                  <p className="text-slate-500 light:text-slate-500 italic py-6 text-center text-xs">No active expense entries.</p>
                 ) : (
                   <div className="space-y-2.5">
                     {expenseItems.map((item, idx) => (
-                      <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-900/40 text-xs">
-                        <span className="text-slate-300 font-bold">{item.name}</span>
-                        <span className="font-mono text-white font-semibold">{company?.currency || "$"}{item.amount.toFixed(2)}</span>
+                      <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 text-xs">
+                        <span className="text-slate-300 light:text-slate-700 font-bold">{item.name}</span>
+                        <span className="font-mono text-white light:text-slate-900 light:text-slate-800 font-semibold">{company?.currency || "$"}{item.amount.toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-              <div className="flex justify-between items-center bg-slate-950/40 p-4 border border-slate-900 rounded-xl">
-                <span className="text-[10px] text-slate-400 uppercase font-black">Total Expenditure</span>
-                <span className="font-mono font-black text-white">{company?.currency || "$"}{totals?.expense_total.toFixed(2)}</span>
+              <div className="flex justify-between items-center bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-xl">
+                <span className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black">Total Expenditure</span>
+                <span className="font-mono font-black text-white light:text-slate-900">{company?.currency || "$"}{totals?.expense_total.toFixed(2)}</span>
               </div>
             </div>
 
             {/* Right Column: Revenues & Earnings */}
-            <div className="rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-6 shadow-2xl backdrop-blur-xl flex flex-col justify-between space-y-4">
+            <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-6 shadow-2xl backdrop-blur-xl flex flex-col justify-between space-y-4">
               <div className="space-y-4">
-                <h3 className="text-xs font-black uppercase tracking-wider text-brand-lime border-b border-slate-900 pb-2">
+                <h3 className="text-xs font-black uppercase tracking-wider text-brand-lime light:text-lime-700 border-b border-slate-900 light:border-slate-200 pb-2">
                   Revenues & Credit Earnings
                 </h3>
                 {revenueItems.length === 0 ? (
-                  <p className="text-slate-500 italic py-6 text-center text-xs">No active sales revenue entries.</p>
+                  <p className="text-slate-500 light:text-slate-500 italic py-6 text-center text-xs">No active sales revenue entries.</p>
                 ) : (
                   <div className="space-y-2.5">
                     {revenueItems.map((item, idx) => (
-                      <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-900/40 text-xs">
-                        <span className="text-slate-300 font-bold">{item.name}</span>
-                        <span className="font-mono text-white font-semibold">{company?.currency || "$"}{item.amount.toFixed(2)}</span>
+                      <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 text-xs">
+                        <span className="text-slate-300 light:text-slate-700 font-bold">{item.name}</span>
+                        <span className="font-mono text-white light:text-slate-900 light:text-slate-800 font-semibold">{company?.currency || "$"}{item.amount.toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-              <div className="flex justify-between items-center bg-slate-950/40 p-4 border border-slate-900 rounded-xl">
-                <span className="text-[10px] text-slate-400 uppercase font-black">Total Revenues</span>
-                <span className="font-mono font-black text-white">{company?.currency || "$"}{totals?.revenue_total.toFixed(2)}</span>
+              <div className="flex justify-between items-center bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-xl">
+                <span className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black">Total Revenues</span>
+                <span className="font-mono font-black text-white light:text-slate-900">{company?.currency || "$"}{totals?.revenue_total.toFixed(2)}</span>
               </div>
             </div>
 

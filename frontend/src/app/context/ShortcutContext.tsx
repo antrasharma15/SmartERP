@@ -87,24 +87,24 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       {/* Glassmorphic Help Cheat Sheet Overlay */}
       {isHelpOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fade-in font-sans text-xs">
-          <div className="w-full max-w-2xl bg-brand-navy-dark/95 border border-slate-800 rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl relative">
+          <div className="w-full max-w-2xl bg-brand-navy-dark/95 border border-slate-800 light:border-slate-200 rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl relative">
             <button
               onClick={() => setIsHelpOpen(false)}
-              className="absolute top-6 right-6 p-1.5 rounded-full text-slate-400 hover:text-white hover:bg-slate-900 transition"
+              className="absolute top-6 right-6 p-1.5 rounded-full text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black hover:bg-slate-900 light:bg-slate-200/80 transition"
               title="Close Guide (ESC)"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="flex items-center gap-3 border-b border-slate-900 pb-4">
-              <div className="p-2.5 bg-brand-lime/10 border border-brand-lime/20 text-brand-lime rounded-xl">
+            <div className="flex items-center gap-3 border-b border-slate-900 light:border-slate-200 pb-4">
+              <div className="p-2.5 bg-brand-lime/10 light:bg-lime-100/60 border border-brand-lime/20 text-brand-lime light:text-lime-700 rounded-xl">
                 <Keyboard className="w-6 h-6" />
               </div>
               <div>
-                <h2 className="text-lg font-black text-white flex items-center gap-1.5">
+                <h2 className="text-lg font-black text-white light:text-slate-900 flex items-center gap-1.5">
                   SmartERP Keyboard Shortcuts Guide
                 </h2>
-                <p className="text-[10px] text-slate-400 mt-0.5">
+                <p className="text-[10px] text-slate-400 light:text-slate-600 mt-0.5">
                   Tally ERP-style keyboard operations. Navigate the system without mouse clicks.
                 </p>
               </div>
@@ -114,17 +114,17 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
               
               {/* Left Column: Global Navigation shortcuts */}
               <div className="space-y-3">
-                <h3 className="text-[10px] font-black uppercase tracking-wider text-brand-lime border-b border-slate-900 pb-1.5">
+                <h3 className="text-[10px] font-black uppercase tracking-wider text-brand-lime light:text-lime-700 border-b border-slate-900 light:border-slate-200 pb-1.5">
                   Global System Keys
                 </h3>
                 {globalShortcuts.length === 0 ? (
-                  <p className="text-slate-500 italic">No global shortcuts active.</p>
+                  <p className="text-slate-500 light:text-slate-500 italic">No global shortcuts active.</p>
                 ) : (
                   <div className="space-y-2">
                     {globalShortcuts.map((s, idx) => (
-                      <div key={idx} className="flex justify-between items-center py-0.5 text-slate-300 font-semibold">
+                      <div key={idx} className="flex justify-between items-center py-0.5 text-slate-300 light:text-slate-700 font-semibold">
                         <span>{s.description}</span>
-                        <kbd className="px-2 py-1 bg-slate-950 border border-slate-800 rounded font-mono text-[9px] text-white shadow-inner">
+                        <kbd className="px-2 py-1 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded font-mono text-[9px] text-white light:text-slate-900 shadow-inner">
                           {s.keys}
                         </kbd>
                       </div>
@@ -135,17 +135,17 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
               {/* Right Column: Page Specific Actions shortcuts */}
               <div className="space-y-3">
-                <h3 className="text-[10px] font-black uppercase tracking-wider text-red-400 border-b border-slate-900 pb-1.5">
+                <h3 className="text-[10px] font-black uppercase tracking-wider text-red-400 border-b border-slate-900 light:border-slate-200 pb-1.5">
                   Current Screen Actions
                 </h3>
                 {pageShortcuts.length === 0 ? (
-                  <p className="text-slate-500 italic text-[10px]">No page action hotkeys active on this screen.</p>
+                  <p className="text-slate-500 light:text-slate-500 italic text-[10px]">No page action hotkeys active on this screen.</p>
                 ) : (
                   <div className="space-y-2">
                     {pageShortcuts.map((s, idx) => (
-                      <div key={idx} className="flex justify-between items-center py-0.5 text-slate-300 font-semibold">
+                      <div key={idx} className="flex justify-between items-center py-0.5 text-slate-300 light:text-slate-700 font-semibold">
                         <span>{s.description}</span>
-                        <kbd className="px-2 py-1 bg-slate-950 border border-slate-800 rounded font-mono text-[9px] text-brand-lime shadow-inner">
+                        <kbd className="px-2 py-1 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded font-mono text-[9px] text-brand-lime light:text-lime-700 shadow-inner">
                           {s.keys}
                         </kbd>
                       </div>
@@ -156,9 +156,9 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
             </div>
 
-            <div className="flex justify-between items-center pt-4 border-t border-slate-900 text-[10px] text-slate-500 font-mono">
+            <div className="flex justify-between items-center pt-4 border-t border-slate-900 light:border-slate-200 text-[10px] text-slate-500 light:text-slate-500 font-mono">
               <span>Press ? or ESC to toggle this guide</span>
-              <span className="text-brand-lime font-bold">SmartERP BI Suite</span>
+              <span className="text-brand-lime light:text-lime-700 font-bold">SmartERP BI Suite</span>
             </div>
           </div>
         </div>

@@ -28,7 +28,7 @@ import {
   UserPlus
 } from "lucide-react";
 
-type TabType = "company" | "users" | "invoice" | "taxes" | "notifications" | "security" | "lock" | "audit";
+type TabType = "company" | "users" | "invoice" | "taxes" | "security" | "lock" | "audit";
 
 interface Company {
   id: string;
@@ -184,12 +184,7 @@ export default function SettingsPage() {
   const [taxPercent, setTaxPercent] = useState("");
   const [taxIsDefault, setTaxIsDefault] = useState(false);
 
-  // Form Fields: Notifications
-  const [notifyFields, setNotifyFields] = useState<NotificationSettings>({
-    invoice_sent: true,
-    payment_received: true,
-    overdue_reminder: true
-  });
+
 
   // Form Fields: Security Password Change
   const [passwordFields, setPasswordFields] = useState({
@@ -328,11 +323,7 @@ export default function SettingsPage() {
       const taxesRes = await apiFetch(`/settings/taxes?company_id=${companyId}`);
       setTaxes(taxesRes.taxes || []);
 
-      // 5. Fetch Notifications
-      const notifyRes = await apiFetch(`/settings/notifications?company_id=${companyId}`);
-      if (notifyRes.notifications) {
-        setNotifyFields(notifyRes.notifications);
-      }
+
 
       // 6. Fetch Audit Logs
       fetchAuditLogs(companyId, 1);
@@ -529,26 +520,7 @@ export default function SettingsPage() {
     }
   };
 
-  // Save alerts notifications
-  const handleSaveNotifications = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!activeCompany) return;
-    setSubmitting(true);
-    try {
-      await apiFetch("/settings/notifications", {
-        method: "PUT",
-        body: JSON.stringify({
-          company_id: activeCompany.id,
-          ...notifyFields
-        })
-      });
-      triggerToast("Notification preferences updated.");
-    } catch (err: any) {
-      triggerToast(err.message || "Failed to update notification toggles");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+
 
   // Security: Change password
   const handleChangePassword = async (e: React.FormEvent) => {
@@ -632,17 +604,17 @@ export default function SettingsPage() {
           <div className="flex items-center gap-6">
             <button
               onClick={() => router.push("/dashboard")}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-brand-lime hover:border-brand-lime/40 transition duration-200"
+              className="p-2 rounded-xl bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 hover:border-brand-lime/40 transition duration-200"
               title="Return to Dashboard (ESC)"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/dashboard")}>
-              <span className="text-xl font-extrabold text-white tracking-wide">My smart</span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">ERP</span>
+              <span className="text-xl font-extrabold text-white light:text-slate-900 tracking-wide">KEY</span>
+              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">books</span>
             </div>
             <div className="h-6 w-[1px] bg-slate-800"></div>
-            <div className="flex items-center gap-2 text-brand-lime font-bold">
+            <div className="flex items-center gap-2 text-brand-lime light:text-lime-700 font-bold">
               <Building2 className="w-5 h-5" />
               <span>{activeCompany?.name}</span>
             </div>
@@ -654,7 +626,7 @@ export default function SettingsPage() {
               <select
                 value={currency}
                 onChange={(e) => handleCurrencyChange(e.target.value)}
-                className="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-300 outline-none cursor-pointer hover:border-brand-lime transition duration-200"
+                className="px-3 py-1.5 bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 rounded-xl text-xs font-bold text-slate-300 light:text-slate-700 outline-none cursor-pointer hover:border-brand-lime transition duration-200"
                 title="Select Preferred Currency"
               >
                 <option value="$">$ (USD)</option>
@@ -668,13 +640,13 @@ export default function SettingsPage() {
             {/* Dark/Light mode toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-brand-lime transition duration-200"
+              className="p-2 rounded-xl bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 transition duration-200"
               title="Toggle Dark/Light Mode"
             >
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
 
-            <span className="text-xs font-mono bg-slate-900 border border-slate-800 px-3 py-1 rounded text-slate-400">
+            <span className="text-xs font-mono bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 px-3 py-1 rounded text-slate-400 light:text-slate-600">
               Settings Panel
             </span>
           </div>
@@ -684,11 +656,11 @@ export default function SettingsPage() {
       {/* Main Grid Layout */}
       <main className="flex-1 max-w-[1450px] mx-auto px-6 py-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Tab Selector - 3 span */}
-        <section className="lg:col-span-3 rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-5 shadow-2xl backdrop-blur-xl space-y-4">
-          <div className="border-b border-slate-900 pb-3 flex items-center justify-between">
-            <h2 className="text-xs font-black uppercase tracking-widest text-brand-lime flex items-center gap-2">
+        <section className="lg:col-span-3 rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl space-y-4">
+          <div className="border-b border-slate-900 light:border-slate-200 pb-3 flex items-center justify-between">
+            <h2 className="text-xs font-black uppercase tracking-widest text-brand-lime light:text-lime-700 flex items-center gap-2">
               <Settings className="w-4 h-4 animate-spin-slow" />
-              Administration
+              System Settings
             </h2>
           </div>
 
@@ -696,7 +668,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("company")}
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
-                activeTab === "company" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 hover:bg-slate-900/30 hover:text-white"
+                activeTab === "company" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900 light:bg-slate-200/80/30 hover:text-white light:text-slate-900 light:hover:text-black"
               }`}
             >
               <Building2 className="w-4 h-4" />
@@ -706,7 +678,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("users")}
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
-                activeTab === "users" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 hover:bg-slate-900/30 hover:text-white"
+                activeTab === "users" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900 light:bg-slate-200/80/30 hover:text-white light:text-slate-900 light:hover:text-black"
               }`}
             >
               <Users className="w-4 h-4" />
@@ -716,7 +688,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("invoice")}
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
-                activeTab === "invoice" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 hover:bg-slate-900/30 hover:text-white"
+                activeTab === "invoice" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900 light:bg-slate-200/80/30 hover:text-white light:text-slate-900 light:hover:text-black"
               }`}
             >
               <FileText className="w-4 h-4" />
@@ -726,27 +698,19 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("taxes")}
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
-                activeTab === "taxes" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 hover:bg-slate-900/30 hover:text-white"
+                activeTab === "taxes" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900 light:bg-slate-200/80/30 hover:text-white light:text-slate-900 light:hover:text-black"
               }`}
             >
               <Percent className="w-4 h-4" />
               Tax Settings
             </button>
 
-            <button
-              onClick={() => setActiveTab("notifications")}
-              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
-                activeTab === "notifications" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 hover:bg-slate-900/30 hover:text-white"
-              }`}
-            >
-              <Bell className="w-4 h-4" />
-              Notifications
-            </button>
+
 
             <button
               onClick={() => setActiveTab("security")}
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
-                activeTab === "security" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 hover:bg-slate-900/30 hover:text-white"
+                activeTab === "security" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900 light:bg-slate-200/80/30 hover:text-white light:text-slate-900 light:hover:text-black"
               }`}
             >
               <KeyRound className="w-4 h-4" />
@@ -756,7 +720,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("lock")}
               className={`w-full py-2.5 px-3 flex items-center justify-between rounded-xl text-left transition font-semibold ${
-                activeTab === "lock" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 hover:bg-slate-900/30 hover:text-white"
+                activeTab === "lock" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900 light:bg-slate-200/80/30 hover:text-white light:text-slate-900 light:hover:text-black"
               }`}
             >
               <span className="flex items-center gap-2.5">
@@ -773,18 +737,18 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("audit")}
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
-                activeTab === "audit" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 hover:bg-slate-900/30 hover:text-white"
+                activeTab === "audit" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900 light:bg-slate-200/80/30 hover:text-white light:text-slate-900 light:hover:text-black"
               }`}
             >
               <History className="w-4 h-4" />
               System Audit Log
             </button>
 
-            <div className="h-[1px] bg-slate-900/50 my-2"></div>
+            <div className="h-[1px] bg-slate-900 light:bg-slate-200/80/50 my-2"></div>
 
             <button
               onClick={handleExportCSV}
-              className="w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left text-slate-400 hover:bg-emerald-500/10 hover:text-emerald-400 transition font-semibold"
+              className="w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left text-slate-400 light:text-slate-600 hover:bg-emerald-500/10 hover:text-emerald-400 light:text-emerald-700 transition font-semibold"
             >
               <Download className="w-4 h-4" />
               Export Transactions
@@ -793,10 +757,10 @@ export default function SettingsPage() {
         </section>
 
         {/* Right Column: Tab View Panels - 9 span */}
-        <section className="lg:col-span-9 rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-6 shadow-2xl backdrop-blur-xl">
+        <section className="lg:col-span-9 rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-6 shadow-2xl backdrop-blur-xl">
           {loading ? (
-            <div className="py-32 flex flex-col items-center justify-center gap-3 text-slate-400">
-              <Loader2 className="w-8 h-8 animate-spin text-brand-lime" />
+            <div className="py-32 flex flex-col items-center justify-center gap-3 text-slate-400 light:text-slate-600">
+              <Loader2 className="w-8 h-8 animate-spin text-brand-lime light:text-lime-700" />
               <p className="text-xs">Loading SmartERP configuration datasets...</p>
             </div>
           ) : (
@@ -805,75 +769,75 @@ export default function SettingsPage() {
               {activeTab === "company" && (
                 <form onSubmit={handleSaveCompany} className="space-y-5">
                   <div>
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <Building2 className="w-5 h-5 text-brand-lime" />
+                    <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                      <Building2 className="w-5 h-5 text-brand-lime light:text-lime-700" />
                       Company Profile Settings
                     </h3>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Manage legal name, logo configuration, and organization contact profiles.</p>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Manage legal name, logo configuration, and organization contact profiles.</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Company Name</label>
+                      <label className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Company Name</label>
                       <input
                         type="text"
                         required
                         value={companyFields.name}
                         onChange={(e) => setCompanyFields({ ...companyFields, name: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs"
+                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-xl text-slate-200 light:text-slate-800 outline-none focus:border-brand-lime text-xs"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Logo URL / Image Link</label>
+                      <label className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Logo URL / Image Link</label>
                       <input
                         type="text"
                         placeholder="Logo image URL"
                         value={companyFields.logo_url}
                         onChange={(e) => setCompanyFields({ ...companyFields, logo_url: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs"
+                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-xl text-slate-200 light:text-slate-800 outline-none focus:border-brand-lime text-xs"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Contact Email</label>
+                      <label className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Contact Email</label>
                       <input
                         type="email"
                         value={companyFields.contact_email}
                         onChange={(e) => setCompanyFields({ ...companyFields, contact_email: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs"
+                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-xl text-slate-200 light:text-slate-800 outline-none focus:border-brand-lime text-xs"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Contact Phone</label>
+                      <label className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Contact Phone</label>
                       <input
                         type="text"
                         value={companyFields.contact_phone}
                         onChange={(e) => setCompanyFields({ ...companyFields, contact_phone: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs"
+                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-xl text-slate-200 light:text-slate-800 outline-none focus:border-brand-lime text-xs"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Currency Symbol</label>
+                      <label className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Currency Symbol</label>
                       <input
                         type="text"
                         required
                         maxLength={5}
                         value={companyFields.currency}
                         onChange={(e) => setCompanyFields({ ...companyFields, currency: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs"
+                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-xl text-slate-200 light:text-slate-800 outline-none focus:border-brand-lime text-xs"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Mailing Address</label>
+                      <label className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Mailing Address</label>
                       <textarea
                         value={companyFields.address}
                         onChange={(e) => setCompanyFields({ ...companyFields, address: e.target.value })}
                         rows={2}
-                        className="w-full px-4 py-2 bg-brand-navy-dark border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs resize-none"
+                        className="w-full px-4 py-2 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-xl text-slate-200 light:text-slate-800 outline-none focus:border-brand-lime text-xs resize-none"
                       />
                     </div>
                   </div>
@@ -893,33 +857,33 @@ export default function SettingsPage() {
               {activeTab === "users" && (
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <Users className="w-5 h-5 text-brand-lime" />
+                    <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                      <Users className="w-5 h-5 text-brand-lime light:text-lime-700" />
                       User Authorization Management
                     </h3>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Invite team members to collaborate and edit ledger states with specific roles.</p>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Invite team members to collaborate and edit ledger states with specific roles.</p>
                   </div>
 
                   {/* Invite Form */}
-                  <form onSubmit={handleInviteUser} className="p-4 bg-brand-navy-dark border border-slate-900 rounded-2xl flex flex-col md:flex-row md:items-end gap-3">
+                  <form onSubmit={handleInviteUser} className="p-4 bg-brand-navy-dark border border-slate-900 light:border-slate-200 rounded-2xl flex flex-col md:flex-row md:items-end gap-3">
                     <div className="flex-1 space-y-1">
-                      <label className="text-[9px] text-slate-400 uppercase font-black tracking-wider">Associate User by Registered Email</label>
+                      <label className="text-[9px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Associate User by Registered Email</label>
                       <input
                         type="email"
                         required
                         placeholder="Email address"
                         value={inviteEmail}
                         onChange={(e) => setInviteEmail(e.target.value)}
-                        className="w-full px-3 py-2 bg-brand-navy-light/40 border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs font-semibold"
+                        className="w-full px-3 py-2 bg-brand-navy-light/40 border border-slate-800 light:border-slate-200 rounded-xl text-slate-200 light:text-slate-800 outline-none focus:border-brand-lime text-xs font-semibold"
                       />
                     </div>
 
                     <div className="w-full md:w-48 space-y-1">
-                      <label className="text-[9px] text-slate-400 uppercase font-black tracking-wider">Access Role</label>
+                      <label className="text-[9px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Access Role</label>
                       <select
                         value={inviteRole}
                         onChange={(e) => setInviteRole(e.target.value)}
-                        className="w-full px-3 py-2 bg-brand-navy-dark border border-slate-800 rounded-xl text-slate-300 outline-none focus:border-brand-lime text-xs font-bold"
+                        className="w-full px-3 py-2 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-xl text-slate-300 light:text-slate-700 outline-none focus:border-brand-lime text-xs font-bold"
                       >
                         <option value="admin">Administrator</option>
                         <option value="accountant">Accountant</option>
@@ -938,10 +902,10 @@ export default function SettingsPage() {
                   </form>
 
                   {/* Users List Grid */}
-                  <div className="overflow-hidden border border-slate-900 rounded-2xl bg-brand-navy-dark/10">
+                  <div className="overflow-hidden border border-slate-900 light:border-slate-200 rounded-2xl bg-brand-navy-dark/10">
                     <table className="w-full text-left border-collapse text-xs">
                       <thead>
-                        <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[9px]">
+                        <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
                           <th className="py-2.5 px-4">Name</th>
                           <th className="py-2.5 px-4">Email</th>
                           <th className="py-2.5 px-4">Company Role</th>
@@ -951,17 +915,17 @@ export default function SettingsPage() {
                       </thead>
                       <tbody>
                         {users.map((item) => (
-                          <tr key={item.id} className="border-b border-slate-900/30 hover:bg-slate-900/10 text-slate-300">
-                            <td className="py-3 px-4 font-bold text-white">{item.name}</td>
-                            <td className="py-3 px-4 font-mono text-slate-500">{item.email}</td>
+                          <tr key={item.id} className="border-b border-slate-900 light:border-slate-200/30 light:border-slate-150 hover:bg-slate-900 light:bg-slate-200/80/10 text-slate-300 light:text-slate-700">
+                            <td className="py-3 px-4 font-bold text-white light:text-slate-900">{item.name}</td>
+                            <td className="py-3 px-4 font-mono text-slate-500 light:text-slate-500">{item.email}</td>
                             <td className="py-3 px-4">
                               {item.role === 'owner' ? (
-                                <span className="text-[10px] px-2 py-0.5 bg-brand-lime/10 border border-brand-lime/20 text-brand-lime rounded font-black uppercase">Owner</span>
+                                <span className="text-[10px] px-2 py-0.5 bg-brand-lime/10 light:bg-lime-100/60 border border-brand-lime/20 text-brand-lime light:text-lime-700 rounded font-black uppercase">Owner</span>
                               ) : (
                                 <select
                                   value={item.role}
                                   onChange={(e) => handleUpdateRole(item.id, e.target.value)}
-                                  className="bg-brand-navy-dark border border-slate-800/80 rounded px-2 py-0.5 text-xs text-slate-300 font-bold outline-none"
+                                  className="bg-brand-navy-dark border border-slate-800 light:border-slate-200/80 rounded px-2 py-0.5 text-xs text-slate-300 light:text-slate-700 font-bold outline-none"
                                 >
                                   <option value="admin">Admin</option>
                                   <option value="accountant">Accountant</option>
@@ -971,7 +935,7 @@ export default function SettingsPage() {
                             </td>
                             <td className="py-3 px-4 text-center">
                               {item.role === 'owner' ? (
-                                <span className="text-[10px] text-brand-lime font-black">Active</span>
+                                <span className="text-[10px] text-brand-lime light:text-lime-700 font-black">Active</span>
                               ) : (
                                 <button
                                   onClick={() => handleToggleUserStatus(item.id, item.is_active)}
@@ -1000,43 +964,43 @@ export default function SettingsPage() {
               {activeTab === "invoice" && (
                 <form onSubmit={handleSaveInvoiceSettings} className="space-y-6">
                   <div>
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <FileText className="w-5 h-5 text-brand-lime" />
+                    <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                      <FileText className="w-5 h-5 text-brand-lime light:text-lime-700" />
                       Document & Invoice Layout Settings
                     </h3>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Control billing template designs, invoice numbering sequencing, and default rules.</p>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Control billing template designs, invoice numbering sequencing, and default rules.</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Invoice Auto-Numbering Prefix</label>
+                      <label className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Invoice Auto-Numbering Prefix</label>
                       <input
                         type="text"
                         required
                         value={invoiceFields.auto_numbering_prefix}
                         onChange={(e) => setInvoiceFields({ ...invoiceFields, auto_numbering_prefix: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs"
+                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-xl text-slate-200 light:text-slate-800 outline-none focus:border-brand-lime text-xs"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Starting Voucher Sequence Number</label>
+                      <label className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Starting Voucher Sequence Number</label>
                       <input
                         type="number"
                         required
                         min={1}
                         value={invoiceFields.auto_numbering_start}
                         onChange={(e) => setInvoiceFields({ ...invoiceFields, auto_numbering_start: parseInt(e.target.value, 10) })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs"
+                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-xl text-slate-200 light:text-slate-800 outline-none focus:border-brand-lime text-xs"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Default Payment Terms</label>
+                      <label className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Default Payment Terms</label>
                       <select
                         value={invoiceFields.default_payment_terms}
                         onChange={(e) => setInvoiceFields({ ...invoiceFields, default_payment_terms: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 rounded-xl text-slate-300 outline-none focus:border-brand-lime text-xs font-bold"
+                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-xl text-slate-300 light:text-slate-700 outline-none focus:border-brand-lime text-xs font-bold"
                       >
                         <option value="due_on_receipt">Due on Receipt</option>
                         <option value="net_15">Net 15 Days</option>
@@ -1046,11 +1010,11 @@ export default function SettingsPage() {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Invoice Style Template Preset</label>
+                      <label className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Invoice Style Template Preset</label>
                       <select
                         value={invoiceFields.template_preset}
                         onChange={(e) => setInvoiceFields({ ...invoiceFields, template_preset: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 rounded-xl text-slate-300 outline-none focus:border-brand-lime text-xs font-bold"
+                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-xl text-slate-300 light:text-slate-700 outline-none focus:border-brand-lime text-xs font-bold"
                       >
                         <option value="classic">Classic Clean Template</option>
                         <option value="modern">Modern Glassmorphic Template</option>
@@ -1074,29 +1038,29 @@ export default function SettingsPage() {
               {activeTab === "taxes" && (
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <Percent className="w-5 h-5 text-brand-lime" />
+                    <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                      <Percent className="w-5 h-5 text-brand-lime light:text-lime-700" />
                       Tax Rules & Rates Directory
                     </h3>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Register tax rates (like GST 18%, Service Tax) to apply to billing products.</p>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Register tax rates (like GST 18%, Service Tax) to apply to billing products.</p>
                   </div>
 
                   {/* Add Tax Form */}
-                  <form onSubmit={handleAddTaxRate} className="p-4 bg-brand-navy-dark border border-slate-900 rounded-2xl flex flex-wrap md:items-end gap-3">
+                  <form onSubmit={handleAddTaxRate} className="p-4 bg-brand-navy-dark border border-slate-900 light:border-slate-200 rounded-2xl flex flex-wrap md:items-end gap-3">
                     <div className="flex-1 min-w-[200px] space-y-1">
-                      <label className="text-[9px] text-slate-400 uppercase font-black tracking-wider">Tax Rule Name</label>
+                      <label className="text-[9px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Tax Rule Name</label>
                       <input
                         type="text"
                         required
                         placeholder="Tax name (e.g. GST)"
                         value={taxName}
                         onChange={(e) => setTaxName(e.target.value)}
-                        className="w-full px-3 py-2 bg-brand-navy-light/40 border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs font-semibold"
+                        className="w-full px-3 py-2 bg-brand-navy-light/40 border border-slate-800 light:border-slate-200 rounded-xl text-slate-200 light:text-slate-800 outline-none focus:border-brand-lime text-xs font-semibold"
                       />
                     </div>
 
                     <div className="w-full md:w-32 space-y-1">
-                      <label className="text-[9px] text-slate-400 uppercase font-black tracking-wider">Percentage (%)</label>
+                      <label className="text-[9px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Percentage (%)</label>
                       <input
                         type="number"
                         required
@@ -1104,7 +1068,7 @@ export default function SettingsPage() {
                         placeholder="Rate percentage"
                         value={taxPercent}
                         onChange={(e) => setTaxPercent(e.target.value)}
-                        className="w-full px-3 py-2 bg-brand-navy-light/40 border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs font-mono font-bold"
+                        className="w-full px-3 py-2 bg-brand-navy-light/40 border border-slate-800 light:border-slate-200 rounded-xl text-slate-200 light:text-slate-800 outline-none focus:border-brand-lime text-xs font-mono font-bold"
                       />
                     </div>
 
@@ -1116,7 +1080,7 @@ export default function SettingsPage() {
                         onChange={(e) => setTaxIsDefault(e.target.checked)}
                         className="rounded accent-brand-lime"
                       />
-                      <label htmlFor="taxIsDefault" className="text-xs text-slate-300 font-bold select-none cursor-pointer">Default rate</label>
+                      <label htmlFor="taxIsDefault" className="text-xs text-slate-300 light:text-slate-700 font-bold select-none cursor-pointer">Default rate</label>
                     </div>
 
                     <button
@@ -1132,19 +1096,19 @@ export default function SettingsPage() {
                   {/* Taxes Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {taxes.map((t) => (
-                      <div key={t.id} className="p-4 bg-brand-navy-dark border border-slate-900 rounded-2xl flex items-center justify-between shadow-lg">
+                      <div key={t.id} className="p-4 bg-brand-navy-dark border border-slate-900 light:border-slate-200 rounded-2xl flex items-center justify-between shadow-lg">
                         <div>
-                          <p className="text-xs font-extrabold text-white flex items-center gap-1.5">
+                          <p className="text-xs font-extrabold text-white light:text-slate-900 flex items-center gap-1.5">
                             {t.name}
                             {t.is_default && (
-                              <span className="text-[9px] bg-brand-lime/10 text-brand-lime px-1.5 py-0.2 rounded font-black border border-brand-lime/10">DEFAULT</span>
+                              <span className="text-[9px] bg-brand-lime/10 light:bg-lime-100/60 text-brand-lime light:text-lime-700 px-1.5 py-0.2 rounded font-black border border-brand-lime/10 light:border-lime-200">DEFAULT</span>
                             )}
                           </p>
-                          <p className="text-xl font-black text-slate-400 mt-1">{t.percentage}%</p>
+                          <p className="text-xl font-black text-slate-400 light:text-slate-600 mt-1">{t.percentage}%</p>
                         </div>
                         <button
                           onClick={() => handleDeleteTaxRate(t.id)}
-                          className="p-2 bg-slate-950/40 border border-slate-900 text-slate-400 hover:text-red-400 rounded-xl transition"
+                          className="p-2 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 border border-slate-900 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-red-400 rounded-xl transition"
                           title="Delete Tax Rate"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -1155,111 +1119,48 @@ export default function SettingsPage() {
                 </div>
               )}
 
-              {/* Tab 5: Notification Settings */}
-              {activeTab === "notifications" && (
-                <form onSubmit={handleSaveNotifications} className="space-y-6">
-                  <div>
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <Bell className="w-5 h-5 text-brand-lime" />
-                      Email & Trigger Notification Alerts
-                    </h3>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Toggle automated notifications dispatch on invoice operations.</p>
-                  </div>
-
-                  <div className="space-y-4 max-w-lg">
-                    <div className="flex items-center justify-between p-4 bg-brand-navy-dark border border-slate-900 rounded-2xl">
-                      <div>
-                        <p className="text-xs font-bold text-white">Invoice Sent Alert</p>
-                        <p className="text-[10px] text-slate-500 mt-0.5">Email customer copy automatically when generating GST tax invoice.</p>
-                      </div>
-                      <input
-                        type="checkbox"
-                        checked={notifyFields.invoice_sent}
-                        onChange={(e) => setNotifyFields({ ...notifyFields, invoice_sent: e.target.checked })}
-                        className="w-5 h-5 accent-brand-lime cursor-pointer"
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-brand-navy-dark border border-slate-900 rounded-2xl">
-                      <div>
-                        <p className="text-xs font-bold text-white">Payment Received Receipt</p>
-                        <p className="text-[10px] text-slate-500 mt-0.5">Dispatch receipt voucher copy once invoice status marks paid.</p>
-                      </div>
-                      <input
-                        type="checkbox"
-                        checked={notifyFields.payment_received}
-                        onChange={(e) => setNotifyFields({ ...notifyFields, payment_received: e.target.checked })}
-                        className="w-5 h-5 accent-brand-lime cursor-pointer"
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-brand-navy-dark border border-slate-900 rounded-2xl">
-                      <div>
-                        <p className="text-xs font-bold text-white">Overdue Reminder Alert</p>
-                        <p className="text-[10px] text-slate-500 mt-0.5">Email warning digest to customer when payment terms pass grace periods.</p>
-                      </div>
-                      <input
-                        type="checkbox"
-                        checked={notifyFields.overdue_reminder}
-                        onChange={(e) => setNotifyFields({ ...notifyFields, overdue_reminder: e.target.checked })}
-                        className="w-5 h-5 accent-brand-lime cursor-pointer"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="px-5 py-2.5 bg-brand-lime text-brand-navy-dark font-extrabold text-xs rounded-xl flex items-center gap-1.5 hover:bg-white transition"
-                  >
-                    {submitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                    Save Notification Toggles
-                  </button>
-                </form>
-              )}
-
               {/* Tab 6: Security Change Password */}
               {activeTab === "security" && (
                 <form onSubmit={handleChangePassword} className="space-y-6">
                   <div>
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <KeyRound className="w-5 h-5 text-brand-lime" />
+                    <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                      <KeyRound className="w-5 h-5 text-brand-lime light:text-lime-700" />
                       Session & Password Settings
                     </h3>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Modify account verification credentials to secure access logs.</p>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Modify account verification credentials to secure access logs.</p>
                   </div>
 
                   <div className="space-y-4 max-w-md">
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Current Password</label>
+                      <label className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Current Password</label>
                       <input
                         type="password"
                         required
                         value={passwordFields.old_password}
                         onChange={(e) => setPasswordFields({ ...passwordFields, old_password: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs font-bold"
+                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-xl text-slate-200 light:text-slate-800 outline-none focus:border-brand-lime text-xs font-bold"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-400 uppercase font-black tracking-wider">New Password</label>
+                      <label className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">New Password</label>
                       <input
                         type="password"
                         required
                         value={passwordFields.new_password}
                         onChange={(e) => setPasswordFields({ ...passwordFields, new_password: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs font-bold"
+                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-xl text-slate-200 light:text-slate-800 outline-none focus:border-brand-lime text-xs font-bold"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Confirm New Password</label>
+                      <label className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Confirm New Password</label>
                       <input
                         type="password"
                         required
                         value={passwordFields.confirm_password}
                         onChange={(e) => setPasswordFields({ ...passwordFields, confirm_password: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 rounded-xl text-slate-200 outline-none focus:border-brand-lime text-xs font-bold"
+                        className="w-full px-4 py-2.5 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-xl text-slate-200 light:text-slate-800 outline-none focus:border-brand-lime text-xs font-bold"
                       />
                     </div>
                   </div>
@@ -1279,14 +1180,14 @@ export default function SettingsPage() {
               {activeTab === "lock" && (
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <Lock className="w-5 h-5 text-brand-lime" />
+                    <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                      <Lock className="w-5 h-5 text-brand-lime light:text-lime-700" />
                       Single-User Concurrency Lock
                     </h3>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Enforces data consistency by restricting system writes to one user session at a time.</p>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Enforces data consistency by restricting system writes to one user session at a time.</p>
                   </div>
 
-                  <div className="p-6 bg-brand-navy-dark border border-slate-900 rounded-3xl flex flex-col md:flex-row items-center gap-6 shadow-xl">
+                  <div className="p-6 bg-brand-navy-dark border border-slate-900 light:border-slate-200 rounded-3xl flex flex-col md:flex-row items-center gap-6 shadow-xl">
                     <div className={`p-4 rounded-full border ${
                       lockStatus.locked
                         ? "bg-red-500/10 border-red-500/30 text-red-400"
@@ -1296,22 +1197,22 @@ export default function SettingsPage() {
                     </div>
 
                     <div className="flex-1 text-center md:text-left space-y-1.5">
-                      <p className="text-lg font-black text-white">
+                      <p className="text-lg font-black text-white light:text-slate-900">
                         {lockStatus.locked
                           ? `System is Locked by ${lockStatus.is_current_user ? "You" : lockStatus.user_name}`
                           : "System is Free to Edit"}
                       </p>
                       
                       {lockStatus.locked && (
-                        <div className="text-xs text-slate-400 space-y-0.5">
-                          <p>Holder Email: <span className="font-mono font-semibold text-slate-300">{lockStatus.user_email}</span></p>
-                          <p>Lock acquired: <span className="font-semibold text-slate-300">{new Date(lockStatus.locked_at).toLocaleString()}</span></p>
-                          <p>Lock Session Expiration: <span className="font-mono font-black text-brand-lime">{formatTime(lockCountdown)}</span></p>
+                        <div className="text-xs text-slate-400 light:text-slate-600 space-y-0.5">
+                          <p>Holder Email: <span className="font-mono font-semibold text-slate-300 light:text-slate-700">{lockStatus.user_email}</span></p>
+                          <p>Lock acquired: <span className="font-semibold text-slate-300 light:text-slate-700">{new Date(lockStatus.locked_at).toLocaleString()}</span></p>
+                          <p>Lock Session Expiration: <span className="font-mono font-black text-brand-lime light:text-lime-700">{formatTime(lockCountdown)}</span></p>
                         </div>
                       )}
 
                       {!lockStatus.locked && (
-                        <p className="text-xs text-slate-400">The concurrency mutex will automatically claim lock status for your session upon your next write operation (invoice creation, ledger edit, vouchers entry).</p>
+                        <p className="text-xs text-slate-400 light:text-slate-600">The concurrency mutex will automatically claim lock status for your session upon your next write operation (invoice creation, ledger edit, vouchers entry).</p>
                       )}
                     </div>
 
@@ -1319,7 +1220,7 @@ export default function SettingsPage() {
                       <button
                         onClick={handleForceReleaseLock}
                         disabled={submitting}
-                        className="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white font-extrabold text-xs rounded-xl transition"
+                        className="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white light:text-slate-900 light:text-slate-900 font-extrabold text-xs rounded-xl transition"
                       >
                         Force Release Lock
                       </button>
@@ -1332,17 +1233,17 @@ export default function SettingsPage() {
               {activeTab === "audit" && (
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <History className="w-5 h-5 text-brand-lime" />
+                    <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                      <History className="w-5 h-5 text-brand-lime light:text-lime-700" />
                       Security Audit & Activity Logs
                     </h3>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Verify double-entry transactions audit trail tracking who performed modifications, when.</p>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Verify double-entry transactions audit trail tracking who performed modifications, when.</p>
                   </div>
 
-                  <div className="overflow-hidden border border-slate-900 rounded-2xl bg-brand-navy-dark/10">
+                  <div className="overflow-hidden border border-slate-900 light:border-slate-200 rounded-2xl bg-brand-navy-dark/10">
                     <table className="w-full text-left border-collapse text-xs">
                       <thead>
-                        <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[9px]">
+                        <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
                           <th className="py-2.5 px-4">Operator</th>
                           <th className="py-2.5 px-4">Action Context</th>
                           <th className="py-2.5 px-4">Module Target</th>
@@ -1351,19 +1252,19 @@ export default function SettingsPage() {
                       </thead>
                       <tbody>
                         {auditLogs.map((log) => (
-                          <tr key={log.id} className="border-b border-slate-900/30 hover:bg-slate-900/10 text-slate-300">
+                          <tr key={log.id} className="border-b border-slate-900 light:border-slate-200/30 light:border-slate-150 hover:bg-slate-900 light:bg-slate-200/80/10 text-slate-300 light:text-slate-700">
                             <td className="py-3 px-4">
-                              <p className="font-bold text-white">{log.user_name || "System"}</p>
-                              <p className="text-[9px] font-mono text-slate-500">{log.user_email}</p>
+                              <p className="font-bold text-white light:text-slate-900">{log.user_name || "System"}</p>
+                              <p className="text-[9px] font-mono text-slate-500 light:text-slate-500">{log.user_email}</p>
                             </td>
-                            <td className="py-3 px-4 font-mono font-bold text-brand-lime text-[10px]">{log.action}</td>
-                            <td className="py-3 px-4 text-slate-400 font-semibold">{log.table_name.toUpperCase()}</td>
-                            <td className="py-3 px-4 text-slate-500 font-mono">{new Date(log.created_at).toLocaleString()}</td>
+                            <td className="py-3 px-4 font-mono font-bold text-brand-lime light:text-lime-700 text-[10px]">{log.action}</td>
+                            <td className="py-3 px-4 text-slate-400 light:text-slate-600 font-semibold">{log.table_name.toUpperCase()}</td>
+                            <td className="py-3 px-4 text-slate-500 light:text-slate-500 font-mono">{new Date(log.created_at).toLocaleString()}</td>
                           </tr>
                         ))}
                         {auditLogs.length === 0 && (
                           <tr>
-                            <td colSpan={4} className="py-12 text-center text-slate-500 text-xs">No audit events recorded.</td>
+                            <td colSpan={4} className="py-12 text-center text-slate-500 light:text-slate-500 text-xs">No audit events recorded.</td>
                           </tr>
                         )}
                       </tbody>
@@ -1380,11 +1281,11 @@ export default function SettingsPage() {
                           }
                         }}
                         disabled={auditPage === 1}
-                        className="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl hover:text-white disabled:opacity-40"
+                        className="px-3 py-1.5 bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 rounded-xl hover:text-white light:text-slate-900 light:hover:text-black disabled:opacity-40"
                       >
                         Previous
                       </button>
-                      <span className="text-slate-400">Page {auditPage} of {auditTotalPages}</span>
+                      <span className="text-slate-400 light:text-slate-600">Page {auditPage} of {auditTotalPages}</span>
                       <button
                         onClick={() => {
                           if (auditPage < auditTotalPages) {
@@ -1392,7 +1293,7 @@ export default function SettingsPage() {
                           }
                         }}
                         disabled={auditPage === auditTotalPages}
-                        className="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl hover:text-white disabled:opacity-40"
+                        className="px-3 py-1.5 bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 rounded-xl hover:text-white light:text-slate-900 light:hover:text-black disabled:opacity-40"
                       >
                         Next
                       </button>
@@ -1408,8 +1309,8 @@ export default function SettingsPage() {
       {/* Floating Toast Notification Wrapper */}
       <div className="fixed bottom-6 left-6 z-50 flex flex-col gap-2">
         {toasts.map((t) => (
-          <div key={t.id} className="px-4 py-3 bg-brand-navy-light border border-slate-850 text-slate-200 font-bold rounded-2xl shadow-2xl flex items-center gap-2 border-l-4 border-l-brand-lime text-xs animate-fade-in-up">
-            <ShieldCheck className="w-4 h-4 text-brand-lime" />
+          <div key={t.id} className="px-4 py-3 bg-brand-navy-light border border-slate-850 text-slate-200 light:text-slate-800 font-bold rounded-2xl shadow-2xl flex items-center gap-2 border-l-4 border-l-brand-lime text-xs animate-fade-in-up">
+            <ShieldCheck className="w-4 h-4 text-brand-lime light:text-lime-700" />
             {t.text}
           </div>
         ))}

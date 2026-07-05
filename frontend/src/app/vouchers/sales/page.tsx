@@ -393,24 +393,24 @@ export default function CreateSalesVoucherPage() {
           <div className="flex items-center gap-6">
             <button
               onClick={() => router.push("/dashboard")}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-brand-lime hover:border-brand-lime/40 transition duration-200"
+              className="p-2 rounded-xl bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 hover:border-brand-lime/40 transition duration-200"
               title="Return to Dashboard (ESC)"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/dashboard")}>
-              <span className="text-xl font-extrabold text-white tracking-wide">My smart</span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">ERP</span>
+              <span className="text-xl font-extrabold text-white light:text-slate-900 tracking-wide">KEY</span>
+              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">books</span>
             </div>
             <div className="h-6 w-[1px] bg-slate-800"></div>
-            <div className="flex items-center gap-2 text-brand-lime font-bold">
+            <div className="flex items-center gap-2 text-brand-lime light:text-lime-700 font-bold">
               <Building2 className="w-5 h-5" />
               <span>{company?.name}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-6">
-            <span className="text-xs font-mono bg-slate-900 border border-slate-800 px-3 py-1 rounded text-slate-400">
+            <span className="text-xs font-mono bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 px-3 py-1 rounded text-slate-400 light:text-slate-600">
               Esc to Exit
             </span>
           </div>
@@ -420,14 +420,14 @@ export default function CreateSalesVoucherPage() {
       {/* Main Form content */}
       <main className="flex-1 max-w-[1450px] mx-auto px-6 py-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Form Editors - 9 span */}
-        <section className="lg:col-span-9 rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-6 shadow-2xl backdrop-blur-xl space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-900 pb-4">
+        <section className="lg:col-span-9 rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-6 shadow-2xl backdrop-blur-xl space-y-6">
+          <div className="flex items-center justify-between border-b border-slate-900 light:border-slate-200 pb-4">
             <div>
-              <h1 className="text-2xl font-black text-white flex items-center gap-2">
-                <FileText className="w-6 h-6 text-brand-lime" />
+              <h1 className="text-2xl font-black text-white light:text-slate-900 flex items-center gap-2">
+                <FileText className="w-6 h-6 text-brand-lime light:text-lime-700" />
                 Sales Voucher Creation
               </h1>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-400 light:text-slate-600 mt-1">
                 Record customer billing transactions, automatically adjust stock levels, and post ledger double-entries.
               </p>
             </div>
@@ -441,8 +441,8 @@ export default function CreateSalesVoucherPage() {
           )}
 
           {loading ? (
-            <div className="py-24 flex flex-col items-center justify-center gap-3 text-slate-400">
-              <Loader2 className="w-8 h-8 animate-spin text-brand-lime" />
+            <div className="py-24 flex flex-col items-center justify-center gap-3 text-slate-400 light:text-slate-600">
+              <Loader2 className="w-8 h-8 animate-spin text-brand-lime light:text-lime-700" />
               <p className="text-xs font-medium">Loading master directories...</p>
             </div>
           ) : (
@@ -451,34 +451,34 @@ export default function CreateSalesVoucherPage() {
               {/* Header Fields */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Voucher Date *</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Voucher Date *</label>
                   <input
                     type="date"
                     required
                     value={voucherDate}
                     onChange={(e) => setVoucherDate(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-brand-navy-dark/60 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime font-mono"
+                    className="w-full px-4 py-2.5 bg-brand-navy-dark/60 border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime font-mono"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Customer Ref / Purchase Order #</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Customer Ref / Purchase Order #</label>
                   <input
                     type="text"
                     value={reference}
                     onChange={(e) => setReference(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-brand-navy-dark/60 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime"
+                    className="w-full px-4 py-2.5 bg-brand-navy-dark/60 border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime"
                     placeholder="e.g. PO-RET-442"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Party Account (Debit) *</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Party Account (Debit) *</label>
                   <select
                     required
                     value={partyLedgerId}
                     onChange={(e) => setPartyLedgerId(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-brand-navy-dark/60 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime cursor-pointer"
+                    className="w-full px-4 py-2.5 bg-brand-navy-dark/60 border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime cursor-pointer"
                   >
                     <option value="">Select Customer / Cash A/c</option>
                     {filteredPartyLedgers.map(l => (
@@ -488,12 +488,12 @@ export default function CreateSalesVoucherPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Sales Ledger (Credit) *</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Sales Ledger (Credit) *</label>
                   <select
                     required
                     value={salesLedgerId}
                     onChange={(e) => setSalesLedgerId(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-brand-navy-dark/60 border border-slate-850 rounded-xl text-white outline-none focus:border-brand-lime cursor-pointer"
+                    className="w-full px-4 py-2.5 bg-brand-navy-dark/60 border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime cursor-pointer"
                   >
                     <option value="">Select Sales Income A/c</option>
                     {filteredSalesLedgers.map(l => (
@@ -505,24 +505,24 @@ export default function CreateSalesVoucherPage() {
 
               {/* Items Table Section */}
               <div className="space-y-3.5 pt-4">
-                <div className="flex items-center justify-between border-b border-slate-900 pb-2">
-                  <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
+                <div className="flex items-center justify-between border-b border-slate-900 light:border-slate-200 pb-2">
+                  <h3 className="text-sm font-bold text-white light:text-slate-900 flex items-center gap-1.5">
                     Stock Items Sold
                   </h3>
                   <button
                     type="button"
                     onClick={addItemRow}
-                    className="flex items-center gap-1 px-3 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg border border-slate-800 text-[10px]"
+                    className="flex items-center gap-1 px-3 py-1 bg-slate-900 light:bg-slate-200/80 hover:bg-slate-800 text-slate-300 light:text-slate-700 rounded-lg border border-slate-800 light:border-slate-200 text-[10px]"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     Add Item Row (Alt+A)
                   </button>
                 </div>
 
-                <div className="overflow-x-auto border border-slate-900 rounded-xl bg-brand-navy-dark/20">
+                <div className="overflow-x-auto border border-slate-900 light:border-slate-200 rounded-xl bg-brand-navy-dark/20 light:bg-white">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[10px]">
+                      <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[10px]">
                         <th className="py-2.5 px-4 w-12">#</th>
                         <th className="py-2.5 px-4">Select Stock Item</th>
                         <th className="py-2.5 px-4 w-28 text-right">Quantity</th>
@@ -536,13 +536,13 @@ export default function CreateSalesVoucherPage() {
                         const matched = stockItems.find(item => item.id === row.stock_item_id);
                         const isOverStock = matched && row.quantity > (Number(matched.quantity) || 0);
                         return (
-                          <tr key={idx} className="border-b border-slate-900/40">
-                            <td className="py-2 px-4 text-slate-500 font-mono">{idx + 1}</td>
+                          <tr key={idx} className="border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+                            <td className="py-2 px-4 text-slate-500 light:text-slate-500 font-mono">{idx + 1}</td>
                             <td className="py-2 px-2">
                               <select
                                 value={row.stock_item_id}
                                 onChange={(e) => handleItemRowChange(idx, "stock_item_id", e.target.value)}
-                                className="w-full px-3 py-2 bg-brand-navy-light/10 border border-slate-850 rounded-lg text-white outline-none focus:border-brand-lime"
+                                className="w-full px-3 py-2 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-lg text-white light:text-slate-900 outline-none focus:border-brand-lime"
                               >
                                 <option value="">Select Item</option>
                                 {stockItems.map(item => (
@@ -552,7 +552,7 @@ export default function CreateSalesVoucherPage() {
                                 ))}
                               </select>
                               {matched && (
-                                <p className={`text-[10px] mt-1 italic font-semibold ${isOverStock ? "text-red-400" : "text-slate-500"}`}>
+                                <p className={`text-[10px] mt-1 italic font-semibold ${isOverStock ? "text-red-400" : "text-slate-500 light:text-slate-500"}`}>
                                   Available warehouse balance: {matched.quantity} {matched.unit_symbol || "PCS"}
                                 </p>
                               )}
@@ -563,10 +563,10 @@ export default function CreateSalesVoucherPage() {
                                 min="1"
                                 value={row.quantity}
                                 onChange={(e) => handleItemRowChange(idx, "quantity", e.target.value)}
-                                className={`w-full px-3 py-2 border rounded-lg text-white text-right font-mono outline-none ${
+                                className={`w-full px-3 py-2 border rounded-lg text-white light:text-slate-900 text-right font-mono outline-none ${
                                   isOverStock 
                                     ? "bg-red-500/10 border-red-500/30 text-red-300 focus:border-red-400" 
-                                    : "bg-brand-navy-light/10 border-slate-850 focus:border-brand-lime"
+                                    : "bg-brand-navy-light/10 light:bg-white border-slate-850 focus:border-brand-lime"
                                 }`}
                               />
                             </td>
@@ -577,17 +577,17 @@ export default function CreateSalesVoucherPage() {
                                 min="0"
                                 value={row.rate}
                                 onChange={(e) => handleItemRowChange(idx, "rate", e.target.value)}
-                                className="w-full px-3 py-2 bg-brand-navy-light/10 border border-slate-850 rounded-lg text-white text-right font-mono"
+                                className="w-full px-3 py-2 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-lg text-white light:text-slate-900 text-right font-mono"
                               />
                             </td>
-                            <td className="py-2 px-4 text-right font-mono text-slate-300">
+                            <td className="py-2 px-4 text-right font-mono text-slate-300 light:text-slate-700">
                               {company?.currency || "$"}{row.amount.toFixed(2)}
                             </td>
                             <td className="py-2 px-2 text-center">
                               <button
                                 type="button"
                                 onClick={() => removeItemRow(idx)}
-                                className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-slate-900 rounded"
+                                className="p-1.5 text-slate-500 light:text-slate-500 hover:text-red-400 hover:bg-slate-900 light:bg-slate-200/80 rounded"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
@@ -602,15 +602,15 @@ export default function CreateSalesVoucherPage() {
 
               {/* Tax Ledgers Section */}
               <div className="space-y-3.5 pt-4">
-                <div className="flex items-center justify-between border-b border-slate-900 pb-2">
-                  <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
+                <div className="flex items-center justify-between border-b border-slate-900 light:border-slate-200 pb-2">
+                  <h3 className="text-sm font-bold text-white light:text-slate-900 flex items-center gap-1.5">
                     GST Taxes / Additional Charges
                   </h3>
                   <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={handleAutoCalculateTax}
-                      className="flex items-center gap-1 px-3 py-1 bg-brand-lime/10 border border-brand-lime/30 text-brand-lime hover:bg-brand-lime hover:text-brand-navy-dark font-extrabold rounded-lg text-[10px] transition"
+                      className="flex items-center gap-1 px-3 py-1 bg-brand-lime/10 light:bg-lime-100/60 border border-brand-lime/30 text-brand-lime light:text-lime-700 hover:bg-brand-lime hover:text-brand-navy-dark font-extrabold rounded-lg text-[10px] transition"
                     >
                       <Calculator className="w-3.5 h-3.5" />
                       Auto-Calculate GST
@@ -618,7 +618,7 @@ export default function CreateSalesVoucherPage() {
                     <button
                       type="button"
                       onClick={addTaxRow}
-                      className="flex items-center gap-1 px-3 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg border border-slate-800 text-[10px]"
+                      className="flex items-center gap-1 px-3 py-1 bg-slate-900 light:bg-slate-200/80 hover:bg-slate-800 text-slate-300 light:text-slate-700 rounded-lg border border-slate-800 light:border-slate-200 text-[10px]"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       Add Tax Row (Alt+T)
@@ -626,10 +626,10 @@ export default function CreateSalesVoucherPage() {
                   </div>
                 </div>
 
-                <div className="overflow-x-auto border border-slate-900 rounded-xl bg-brand-navy-dark/20">
+                <div className="overflow-x-auto border border-slate-900 light:border-slate-200 rounded-xl bg-brand-navy-dark/20 light:bg-white">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[10px]">
+                      <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[10px]">
                         <th className="py-2.5 px-4 w-12">#</th>
                         <th className="py-2.5 px-4">Select Tax Account Ledger</th>
                         <th className="py-2.5 px-4 w-48 text-right">Credit Amount ({company?.currency || "$"})</th>
@@ -638,13 +638,13 @@ export default function CreateSalesVoucherPage() {
                     </thead>
                     <tbody>
                       {taxRows.map((row, idx) => (
-                        <tr key={idx} className="border-b border-slate-900/40">
-                          <td className="py-2 px-4 text-slate-500 font-mono">{idx + 1}</td>
+                        <tr key={idx} className="border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+                          <td className="py-2 px-4 text-slate-500 light:text-slate-500 font-mono">{idx + 1}</td>
                           <td className="py-2 px-2">
                             <select
                               value={row.ledger_id}
                               onChange={(e) => handleTaxRowChange(idx, "ledger_id", e.target.value)}
-                              className="w-full px-3 py-2 bg-brand-navy-light/10 border border-slate-850 rounded-lg text-white outline-none focus:border-brand-lime"
+                              className="w-full px-3 py-2 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-lg text-white light:text-slate-900 outline-none focus:border-brand-lime"
                             >
                               <option value="">Select Ledger</option>
                               {ledgers.map(l => (
@@ -659,14 +659,14 @@ export default function CreateSalesVoucherPage() {
                               min="0"
                               value={row.amount}
                               onChange={(e) => handleTaxRowChange(idx, "amount", e.target.value)}
-                              className="w-full px-3 py-2 bg-brand-navy-light/10 border border-slate-850 rounded-lg text-white text-right font-mono"
+                              className="w-full px-3 py-2 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-lg text-white light:text-slate-900 text-right font-mono"
                             />
                           </td>
                           <td className="py-2 px-12 text-center">
                             <button
                               type="button"
                               onClick={() => removeTaxRow(idx)}
-                              className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-slate-900 rounded"
+                              className="p-1.5 text-slate-500 light:text-slate-500 hover:text-red-400 hover:bg-slate-900 light:bg-slate-200/80 rounded"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -680,22 +680,22 @@ export default function CreateSalesVoucherPage() {
 
               {/* Narration */}
               <div className="space-y-1.5 pt-4">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Narration / Remarks</label>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">Narration / Remarks</label>
                 <textarea
                   value={narration}
                   onChange={(e) => setNarration(e.target.value)}
-                  className="w-full px-4 py-3 bg-brand-navy-dark/60 border border-slate-850 rounded-2xl text-white outline-none focus:border-brand-lime"
+                  className="w-full px-4 py-3 bg-brand-navy-dark/60 border border-slate-850 rounded-2xl text-white light:text-slate-900 outline-none focus:border-brand-lime"
                   rows={2}
                   placeholder="Enter remarks or details about this sale..."
                 />
               </div>
 
               {/* Action buttons */}
-              <div className="flex justify-end gap-3.5 border-t border-slate-900 pt-5">
+              <div className="flex justify-end gap-3.5 border-t border-slate-900 light:border-slate-200 pt-5">
                 <button
                   type="button"
                   onClick={() => router.push("/dashboard")}
-                  className="px-5 py-2.5 rounded-xl border border-slate-800 text-slate-400 hover:text-white"
+                  className="px-5 py-2.5 rounded-xl border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
                 >
                   Cancel
                 </button>
@@ -703,7 +703,7 @@ export default function CreateSalesVoucherPage() {
                   type="button"
                   onClick={submitVoucher}
                   disabled={submitting || hasStockAlert}
-                  className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold text-brand-navy-dark bg-brand-lime hover:bg-white disabled:bg-slate-800 disabled:text-slate-500 transition shadow-lg shadow-brand-lime/10"
+                  className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold text-brand-navy-dark bg-brand-lime hover:bg-white disabled:bg-slate-800 disabled:text-slate-500 light:text-slate-500 transition shadow-lg shadow-brand-lime/10"
                 >
                   {submitting ? (
                     <>
@@ -726,32 +726,32 @@ export default function CreateSalesVoucherPage() {
         {/* Right Column: Double Entry Preview - 3 span */}
         <section className="lg:col-span-3 space-y-6">
           {/* Double entry preview */}
-          <div className="rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-5 shadow-2xl backdrop-blur-xl space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-widest text-brand-lime flex items-center gap-1.5 border-b border-slate-900 pb-2">
+          <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl space-y-4">
+            <h3 className="text-xs font-black uppercase tracking-widest text-brand-lime light:text-lime-700 flex items-center gap-1.5 border-b border-slate-900 light:border-slate-200 pb-2">
               <CheckCircle2 className="w-4 h-4" />
               Double-Entry Preview
             </h3>
 
             <div className="space-y-3 pt-1 text-xs">
-              <div className="flex justify-between items-center border-b border-slate-900/40 pb-1.5">
-                <span className="text-slate-400 font-bold">Party Debit:</span>
-                <span className="font-mono font-bold text-white">{company?.currency || "$"}{totals.grandTotal.toFixed(2)}</span>
+              <div className="flex justify-between items-center border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 pb-1.5">
+                <span className="text-slate-400 light:text-slate-600 font-bold">Party Debit:</span>
+                <span className="font-mono font-bold text-white light:text-slate-900">{company?.currency || "$"}{totals.grandTotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between items-center border-b border-slate-900/40 pb-1.5">
-                <span className="text-slate-400 font-bold">Sales Credit:</span>
-                <span className="font-mono font-bold text-white">{company?.currency || "$"}{totals.itemsTotal.toFixed(2)}</span>
+              <div className="flex justify-between items-center border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 pb-1.5">
+                <span className="text-slate-400 light:text-slate-600 font-bold">Sales Credit:</span>
+                <span className="font-mono font-bold text-white light:text-slate-900">{company?.currency || "$"}{totals.itemsTotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between items-center border-b border-slate-900/40 pb-1.5">
-                <span className="text-slate-400 font-bold">Taxes Credit:</span>
-                <span className="font-mono font-bold text-white">{company?.currency || "$"}{totals.taxesTotal.toFixed(2)}</span>
+              <div className="flex justify-between items-center border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 pb-1.5">
+                <span className="text-slate-400 light:text-slate-600 font-bold">Taxes Credit:</span>
+                <span className="font-mono font-bold text-white light:text-slate-900">{company?.currency || "$"}{totals.taxesTotal.toFixed(2)}</span>
               </div>
               
               <div className="pt-2 flex justify-between items-center">
-                <span className="text-[10px] uppercase font-black text-slate-500">Status</span>
+                <span className="text-[10px] uppercase font-black text-slate-500 light:text-slate-500">Status</span>
                 <span className={`px-2 py-0.5 border font-mono rounded text-[10px] uppercase font-black ${
                   hasStockAlert 
                     ? "bg-red-500/10 border-red-500/20 text-red-400" 
-                    : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+                    : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 light:text-emerald-700"
                 }`}>
                   {hasStockAlert ? "INSUFFICIENT STOCK" : "BALANCED"}
                 </span>
@@ -760,26 +760,26 @@ export default function CreateSalesVoucherPage() {
           </div>
 
           {/* Keyboard guides */}
-          <div className="rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-5 shadow-2xl backdrop-blur-xl">
-            <h3 className="text-xs font-black uppercase tracking-widest text-white flex items-center gap-1.5 border-b border-slate-900 pb-2">
+          <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl">
+            <h3 className="text-xs font-black uppercase tracking-widest text-white light:text-slate-900 flex items-center gap-1.5 border-b border-slate-900 light:border-slate-200 pb-2">
               Keyboard Guides
             </h3>
-            <div className="space-y-2.5 pt-3 text-[10px] font-mono text-slate-400">
+            <div className="space-y-2.5 pt-3 text-[10px] font-mono text-slate-400 light:text-slate-600">
               <div className="flex justify-between items-center">
                 <span>Add Item Row</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 border border-slate-800 text-brand-lime rounded">Alt + A</span>
+                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-brand-lime light:text-lime-700 rounded">Alt + A</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Add Tax Row</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 border border-slate-800 text-white rounded">Alt + T</span>
+                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">Alt + T</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Post Voucher</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 border border-slate-800 text-white rounded">Ctrl + Enter</span>
+                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">Ctrl + Enter</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Cancel / Exit</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 border border-slate-800 text-white rounded">ESC</span>
+                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">ESC</span>
               </div>
             </div>
           </div>
@@ -791,9 +791,9 @@ export default function CreateSalesVoucherPage() {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className="p-4 rounded-2xl bg-brand-navy-light/95 border border-slate-800 text-xs font-semibold text-white shadow-2xl backdrop-blur-md flex items-center gap-3 animate-fade-in-left pointer-events-auto"
+            className="p-4 rounded-2xl bg-brand-navy-light/95 border border-slate-800 light:border-slate-200 text-xs font-semibold text-white light:text-slate-900 shadow-2xl backdrop-blur-md flex items-center gap-3 animate-fade-in-left pointer-events-auto"
           >
-            <div className="p-1 bg-brand-lime/10 border border-brand-lime/20 text-brand-lime rounded-lg shrink-0">
+            <div className="p-1 bg-brand-lime/10 light:bg-lime-100/60 border border-brand-lime/20 text-brand-lime light:text-lime-700 rounded-lg shrink-0">
               <HelpCircle className="w-4 h-4" />
             </div>
             <span>{toast.text}</span>

@@ -136,24 +136,24 @@ export default function TrialBalanceReportPage() {
           <div className="flex items-center gap-6">
             <button
               onClick={() => router.push("/reports")}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-brand-lime hover:border-brand-lime/40 transition duration-200"
+              className="p-2 rounded-xl bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 hover:border-brand-lime/40 transition duration-200"
               title="Return to Reports Menu (ESC)"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/dashboard")}>
-              <span className="text-xl font-extrabold text-white tracking-wide">My smart</span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">ERP</span>
+              <span className="text-xl font-extrabold text-white light:text-slate-900 tracking-wide">KEY</span>
+              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">books</span>
             </div>
             <div className="h-6 w-[1px] bg-slate-800"></div>
-            <div className="flex items-center gap-2 text-brand-lime font-bold">
+            <div className="flex items-center gap-2 text-brand-lime light:text-lime-700 font-bold">
               <Building2 className="w-5 h-5" />
               <span>{company?.name}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-6">
-            <span className="text-xs font-mono bg-slate-900 border border-slate-800 px-3 py-1 rounded text-slate-400">
+            <span className="text-xs font-mono bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 px-3 py-1 rounded text-slate-400 light:text-slate-600">
               Esc to Back
             </span>
           </div>
@@ -162,33 +162,33 @@ export default function TrialBalanceReportPage() {
 
       {/* Main content grid */}
       <main className="flex-1 max-w-[1400px] mx-auto px-6 py-8 w-full space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900 light:border-slate-200 pb-4">
           <div>
-            <h1 className="text-2xl font-black text-white flex items-center gap-2">
-              <Scale className="w-6 h-6 text-brand-lime" />
+            <h1 className="text-2xl font-black text-white light:text-slate-900 flex items-center gap-2">
+              <Scale className="w-6 h-6 text-brand-lime light:text-lime-700" />
               Trial Balance Sheet
             </h1>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-400 light:text-slate-600 mt-1">
               Validates double-entry postings by auditing ledger debit and credit balances in real-time.
             </p>
           </div>
 
           {/* Date Picker Controls */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 bg-slate-950/40 border border-slate-900 px-3 py-1.5 rounded-xl text-xs font-semibold">
-              <Calendar className="w-4 h-4 text-slate-400" />
+            <div className="flex items-center gap-1.5 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 border border-slate-900 light:border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold">
+              <Calendar className="w-4 h-4 text-slate-400 light:text-slate-600" />
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="bg-transparent outline-none text-white font-mono"
+                className="bg-transparent outline-none text-white light:text-slate-900 font-mono"
               />
               <span className="text-slate-600">to</span>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="bg-transparent outline-none text-white font-mono"
+                className="bg-transparent outline-none text-white light:text-slate-900 font-mono"
               />
             </div>
             <button
@@ -204,7 +204,7 @@ export default function TrialBalanceReportPage() {
         {totals && (
           <div className={`p-4 rounded-2xl border text-xs font-semibold flex items-center justify-between ${
             isBalanced 
-              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 light:text-emerald-700"
               : "bg-red-500/10 border-red-500/20 text-red-400"
           }`}>
             <div className="flex items-center gap-2">
@@ -227,21 +227,21 @@ export default function TrialBalanceReportPage() {
         )}
 
         {/* Filters and List */}
-        <div className="rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-6 shadow-2xl backdrop-blur-xl space-y-6">
+        <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-6 shadow-2xl backdrop-blur-xl space-y-6">
           <div className="relative">
-            <Search className="absolute left-4 top-3.5 w-4 h-4 text-slate-500" />
+            <Search className="absolute left-4 top-3.5 w-4 h-4 text-slate-500 light:text-slate-500" />
             <input
               type="text"
               placeholder="Search ledger names or groups..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-brand-navy-dark/60 border border-slate-850 rounded-2xl text-slate-200 placeholder-slate-500 outline-none focus:border-brand-lime transition text-xs font-semibold"
+              className="w-full pl-11 pr-4 py-3 bg-brand-navy-dark/60 border border-slate-850 rounded-2xl text-slate-200 light:text-slate-800 placeholder-slate-500 outline-none focus:border-brand-lime transition text-xs font-semibold"
             />
           </div>
 
           {loading ? (
-            <div className="py-24 flex flex-col items-center justify-center gap-3 text-slate-400">
-              <Loader2 className="w-8 h-8 animate-spin text-brand-lime" />
+            <div className="py-24 flex flex-col items-center justify-center gap-3 text-slate-400 light:text-slate-600">
+              <Loader2 className="w-8 h-8 animate-spin text-brand-lime light:text-lime-700" />
               <p className="text-xs">Computing balances...</p>
             </div>
           ) : error ? (
@@ -249,17 +249,17 @@ export default function TrialBalanceReportPage() {
               <div className="inline-flex p-3 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
                 <AlertCircle className="w-6 h-6" />
               </div>
-              <p className="text-slate-300 text-sm">{error}</p>
+              <p className="text-slate-300 light:text-slate-700 text-sm">{error}</p>
             </div>
           ) : filteredRows.length === 0 ? (
-            <div className="py-24 border border-dashed border-slate-800 rounded-3xl text-center">
-              <p className="text-slate-400 text-xs">No active ledger balances found.</p>
+            <div className="py-24 border border-dashed border-slate-800 light:border-slate-200 rounded-3xl text-center">
+              <p className="text-slate-400 light:text-slate-600 text-xs">No active ledger balances found.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto border border-slate-900/50 rounded-2xl bg-brand-navy-dark/20">
+            <div className="overflow-x-auto border border-slate-900 light:border-slate-200/50 light:border-slate-200 rounded-2xl bg-brand-navy-dark/20 light:bg-white">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[10px]">
+                  <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[10px]">
                     <th className="py-3 px-4">Ledger Account</th>
                     <th className="py-3 px-4">Group Classification</th>
                     <th className="py-3 px-4 text-right">Opening Balance ({company?.currency || "$"})</th>
@@ -270,21 +270,21 @@ export default function TrialBalanceReportPage() {
                 </thead>
                 <tbody>
                   {filteredRows.map((row) => (
-                    <tr key={row.ledger_id} className="border-b border-slate-900/40 hover:bg-slate-900/10 text-slate-300">
-                      <td className="py-3 px-4 font-bold text-white">{row.ledger_name}</td>
-                      <td className="py-3 px-4 uppercase text-[10px] text-slate-500">{row.group_name}</td>
+                    <tr key={row.ledger_id} className="border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 hover:bg-slate-900 light:bg-slate-200/80/10 text-slate-300 light:text-slate-700">
+                      <td className="py-3 px-4 font-bold text-white light:text-slate-900">{row.ledger_name}</td>
+                      <td className="py-3 px-4 uppercase text-[10px] text-slate-500 light:text-slate-500">{row.group_name}</td>
                       <td className="py-3 px-4 text-right font-mono">
                         {row.opening_balance > 0 
                           ? `${row.opening_balance.toFixed(2)} ${row.opening_balance_type.toUpperCase()}`
                           : "0.00"}
                       </td>
-                      <td className="py-3 px-4 text-right font-mono text-slate-400">
+                      <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">
                         {row.debit_total > 0 ? row.debit_total.toFixed(2) : "0.00"}
                       </td>
-                      <td className="py-3 px-4 text-right font-mono text-slate-400">
+                      <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">
                         {row.credit_total > 0 ? row.credit_total.toFixed(2) : "0.00"}
                       </td>
-                      <td className="py-3 px-4 text-right font-mono font-bold text-white">
+                      <td className="py-3 px-4 text-right font-mono font-bold text-white light:text-slate-900">
                         {row.closing_balance > 0 
                           ? `${row.closing_balance.toFixed(2)} ${row.closing_balance_type.toUpperCase()}`
                           : "0.00"}
@@ -293,8 +293,8 @@ export default function TrialBalanceReportPage() {
                   ))}
                   {/* Totals row */}
                   {totals && (
-                    <tr className="bg-slate-950/60 font-black border-t-2 border-t-slate-800 text-white">
-                      <td className="py-4 px-4 uppercase text-[10px] tracking-wider text-brand-lime">Total Movements</td>
+                    <tr className="bg-slate-950 light:bg-slate-100/60 font-black border-t-2 border-t-slate-800 text-white light:text-slate-900">
+                      <td className="py-4 px-4 uppercase text-[10px] tracking-wider text-brand-lime light:text-lime-700">Total Movements</td>
                       <td className="py-4 px-4"></td>
                       <td className="py-4 px-4 font-mono text-right">
                         <div className="flex flex-col text-[10px] leading-tight">
@@ -302,13 +302,13 @@ export default function TrialBalanceReportPage() {
                           <span>Cr: {company?.currency || "$"}{totals.opening_credit.toFixed(2)}</span>
                         </div>
                       </td>
-                      <td className="py-4 px-4 text-right font-mono text-slate-300">
+                      <td className="py-4 px-4 text-right font-mono text-slate-300 light:text-slate-700">
                         {company?.currency || "$"}{totals.debit_movements.toFixed(2)}
                       </td>
-                      <td className="py-4 px-4 text-right font-mono text-slate-300">
+                      <td className="py-4 px-4 text-right font-mono text-slate-300 light:text-slate-700">
                         {company?.currency || "$"}{totals.credit_movements.toFixed(2)}
                       </td>
-                      <td className="py-4 px-4 text-right font-mono text-brand-lime">
+                      <td className="py-4 px-4 text-right font-mono text-brand-lime light:text-lime-700">
                         <div className="flex flex-col text-[10px] leading-tight">
                           <span>Dr: {company?.currency || "$"}{totals.closing_debit.toFixed(2)}</span>
                           <span>Cr: {company?.currency || "$"}{totals.closing_credit.toFixed(2)}</span>
@@ -328,9 +328,9 @@ export default function TrialBalanceReportPage() {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className="p-4 rounded-2xl bg-brand-navy-light/95 border border-slate-800 text-xs font-semibold text-white shadow-2xl backdrop-blur-md flex items-center gap-3 pointer-events-auto"
+            className="p-4 rounded-2xl bg-brand-navy-light/95 border border-slate-800 light:border-slate-200 text-xs font-semibold text-white light:text-slate-900 shadow-2xl backdrop-blur-md flex items-center gap-3 pointer-events-auto"
           >
-            <div className="p-1 bg-brand-lime/10 border border-brand-lime/20 text-brand-lime rounded-lg shrink-0">
+            <div className="p-1 bg-brand-lime/10 light:bg-lime-100/60 border border-brand-lime/20 text-brand-lime light:text-lime-700 rounded-lg shrink-0">
               <HelpCircle className="w-4 h-4" />
             </div>
             <span>{toast.text}</span>

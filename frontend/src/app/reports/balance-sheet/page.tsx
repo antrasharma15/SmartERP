@@ -111,24 +111,24 @@ export default function BalanceSheetReportPage() {
           <div className="flex items-center gap-6">
             <button
               onClick={() => router.push("/reports")}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-brand-lime hover:border-brand-lime/40 transition duration-200"
+              className="p-2 rounded-xl bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 hover:border-brand-lime/40 transition duration-200"
               title="Return to Reports Menu (ESC)"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/dashboard")}>
-              <span className="text-xl font-extrabold text-white tracking-wide">My smart</span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">ERP</span>
+              <span className="text-xl font-extrabold text-white light:text-slate-900 tracking-wide">KEY</span>
+              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">books</span>
             </div>
             <div className="h-6 w-[1px] bg-slate-800"></div>
-            <div className="flex items-center gap-2 text-brand-lime font-bold">
+            <div className="flex items-center gap-2 text-brand-lime light:text-lime-700 font-bold">
               <Building2 className="w-5 h-5" />
               <span>{company?.name}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-6">
-            <span className="text-xs font-mono bg-slate-900 border border-slate-800 px-3 py-1 rounded text-slate-400">
+            <span className="text-xs font-mono bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 px-3 py-1 rounded text-slate-400 light:text-slate-600">
               Esc to Back
             </span>
           </div>
@@ -137,33 +137,33 @@ export default function BalanceSheetReportPage() {
 
       {/* Main content grid */}
       <main className="flex-1 max-w-[1400px] mx-auto px-6 py-8 w-full space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900 light:border-slate-200 pb-4">
           <div>
-            <h1 className="text-2xl font-black text-white flex items-center gap-2">
-              <BarChart3 className="w-6 h-6 text-brand-lime" />
+            <h1 className="text-2xl font-black text-white light:text-slate-900 flex items-center gap-2">
+              <BarChart3 className="w-6 h-6 text-brand-lime light:text-lime-700" />
               Company Balance Sheet
             </h1>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-400 light:text-slate-600 mt-1">
               Displays structural assets, capital equity accounts, and payables at a specific point in time.
             </p>
           </div>
 
           {/* Date Picker Controls */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 bg-slate-950/40 border border-slate-900 px-3 py-1.5 rounded-xl text-xs font-semibold">
-              <Calendar className="w-4 h-4 text-slate-400" />
+            <div className="flex items-center gap-1.5 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 border border-slate-900 light:border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold">
+              <Calendar className="w-4 h-4 text-slate-400 light:text-slate-600" />
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="bg-transparent outline-none text-white font-mono"
+                className="bg-transparent outline-none text-white light:text-slate-900 font-mono"
               />
               <span className="text-slate-600">to</span>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="bg-transparent outline-none text-white font-mono"
+                className="bg-transparent outline-none text-white light:text-slate-900 font-mono"
               />
             </div>
             <button
@@ -179,7 +179,7 @@ export default function BalanceSheetReportPage() {
         {totals && (
           <div className={`p-4 rounded-2xl border text-xs font-semibold flex items-center justify-between ${
             holdsParity 
-              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 light:text-emerald-700"
               : "bg-red-500/10 border-red-500/20 text-red-400"
           }`}>
             <div className="flex items-center gap-2">
@@ -203,8 +203,8 @@ export default function BalanceSheetReportPage() {
 
         {/* Dual Columns view */}
         {loading ? (
-          <div className="py-24 flex flex-col items-center justify-center gap-3 text-slate-400">
-            <Loader2 className="w-8 h-8 animate-spin text-brand-lime" />
+          <div className="py-24 flex flex-col items-center justify-center gap-3 text-slate-400 light:text-slate-600">
+            <Loader2 className="w-8 h-8 animate-spin text-brand-lime light:text-lime-700" />
             <p className="text-xs">Reconciling statements...</p>
           </div>
         ) : error ? (
@@ -212,25 +212,25 @@ export default function BalanceSheetReportPage() {
             <div className="inline-flex p-3 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
               <AlertCircle className="w-6 h-6" />
             </div>
-            <p className="text-slate-300 text-sm">{error}</p>
+            <p className="text-slate-300 light:text-slate-700 text-sm">{error}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Left Column: Liabilities & Capital */}
-            <div className="rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-6 shadow-2xl backdrop-blur-xl flex flex-col justify-between space-y-4">
+            <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-6 shadow-2xl backdrop-blur-xl flex flex-col justify-between space-y-4">
               <div className="space-y-4">
-                <h3 className="text-xs font-black uppercase tracking-wider text-red-400 border-b border-slate-900 pb-2">
+                <h3 className="text-xs font-black uppercase tracking-wider text-red-400 border-b border-slate-900 light:border-slate-200 pb-2">
                   Liabilities, Equity & Capital Accounts
                 </h3>
                 {liabilityItems.length === 0 ? (
-                  <p className="text-slate-500 italic py-6 text-center text-xs">No active liability items.</p>
+                  <p className="text-slate-500 light:text-slate-500 italic py-6 text-center text-xs">No active liability items.</p>
                 ) : (
                   <div className="space-y-2.5">
                     {liabilityItems.map((item, idx) => (
-                      <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-900/40 text-xs">
-                        <span className="text-slate-300 font-bold">{item.name}</span>
-                        <span className="font-mono text-white font-semibold">
+                      <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 text-xs">
+                        <span className="text-slate-300 light:text-slate-700 font-bold">{item.name}</span>
+                        <span className="font-mono text-white light:text-slate-900 light:text-slate-800 font-semibold">
                           {item.amount < 0 ? `-${company?.currency || "$"}${Math.abs(item.amount).toFixed(2)}` : `${company?.currency || "$"}${item.amount.toFixed(2)}`}
                         </span>
                       </div>
@@ -238,34 +238,34 @@ export default function BalanceSheetReportPage() {
                   </div>
                 )}
               </div>
-              <div className="flex justify-between items-center bg-slate-950/40 p-4 border border-slate-900 rounded-xl">
-                <span className="text-[10px] text-slate-400 uppercase font-black">Total Liabilities & Equity</span>
-                <span className="font-mono font-black text-white">{company?.currency || "$"}{totals?.liabilities_total.toFixed(2)}</span>
+              <div className="flex justify-between items-center bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-xl">
+                <span className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black">Total Liabilities & Equity</span>
+                <span className="font-mono font-black text-white light:text-slate-900">{company?.currency || "$"}{totals?.liabilities_total.toFixed(2)}</span>
               </div>
             </div>
 
             {/* Right Column: Assets */}
-            <div className="rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-6 shadow-2xl backdrop-blur-xl flex flex-col justify-between space-y-4">
+            <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-6 shadow-2xl backdrop-blur-xl flex flex-col justify-between space-y-4">
               <div className="space-y-4">
-                <h3 className="text-xs font-black uppercase tracking-wider text-brand-lime border-b border-slate-900 pb-2">
+                <h3 className="text-xs font-black uppercase tracking-wider text-brand-lime light:text-lime-700 border-b border-slate-900 light:border-slate-200 pb-2">
                   Assets & Debit Values
                 </h3>
                 {assetItems.length === 0 ? (
-                  <p className="text-slate-500 italic py-6 text-center text-xs">No active asset records.</p>
+                  <p className="text-slate-500 light:text-slate-500 italic py-6 text-center text-xs">No active asset records.</p>
                 ) : (
                   <div className="space-y-2.5">
                     {assetItems.map((item, idx) => (
-                      <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-900/40 text-xs">
-                        <span className="text-slate-300 font-bold">{item.name}</span>
-                        <span className="font-mono text-white font-semibold">{company?.currency || "$"}{item.amount.toFixed(2)}</span>
+                      <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 text-xs">
+                        <span className="text-slate-300 light:text-slate-700 font-bold">{item.name}</span>
+                        <span className="font-mono text-white light:text-slate-900 light:text-slate-800 font-semibold">{company?.currency || "$"}{item.amount.toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-              <div className="flex justify-between items-center bg-slate-950/40 p-4 border border-slate-900 rounded-xl">
-                <span className="text-[10px] text-slate-400 uppercase font-black">Total Assets</span>
-                <span className="font-mono font-black text-white">{company?.currency || "$"}{totals?.assets_total.toFixed(2)}</span>
+              <div className="flex justify-between items-center bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-xl">
+                <span className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black">Total Assets</span>
+                <span className="font-mono font-black text-white light:text-slate-900">{company?.currency || "$"}{totals?.assets_total.toFixed(2)}</span>
               </div>
             </div>
 

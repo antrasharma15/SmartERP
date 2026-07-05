@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "My Smart ERP | Ultimate Business Accounting & Inventory Management",
+  title: "KEYbooks | Ultimate Business Accounting & Inventory Management",
   description: "Unify your accounting ledgers, purchase and sales vouchers, stock inventory levels, and real-time GST reports under a keyboard-first, Tally-inspired cloud interface.",
 };
 

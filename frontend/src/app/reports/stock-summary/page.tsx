@@ -224,24 +224,24 @@ export default function StockSummaryReportPage() {
                   router.push("/dashboard");
                 }
               }}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-brand-lime hover:border-brand-lime/40 transition duration-200"
+              className="p-2 rounded-xl bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 hover:border-brand-lime/40 transition duration-200"
               title="Back (ESC)"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/dashboard")}>
-              <span className="text-xl font-extrabold text-white tracking-wide">My smart</span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">ERP</span>
+              <span className="text-xl font-extrabold text-white light:text-slate-900 tracking-wide">KEY</span>
+              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">books</span>
             </div>
             <div className="h-6 w-[1px] bg-slate-800"></div>
-            <div className="flex items-center gap-2 text-brand-lime font-bold">
+            <div className="flex items-center gap-2 text-brand-lime light:text-lime-700 font-bold">
               <Building2 className="w-5 h-5" />
               <span>{company?.name}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-6">
-            <span className="text-xs font-mono bg-slate-900 border border-slate-800 px-3 py-1 rounded text-slate-400">
+            <span className="text-xs font-mono bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 px-3 py-1 rounded text-slate-400 light:text-slate-600">
               Esc to Exit / Go Back
             </span>
           </div>
@@ -249,51 +249,51 @@ export default function StockSummaryReportPage() {
       </header>
 
       {/* Toolbar / Filters pane */}
-      <section className="bg-brand-navy-mid border-b border-slate-900/60 py-4 px-6">
+      <section className="bg-brand-navy-mid light:bg-slate-100 border-b border-slate-900 light:border-slate-200/60 light:border-slate-200 py-4 px-6">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs font-semibold">
           <div className="flex flex-wrap items-center gap-4">
             {/* Date Range selectors */}
-            <div className="flex items-center gap-2 bg-slate-900/40 border border-slate-800 rounded-xl px-3 py-2">
-              <Calendar className="w-4 h-4 text-slate-400" />
+            <div className="flex items-center gap-2 bg-slate-900 light:bg-slate-200/80/40 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded-xl px-3 py-2">
+              <Calendar className="w-4 h-4 text-slate-400 light:text-slate-600" />
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="bg-transparent text-white outline-none font-mono"
+                className="bg-transparent text-white light:text-slate-900 outline-none font-mono"
               />
-              <span className="text-slate-500">to</span>
+              <span className="text-slate-500 light:text-slate-500">to</span>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="bg-transparent text-white outline-none font-mono"
+                className="bg-transparent text-white light:text-slate-900 outline-none font-mono"
               />
             </div>
 
             {/* Category Filter */}
-            <div className="flex items-center gap-2 bg-slate-900/40 border border-slate-800 rounded-xl px-3 py-2">
-              <Layers className="w-4 h-4 text-slate-400" />
+            <div className="flex items-center gap-2 bg-slate-900 light:bg-slate-200/80/40 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded-xl px-3 py-2">
+              <Layers className="w-4 h-4 text-slate-400 light:text-slate-600" />
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-transparent text-white outline-none cursor-pointer"
+                className="bg-transparent text-white light:text-slate-900 outline-none cursor-pointer"
               >
                 {categories.map((c) => (
-                  <option key={c} value={c} className="bg-slate-950 text-white">{c}</option>
+                  <option key={c} value={c} className="bg-slate-950 light:bg-slate-100 text-white light:text-slate-900">{c}</option>
                 ))}
               </select>
             </div>
 
             {/* Godown Filter */}
-            <div className="flex items-center gap-2 bg-slate-900/40 border border-slate-800 rounded-xl px-3 py-2">
-              <Warehouse className="w-4 h-4 text-slate-400" />
+            <div className="flex items-center gap-2 bg-slate-900 light:bg-slate-200/80/40 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded-xl px-3 py-2">
+              <Warehouse className="w-4 h-4 text-slate-400 light:text-slate-600" />
               <select
                 value={selectedGodown}
                 onChange={(e) => setSelectedGodown(e.target.value)}
-                className="bg-transparent text-white outline-none cursor-pointer"
+                className="bg-transparent text-white light:text-slate-900 outline-none cursor-pointer"
               >
                 {godowns.map((g) => (
-                  <option key={g} value={g} className="bg-slate-950 text-white">{g}</option>
+                  <option key={g} value={g} className="bg-slate-950 light:bg-slate-100 text-white light:text-slate-900">{g}</option>
                 ))}
               </select>
             </div>
@@ -301,14 +301,14 @@ export default function StockSummaryReportPage() {
 
           {/* Valuation Method */}
           <div className="flex items-center gap-3">
-            <span className="text-[10px] text-slate-400 uppercase font-black">Valuation Method</span>
-            <div className="flex bg-slate-900 border border-slate-850 p-1 rounded-xl">
+            <span className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black">Valuation Method</span>
+            <div className="flex bg-slate-900 light:bg-slate-200/80 border border-slate-850 p-1 rounded-xl">
               <button
                 onClick={() => setValuationMethod("fifo")}
                 className={`px-3 py-1 rounded-lg transition text-[10px] font-black uppercase ${
                   valuationMethod === "fifo"
                     ? "bg-brand-lime text-brand-navy-dark"
-                    : "text-slate-400 hover:text-white"
+                    : "text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
                 }`}
               >
                 FIFO (First-In, First-Out)
@@ -318,7 +318,7 @@ export default function StockSummaryReportPage() {
                 className={`px-3 py-1 rounded-lg transition text-[10px] font-black uppercase ${
                   valuationMethod === "wac"
                     ? "bg-brand-lime text-brand-navy-dark"
-                    : "text-slate-400 hover:text-white"
+                    : "text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
                 }`}
               >
                 Weighted Avg Cost
@@ -326,7 +326,7 @@ export default function StockSummaryReportPage() {
             </div>
             <button
               onClick={() => setShowValuationInfo(true)}
-              className="p-1.5 text-slate-400 hover:text-brand-lime hover:bg-slate-900 rounded-lg"
+              className="p-1.5 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 hover:bg-slate-900 light:bg-slate-200/80 rounded-lg"
               title="Methodology Details"
             >
               <Info className="w-4.5 h-4.5" />
@@ -337,11 +337,11 @@ export default function StockSummaryReportPage() {
 
       {/* Main Content Tabs */}
       <div className="max-w-7xl mx-auto w-full px-6 pt-6">
-        <div className="flex border-b border-slate-900 gap-1 text-xs">
+        <div className="flex border-b border-slate-900 light:border-slate-200 gap-1 text-xs">
           <button
             onClick={() => { setActiveTab("summary"); setDrillLevel("category"); }}
             className={`px-5 py-3 font-bold border-b-2 transition flex items-center gap-2 ${
-              activeTab === "summary" ? "border-brand-lime text-brand-lime font-black" : "border-transparent text-slate-400 hover:text-white"
+              activeTab === "summary" ? "border-brand-lime text-brand-lime light:text-lime-700 font-black" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
             }`}
           >
             <Boxes className="w-4 h-4" />
@@ -350,7 +350,7 @@ export default function StockSummaryReportPage() {
           <button
             onClick={() => setActiveTab("godown")}
             className={`px-5 py-3 font-bold border-b-2 transition flex items-center gap-2 ${
-              activeTab === "godown" ? "border-brand-lime text-brand-lime font-black" : "border-transparent text-slate-400 hover:text-white"
+              activeTab === "godown" ? "border-brand-lime text-brand-lime light:text-lime-700 font-black" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
             }`}
           >
             <Warehouse className="w-4 h-4" />
@@ -359,7 +359,7 @@ export default function StockSummaryReportPage() {
           <button
             onClick={() => setActiveTab("ageing")}
             className={`px-5 py-3 font-bold border-b-2 transition flex items-center gap-2 ${
-              activeTab === "ageing" ? "border-brand-lime text-brand-lime font-black" : "border-transparent text-slate-400 hover:text-white"
+              activeTab === "ageing" ? "border-brand-lime text-brand-lime light:text-lime-700 font-black" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
             }`}
           >
             <Hourglass className="w-4 h-4" />
@@ -368,7 +368,7 @@ export default function StockSummaryReportPage() {
           <button
             onClick={() => setActiveTab("reorder")}
             className={`px-5 py-3 font-bold border-b-2 transition flex items-center gap-2 ${
-              activeTab === "reorder" ? "border-brand-lime text-brand-lime font-black" : "border-transparent text-slate-400 hover:text-white"
+              activeTab === "reorder" ? "border-brand-lime text-brand-lime light:text-lime-700 font-black" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
             }`}
           >
             <BellRing className="w-4 h-4" />
@@ -377,7 +377,7 @@ export default function StockSummaryReportPage() {
           <button
             onClick={() => setActiveTab("batch")}
             className={`px-5 py-3 font-bold border-b-2 transition flex items-center gap-2 ${
-              activeTab === "batch" ? "border-brand-lime text-brand-lime font-black" : "border-transparent text-slate-400 hover:text-white"
+              activeTab === "batch" ? "border-brand-lime text-brand-lime light:text-lime-700 font-black" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
             }`}
           >
             <QrCode className="w-4 h-4" />
@@ -385,7 +385,7 @@ export default function StockSummaryReportPage() {
           </button>
           <button
             onClick={() => setActiveTab("spec")}
-            className={`ml-auto px-5 py-3 font-extrabold border-b-2 transition flex items-center gap-2 text-sky-400 border-transparent hover:text-white`}
+            className={`ml-auto px-5 py-3 font-extrabold border-b-2 transition flex items-center gap-2 text-sky-400 border-transparent hover:text-white light:text-slate-900 light:hover:text-black`}
           >
             <FileCode className="w-4 h-4 text-sky-400" />
             Systems Architect Design Specs
@@ -396,17 +396,17 @@ export default function StockSummaryReportPage() {
       {/* Main Grid */}
       <main className="flex-1 max-w-7xl mx-auto px-6 py-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Principal Reports - 9 span */}
-        <section className="lg:col-span-9 rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-6 shadow-2xl backdrop-blur-xl space-y-6 min-h-[500px]">
+        <section className="lg:col-span-9 rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-6 shadow-2xl backdrop-blur-xl space-y-6 min-h-[500px]">
           
           {loading ? (
-            <div className="py-32 flex flex-col items-center justify-center gap-3 text-slate-400">
-              <Loader2 className="w-8 h-8 animate-spin text-brand-lime" />
+            <div className="py-32 flex flex-col items-center justify-center gap-3 text-slate-400 light:text-slate-600">
+              <Loader2 className="w-8 h-8 animate-spin text-brand-lime light:text-lime-700" />
               <p className="text-xs">Computing double-entry stock quantities...</p>
             </div>
           ) : error ? (
             <div className="py-24 text-center space-y-4">
               <AlertCircle className="w-12 h-12 text-rose-500 mx-auto" />
-              <p className="text-sm text-slate-300">{error}</p>
+              <p className="text-sm text-slate-300 light:text-slate-700">{error}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -414,12 +414,12 @@ export default function StockSummaryReportPage() {
               {activeTab === "summary" && (
                 <div className="space-y-4">
                   {/* Drill-down breadcrumbs */}
-                  <div className="flex items-center gap-1.5 text-[10px] uppercase font-black tracking-wider text-slate-400 bg-slate-950/20 p-2 rounded-xl border border-slate-900">
-                    <span className="cursor-pointer hover:text-brand-lime" onClick={() => setDrillLevel("category")}>Groups Summary</span>
+                  <div className="flex items-center gap-1.5 text-[10px] uppercase font-black tracking-wider text-slate-400 light:text-slate-600 bg-slate-950 light:bg-slate-100/20 light:bg-slate-100 p-2 rounded-xl border border-slate-900 light:border-slate-200">
+                    <span className="cursor-pointer hover:text-brand-lime light:text-lime-700" onClick={() => setDrillLevel("category")}>Groups Summary</span>
                     {drillLevel !== "category" && (
                       <>
                         <ChevronRight className="w-3.5 h-3.5" />
-                        <span className="cursor-pointer hover:text-brand-lime text-white" onClick={() => setDrillLevel("item")}>
+                        <span className="cursor-pointer hover:text-brand-lime light:text-lime-700 text-white light:text-slate-900" onClick={() => setDrillLevel("item")}>
                           {selectedGroupPath}
                         </span>
                       </>
@@ -427,17 +427,17 @@ export default function StockSummaryReportPage() {
                     {drillLevel === "voucher" && (
                       <>
                         <ChevronRight className="w-3.5 h-3.5" />
-                        <span className="text-brand-lime font-black">{selectedItemPath?.name} Ledger</span>
+                        <span className="text-brand-lime light:text-lime-700 font-black">{selectedItemPath?.name} Ledger</span>
                       </>
                     )}
                   </div>
 
                   {/* Level 1: Category/Group Summary */}
                   {drillLevel === "category" && (
-                    <div className="overflow-hidden border border-slate-900/50 rounded-2xl bg-brand-navy-dark/20">
+                    <div className="overflow-hidden border border-slate-900 light:border-slate-200/50 light:border-slate-200 rounded-2xl bg-brand-navy-dark/20 light:bg-white">
                       <table className="w-full text-left border-collapse text-xs">
                         <thead>
-                          <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[9px]">
+                          <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
                             <th className="py-3 px-4">Stock Group / Category</th>
                             <th className="py-3 px-4 text-center">Items Count</th>
                             <th className="py-3 px-4 text-right">Opening Qty</th>
@@ -452,18 +452,18 @@ export default function StockSummaryReportPage() {
                             <tr
                               key={cat.group}
                               onClick={() => { setSelectedGroupPath(cat.group); setDrillLevel("item"); }}
-                              className="border-b border-slate-900/30 hover:bg-slate-900/20 text-slate-300 cursor-pointer transition"
+                              className="border-b border-slate-900 light:border-slate-200/30 light:border-slate-150 hover:bg-slate-900 light:bg-slate-200/80/20 text-slate-300 light:text-slate-700 cursor-pointer transition"
                             >
-                              <td className="py-3 px-4 font-bold text-white flex items-center gap-1">
-                                <ChevronRight className="w-4 h-4 text-brand-lime shrink-0" />
+                              <td className="py-3 px-4 font-bold text-white light:text-slate-900 flex items-center gap-1">
+                                <ChevronRight className="w-4 h-4 text-brand-lime light:text-lime-700 shrink-0" />
                                 {cat.group}
                               </td>
                               <td className="py-3 px-4 text-center font-semibold text-sky-400">{cat.count} Items</td>
-                              <td className="py-3 px-4 text-right font-mono text-slate-400">{cat.openingQty} PCS</td>
-                              <td className="py-3 px-4 text-right font-mono text-emerald-400">+{cat.inwards}</td>
+                              <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{cat.openingQty} PCS</td>
+                              <td className="py-3 px-4 text-right font-mono text-emerald-400 light:text-emerald-700">+{cat.inwards}</td>
                               <td className="py-3 px-4 text-right font-mono text-rose-400">-{cat.outwards}</td>
-                              <td className="py-3 px-4 text-right font-mono font-bold text-slate-200">{cat.closingQty} PCS</td>
-                              <td className="py-3 px-4 text-right font-mono font-black text-white">{currency}{cat.value.toFixed(2)}</td>
+                              <td className="py-3 px-4 text-right font-mono font-bold text-slate-200 light:text-slate-800">{cat.closingQty} PCS</td>
+                              <td className="py-3 px-4 text-right font-mono font-black text-white light:text-slate-900">{currency}{cat.value.toFixed(2)}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -473,10 +473,10 @@ export default function StockSummaryReportPage() {
 
                   {/* Level 2: Item-wise Detail */}
                   {drillLevel === "item" && (
-                    <div className="overflow-hidden border border-slate-900/50 rounded-2xl bg-brand-navy-dark/20">
+                    <div className="overflow-hidden border border-slate-900 light:border-slate-200/50 light:border-slate-200 rounded-2xl bg-brand-navy-dark/20 light:bg-white">
                       <table className="w-full text-left border-collapse text-xs">
                         <thead>
-                          <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[9px]">
+                          <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
                             <th className="py-3 px-4">Stock Item Name</th>
                             <th className="py-3 px-4">SKU</th>
                             <th className="py-3 px-4 text-right">Opening Qty</th>
@@ -500,19 +500,19 @@ export default function StockSummaryReportPage() {
                                 <tr
                                   key={row.id}
                                   onClick={() => { setSelectedItemPath(row); setDrillLevel("voucher"); }}
-                                  className="border-b border-slate-900/30 hover:bg-slate-900/20 text-slate-300 cursor-pointer transition"
+                                  className="border-b border-slate-900 light:border-slate-200/30 light:border-slate-150 hover:bg-slate-900 light:bg-slate-200/80/20 text-slate-300 light:text-slate-700 cursor-pointer transition"
                                 >
-                                  <td className="py-3 px-4 font-bold text-white flex items-center gap-1">
+                                  <td className="py-3 px-4 font-bold text-white light:text-slate-900 flex items-center gap-1">
                                     <ChevronRight className="w-4 h-4 text-sky-400 shrink-0" />
                                     {row.name}
                                   </td>
-                                  <td className="py-3 px-4 font-mono text-slate-500">{row.sku || "-"}</td>
-                                  <td className="py-3 px-4 text-right font-mono text-slate-400">{openingSim} PCS</td>
-                                  <td className="py-3 px-4 text-right font-mono text-emerald-400">+{inwardsSim}</td>
+                                  <td className="py-3 px-4 font-mono text-slate-500 light:text-slate-500">{row.sku || "-"}</td>
+                                  <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{openingSim} PCS</td>
+                                  <td className="py-3 px-4 text-right font-mono text-emerald-400 light:text-emerald-700">+{inwardsSim}</td>
                                   <td className="py-3 px-4 text-right font-mono text-rose-400">-{outwardsSim}</td>
-                                  <td className="py-3 px-4 text-right font-mono font-bold text-slate-200">{baseQty} PCS</td>
-                                  <td className="py-3 px-4 text-right font-mono text-slate-400">{currency}{Number(row.purchase_price).toFixed(2)}</td>
-                                  <td className="py-3 px-4 text-right font-mono font-black text-brand-lime">
+                                  <td className="py-3 px-4 text-right font-mono font-bold text-slate-200 light:text-slate-800">{baseQty} PCS</td>
+                                  <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{currency}{Number(row.purchase_price).toFixed(2)}</td>
+                                  <td className="py-3 px-4 text-right font-mono font-black text-brand-lime light:text-lime-700">
                                     {currency}{(baseQty * (valuationMethod === "fifo" ? row.purchase_price : row.purchase_price * 0.98)).toFixed(2)}
                                   </td>
                                 </tr>
@@ -526,21 +526,21 @@ export default function StockSummaryReportPage() {
                   {/* Level 3: Voucher-level Detail */}
                   {drillLevel === "voucher" && selectedItemPath && (
                     <div className="space-y-4 animate-fade-in">
-                      <div className="p-4 bg-brand-navy-dark border border-slate-800 rounded-2xl flex items-center justify-between">
+                      <div className="p-4 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-2xl flex items-center justify-between">
                         <div>
-                          <h4 className="font-extrabold text-white text-sm">{selectedItemPath.name}</h4>
-                          <p className="text-[10px] text-slate-500 font-mono mt-0.5">SKU: {selectedItemPath.sku || "N/A"} | Group: {selectedItemPath.group_name}</p>
+                          <h4 className="font-extrabold text-white light:text-slate-900 text-sm">{selectedItemPath.name}</h4>
+                          <p className="text-[10px] text-slate-500 light:text-slate-500 font-mono mt-0.5">SKU: {selectedItemPath.sku || "N/A"} | Group: {selectedItemPath.group_name}</p>
                         </div>
                         <div className="text-right">
-                          <span className="text-[9px] uppercase font-black text-slate-400">Current Balance</span>
-                          <p className="text-lg font-black text-brand-lime font-mono">{selectedItemPath.quantity} PCS</p>
+                          <span className="text-[9px] uppercase font-black text-slate-400 light:text-slate-600">Current Balance</span>
+                          <p className="text-lg font-black text-brand-lime light:text-lime-700 font-mono">{selectedItemPath.quantity} PCS</p>
                         </div>
                       </div>
 
-                      <div className="overflow-hidden border border-slate-900/50 rounded-2xl bg-brand-navy-dark/20">
+                      <div className="overflow-hidden border border-slate-900 light:border-slate-200/50 light:border-slate-200 rounded-2xl bg-brand-navy-dark/20 light:bg-white">
                         <table className="w-full text-left border-collapse text-xs">
                           <thead>
-                            <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[9px]">
+                            <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
                               <th className="py-2.5 px-4">Date</th>
                               <th className="py-2.5 px-4">Voucher No</th>
                               <th className="py-2.5 px-4">Voucher Type</th>
@@ -553,15 +553,15 @@ export default function StockSummaryReportPage() {
                           </thead>
                           <tbody>
                             {getVoucherDetails(selectedItemPath).map((v) => (
-                              <tr key={v.id} className="border-b border-slate-900/30 hover:bg-slate-900/25 text-slate-300">
+                              <tr key={v.id} className="border-b border-slate-900 light:border-slate-200/30 light:border-slate-150 hover:bg-slate-900 light:bg-slate-200/80/25 text-slate-300 light:text-slate-700">
                                 <td className="py-3 px-4 font-mono">{v.date}</td>
-                                <td className="py-3 px-4 font-mono font-bold text-white">{v.vnum}</td>
+                                <td className="py-3 px-4 font-mono font-bold text-white light:text-slate-900">{v.vnum}</td>
                                 <td className="py-3 px-4">
                                   <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
                                     v.type === "Purchase"
                                       ? "bg-sky-500/10 text-sky-400"
                                       : v.type === "Sales"
-                                      ? "bg-brand-lime/10 text-brand-lime"
+                                      ? "bg-brand-lime/10 light:bg-lime-100/60 text-brand-lime light:text-lime-700"
                                       : "bg-amber-500/10 text-amber-400"
                                   }`}>
                                     {v.type}
@@ -569,13 +569,13 @@ export default function StockSummaryReportPage() {
                                 </td>
                                 <td className="py-3 px-4 font-bold">{v.party}</td>
                                 <td className="py-3 px-4 text-right">
-                                  <span className={`font-black uppercase text-[10px] ${v.flow === "Inward" ? "text-emerald-400" : "text-rose-400"}`}>
+                                  <span className={`font-black uppercase text-[10px] ${v.flow === "Inward" ? "text-emerald-400 light:text-emerald-700" : "text-rose-400"}`}>
                                     {v.flow}
                                   </span>
                                 </td>
                                 <td className="py-3 px-4 text-right font-mono font-semibold">{v.qty} PCS</td>
-                                <td className="py-3 px-4 text-right font-mono text-slate-400">{Number(v.rate).toFixed(2)}</td>
-                                <td className="py-3 px-4 text-right font-mono font-bold text-white">{Number(v.val).toFixed(2)}</td>
+                                <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{Number(v.rate).toFixed(2)}</td>
+                                <td className="py-3 px-4 text-right font-mono font-bold text-white light:text-slate-900">{Number(v.val).toFixed(2)}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -590,11 +590,11 @@ export default function StockSummaryReportPage() {
               {activeTab === "godown" && (
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <Warehouse className="w-5 h-5 text-brand-lime" />
+                    <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                      <Warehouse className="w-5 h-5 text-brand-lime light:text-lime-700" />
                       Godown & Warehouse Inventory Allocation
                     </h3>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Physical distribution of stock assets across multiple secondary storehouse locations.</p>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Physical distribution of stock assets across multiple secondary storehouse locations.</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -604,20 +604,20 @@ export default function StockSummaryReportPage() {
                       const totalQty = getFilteredItems().reduce((acc, row) => acc + (row.quantity * seed), 0);
 
                       return (
-                        <div key={g} className="p-5 bg-brand-navy-dark border border-slate-900 rounded-3xl space-y-4">
-                          <div className="flex items-center justify-between border-b border-slate-900 pb-2">
-                            <span className="font-bold text-white">{g}</span>
-                            <span className="px-2 py-0.5 bg-brand-lime/10 border border-brand-lime/20 text-brand-lime font-mono rounded text-[10px]">ACTIVE</span>
+                        <div key={g} className="p-5 bg-brand-navy-dark border border-slate-900 light:border-slate-200 rounded-3xl space-y-4">
+                          <div className="flex items-center justify-between border-b border-slate-900 light:border-slate-200 pb-2">
+                            <span className="font-bold text-white light:text-slate-900">{g}</span>
+                            <span className="px-2 py-0.5 bg-brand-lime/10 light:bg-lime-100/60 border border-brand-lime/20 text-brand-lime light:text-lime-700 font-mono rounded text-[10px]">ACTIVE</span>
                           </div>
                           
                           <div className="grid grid-cols-2 gap-3 text-xs">
                             <div>
-                              <span className="text-[9px] uppercase font-black text-slate-500">Allocated Qty</span>
-                              <p className="text-white font-mono font-bold mt-0.5">{totalQty.toFixed(0)} PCS</p>
+                              <span className="text-[9px] uppercase font-black text-slate-500 light:text-slate-500">Allocated Qty</span>
+                              <p className="text-white light:text-slate-900 font-mono font-bold mt-0.5">{totalQty.toFixed(0)} PCS</p>
                             </div>
                             <div className="text-right">
-                              <span className="text-[9px] uppercase font-black text-slate-500">Stock Value</span>
-                              <p className="text-brand-lime font-mono font-black mt-0.5">{currency}{totalVal.toFixed(2)}</p>
+                              <span className="text-[9px] uppercase font-black text-slate-500 light:text-slate-500">Stock Value</span>
+                              <p className="text-brand-lime light:text-lime-700 font-mono font-black mt-0.5">{currency}{totalVal.toFixed(2)}</p>
                             </div>
                           </div>
                         </div>
@@ -631,17 +631,17 @@ export default function StockSummaryReportPage() {
               {activeTab === "ageing" && (
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <Hourglass className="w-5 h-5 text-brand-lime" />
+                    <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                      <Hourglass className="w-5 h-5 text-brand-lime light:text-lime-700" />
                       Stock Ageing Analysis
                     </h3>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Analyze how long inventory has been sitting in stock. Useful for tracking slow-moving assets.</p>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Analyze how long inventory has been sitting in stock. Useful for tracking slow-moving assets.</p>
                   </div>
 
-                  <div className="overflow-hidden border border-slate-900/50 rounded-2xl bg-brand-navy-dark/20">
+                  <div className="overflow-hidden border border-slate-900 light:border-slate-200/50 light:border-slate-200 rounded-2xl bg-brand-navy-dark/20 light:bg-white">
                     <table className="w-full text-left border-collapse text-xs">
                       <thead>
-                        <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[9px]">
+                        <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
                           <th className="py-2.5 px-4">Item Name</th>
                           <th className="py-2.5 px-4 text-right">Total Qty</th>
                           <th className="py-2.5 px-4 text-right">Under 30 Days</th>
@@ -662,11 +662,11 @@ export default function StockSummaryReportPage() {
                           const isSlowMoving = g4 > (baseQty * 0.1);
 
                           return (
-                            <tr key={item.id} className="border-b border-slate-900/30 hover:bg-slate-900/10 text-slate-300">
-                              <td className="py-3 px-4 font-bold text-white">{item.name}</td>
-                              <td className="py-3 px-4 text-right font-mono font-bold text-slate-200">{baseQty} PCS</td>
-                              <td className="py-3 px-4 text-right font-mono text-emerald-400">{g1}</td>
-                              <td className="py-3 px-4 text-right font-mono text-slate-400">{g2}</td>
+                            <tr key={item.id} className="border-b border-slate-900 light:border-slate-200/30 light:border-slate-150 hover:bg-slate-900 light:bg-slate-200/80/10 text-slate-300 light:text-slate-700">
+                              <td className="py-3 px-4 font-bold text-white light:text-slate-900">{item.name}</td>
+                              <td className="py-3 px-4 text-right font-mono font-bold text-slate-200 light:text-slate-800">{baseQty} PCS</td>
+                              <td className="py-3 px-4 text-right font-mono text-emerald-400 light:text-emerald-700">{g1}</td>
+                              <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{g2}</td>
                               <td className="py-3 px-4 text-right font-mono text-amber-400">{g3}</td>
                               <td className="py-3 px-4 text-right font-mono text-rose-400">{g4}</td>
                               <td className="py-3 px-4 text-right">
@@ -689,11 +689,11 @@ export default function StockSummaryReportPage() {
               {activeTab === "reorder" && (
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <BellRing className="w-5 h-5 text-brand-lime" />
+                    <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                      <BellRing className="w-5 h-5 text-brand-lime light:text-lime-700" />
                       Reorder & Low Stock Alerts
                     </h3>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Identifies items that require immediate purchase orders because stock falls below safety levels.</p>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Identifies items that require immediate purchase orders because stock falls below safety levels.</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -701,11 +701,11 @@ export default function StockSummaryReportPage() {
                       const reorderLevel = Math.ceil(item.quantity * 1.2); // Simulate a reorder level
                       const shortfall = reorderLevel - item.quantity;
                       return (
-                        <div key={item.id} className="p-4 bg-brand-navy-dark border border-slate-900 rounded-3xl flex items-center justify-between">
+                        <div key={item.id} className="p-4 bg-brand-navy-dark border border-slate-900 light:border-slate-200 rounded-3xl flex items-center justify-between">
                           <div>
-                            <span className="text-[9px] uppercase font-mono text-slate-500">SKU: {item.sku || "N/A"}</span>
-                            <h4 className="font-bold text-white text-xs">{item.name}</h4>
-                            <div className="flex gap-4 mt-2 text-[10px] text-slate-450">
+                            <span className="text-[9px] uppercase font-mono text-slate-500 light:text-slate-500">SKU: {item.sku || "N/A"}</span>
+                            <h4 className="font-bold text-white light:text-slate-900 text-xs">{item.name}</h4>
+                            <div className="flex gap-4 mt-2 text-[10px] text-slate-450 light:text-slate-500">
                               <p>Available: <span className="font-mono text-red-400 font-bold">{item.quantity} PCS</span></p>
                               <p>Reorder Safety: <span className="font-mono text-slate-350">{reorderLevel} PCS</span></p>
                             </div>
@@ -726,17 +726,17 @@ export default function StockSummaryReportPage() {
               {activeTab === "batch" && (
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <QrCode className="w-5 h-5 text-brand-lime" />
+                    <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                      <QrCode className="w-5 h-5 text-brand-lime light:text-lime-700" />
                       Batch Code & Expiry tracking
                     </h3>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Traces inventory batch serial number details, manufacturing inputs, and expiry warning timestamps.</p>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Traces inventory batch serial number details, manufacturing inputs, and expiry warning timestamps.</p>
                   </div>
 
-                  <div className="overflow-hidden border border-slate-900/50 rounded-2xl bg-brand-navy-dark/20">
+                  <div className="overflow-hidden border border-slate-900 light:border-slate-200/50 light:border-slate-200 rounded-2xl bg-brand-navy-dark/20 light:bg-white">
                     <table className="w-full text-left border-collapse text-xs">
                       <thead>
-                        <tr className="border-b border-slate-900 bg-slate-950/40 text-slate-400 uppercase font-black tracking-wider text-[9px]">
+                        <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
                           <th className="py-2.5 px-4">Item Name</th>
                           <th className="py-2.5 px-4 font-mono">Batch Code</th>
                           <th className="py-2.5 px-4 font-mono">Mfg Date</th>
@@ -753,13 +753,13 @@ export default function StockSummaryReportPage() {
                           const daysLeft = Math.max(0, Math.floor((new Date(exp).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
 
                           return (
-                            <tr key={item.id} className="border-b border-slate-900/30 hover:bg-slate-900/10 text-slate-300">
-                              <td className="py-3 px-4 font-bold text-white">{item.name}</td>
-                              <td className="py-3 px-4 font-mono text-slate-400">{batch}</td>
-                              <td className="py-3 px-4 font-mono text-slate-500">{mfg}</td>
+                            <tr key={item.id} className="border-b border-slate-900 light:border-slate-200/30 light:border-slate-150 hover:bg-slate-900 light:bg-slate-200/80/10 text-slate-300 light:text-slate-700">
+                              <td className="py-3 px-4 font-bold text-white light:text-slate-900">{item.name}</td>
+                              <td className="py-3 px-4 font-mono text-slate-400 light:text-slate-600">{batch}</td>
+                              <td className="py-3 px-4 font-mono text-slate-500 light:text-slate-500">{mfg}</td>
                               <td className="py-3 px-4 font-mono text-rose-400 font-bold">{exp}</td>
-                              <td className="py-3 px-4 text-right font-mono font-bold text-slate-200">{item.quantity} PCS</td>
-                              <td className="py-3 px-4 text-right font-mono text-brand-lime font-black">{daysLeft} Days</td>
+                              <td className="py-3 px-4 text-right font-mono font-bold text-slate-200 light:text-slate-800">{item.quantity} PCS</td>
+                              <td className="py-3 px-4 text-right font-mono text-brand-lime light:text-lime-700 font-black">{daysLeft} Days</td>
                             </tr>
                           );
                         })}
@@ -771,22 +771,22 @@ export default function StockSummaryReportPage() {
 
               {/* Tab 6: Systems Architect Design Specs */}
               {activeTab === "spec" && (
-                <div className="space-y-6 text-xs text-slate-300 leading-relaxed font-semibold max-h-[700px] overflow-y-auto pr-2">
-                  <div className="border-b border-slate-900 pb-3 flex items-center justify-between">
+                <div className="space-y-6 text-xs text-slate-300 light:text-slate-700 leading-relaxed font-semibold max-h-[700px] overflow-y-auto pr-2">
+                  <div className="border-b border-slate-900 light:border-slate-200 pb-3 flex items-center justify-between">
                     <div>
-                      <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+                      <h3 className="text-base font-extrabold text-white light:text-slate-900 flex items-center gap-2">
                         <BookOpen className="w-5 h-5 text-sky-400" />
                         ERP Inventory Systems Architect Specification
                       </h3>
-                      <p className="text-[10px] text-slate-500 mt-0.5">Reference documentation for developers, database schemas, and mathematical valuation formulations.</p>
+                      <p className="text-[10px] text-slate-500 light:text-slate-500 mt-0.5">Reference documentation for developers, database schemas, and mathematical valuation formulations.</p>
                     </div>
                   </div>
 
                   {/* Point 1: Database Schema */}
-                  <div className="space-y-3 bg-slate-950/40 p-4 border border-slate-900 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime uppercase text-[10px] tracking-wider">1. Normalized Database Schema</h4>
-                    <p className="text-[11px] text-slate-400">Five tables form the core transactional storage for the inventory module:</p>
-                    <pre className="p-3 bg-slate-950 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
+                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
+                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">1. Normalized Database Schema</h4>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600">Five tables form the core transactional storage for the inventory module:</p>
+                    <pre className="p-3 bg-slate-950 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
 {`-- 1. Stock Items Master
 CREATE TABLE stock_items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -836,33 +836,33 @@ CREATE TABLE stock_balances (
                   </div>
 
                   {/* Point 2: Date Range Math */}
-                  <div className="space-y-3 bg-slate-950/40 p-4 border border-slate-900 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime uppercase text-[10px] tracking-wider">2. Date-Range Balancing Math</h4>
-                    <p className="text-[11px] text-slate-400">For any date range [T_start, T_end]:</p>
+                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
+                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">2. Date-Range Balancing Math</h4>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600">For any date range [T_start, T_end]:</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px]">
-                      <div className="p-3 bg-slate-950/20 border border-slate-900 rounded-xl">
-                        <span className="font-bold text-white block">Opening Stock at T_start</span>
-                        <p className="text-slate-400 mt-1 font-mono">Opening = InitialQty + Sum(Qty where Date &lt; T_start)</p>
+                      <div className="p-3 bg-slate-950 light:bg-slate-100/20 light:bg-slate-100 border border-slate-900 light:border-slate-200 rounded-xl">
+                        <span className="font-bold text-white light:text-slate-900 block">Opening Stock at T_start</span>
+                        <p className="text-slate-400 light:text-slate-600 mt-1 font-mono">Opening = InitialQty + Sum(Qty where Date &lt; T_start)</p>
                       </div>
-                      <div className="p-3 bg-slate-950/20 border border-slate-900 rounded-xl">
-                        <span className="font-bold text-white block">Closing Stock at T_end</span>
-                        <p className="text-slate-400 mt-1 font-mono">Closing = Opening + Inwards(T_start, T_end) - Outwards(T_start, T_end)</p>
+                      <div className="p-3 bg-slate-950 light:bg-slate-100/20 light:bg-slate-100 border border-slate-900 light:border-slate-200 rounded-xl">
+                        <span className="font-bold text-white light:text-slate-900 block">Closing Stock at T_end</span>
+                        <p className="text-slate-400 light:text-slate-600 mt-1 font-mono">Closing = Opening + Inwards(T_start, T_end) - Outwards(T_start, T_end)</p>
                       </div>
                     </div>
                   </div>
 
                   {/* Point 3: FIFO & WAC Calculations */}
-                  <div className="space-y-3 bg-slate-950/40 p-4 border border-slate-900 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime uppercase text-[10px] tracking-wider">3. Valuation Methods Mechanics</h4>
+                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
+                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">3. Valuation Methods Mechanics</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[11px]">
                       <div className="space-y-1.5">
-                        <span className="font-bold text-white">First-In, First-Out (FIFO)</span>
-                        <p className="text-slate-400">Transactions are tracked chronologically. When items are sold, they are valued using the cost price of the oldest available purchased batches. Closing stock represents the cost of the newest batches.</p>
+                        <span className="font-bold text-white light:text-slate-900">First-In, First-Out (FIFO)</span>
+                        <p className="text-slate-400 light:text-slate-600">Transactions are tracked chronologically. When items are sold, they are valued using the cost price of the oldest available purchased batches. Closing stock represents the cost of the newest batches.</p>
                       </div>
                       <div className="space-y-1.5">
-                        <span className="font-bold text-white">Weighted Average Cost (WAC)</span>
-                        <p className="text-slate-400">After each inward transaction, the new average unit cost is recomputed:
-                          <span className="block my-2 font-mono text-white text-center bg-slate-950/50 p-2 rounded-lg">Average Rate = (Previous Value + New Inward Value) / (Previous Qty + New Inward Qty)</span>
+                        <span className="font-bold text-white light:text-slate-900">Weighted Average Cost (WAC)</span>
+                        <p className="text-slate-400 light:text-slate-600">After each inward transaction, the new average unit cost is recomputed:
+                          <span className="block my-2 font-mono text-white light:text-slate-900 text-center bg-slate-950 light:bg-slate-100/50 p-2 rounded-lg">Average Rate = (Previous Value + New Inward Value) / (Previous Qty + New Inward Qty)</span>
                           Sales are always drawn at the current calculated average unit rate.
                         </p>
                       </div>
@@ -870,9 +870,9 @@ CREATE TABLE stock_balances (
                   </div>
 
                   {/* Point 5: Sample JSON API Response */}
-                  <div className="space-y-3 bg-slate-950/40 p-4 border border-slate-900 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime uppercase text-[10px] tracking-wider">4. REST API JSON Payload Schema</h4>
-                    <pre className="p-3 bg-slate-950 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
+                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
+                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">4. REST API JSON Payload Schema</h4>
+                    <pre className="p-3 bg-slate-950 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
 {`{
   "filters": {
     "start_date": "2026-04-01",
@@ -906,9 +906,9 @@ CREATE TABLE stock_balances (
                   </div>
 
                   {/* Point 6: Sample SQL query */}
-                  <div className="space-y-3 bg-slate-950/40 p-4 border border-slate-900 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime uppercase text-[10px] tracking-wider">5. Sample SQL Query</h4>
-                    <pre className="p-3 bg-slate-950 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
+                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
+                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">5. Sample SQL Query</h4>
+                    <pre className="p-3 bg-slate-950 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
 {`-- Query to calculate opening, inward, outward, and closing quantities
 SELECT 
     si.id as item_id,
@@ -933,50 +933,50 @@ ORDER BY si.name ASC;`}
         {/* Right Column: Asset Summary - 3 span */}
         <section className="lg:col-span-3 space-y-6">
           {/* Main Stock card */}
-          <div className="rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-5 shadow-2xl backdrop-blur-xl space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-widest text-brand-lime flex items-center gap-1.5 border-b border-slate-900 pb-2">
+          <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl space-y-4">
+            <h3 className="text-xs font-black uppercase tracking-widest text-brand-lime light:text-lime-700 flex items-center gap-1.5 border-b border-slate-900 light:border-slate-200 pb-2">
               Valuation summary
             </h3>
 
             <div className="space-y-3 pt-1 text-xs">
-              <div className="flex items-center gap-3 py-1 border-b border-slate-900/40">
-                <div className="p-2 bg-slate-900 rounded-lg text-slate-400">
+              <div className="flex items-center gap-3 py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+                <div className="p-2 bg-slate-900 light:bg-slate-200/80 rounded-lg text-slate-400 light:text-slate-600">
                   <Layers className="w-4 h-4" />
                 </div>
                 <div>
                   <span className="text-[10px] text-slate-550 uppercase font-black">Stock Lines</span>
-                  <p className="text-white font-bold font-mono mt-0.5">{totals?.total_items || 0} ITEMS</p>
+                  <p className="text-white light:text-slate-900 light:text-slate-900 font-bold font-mono mt-0.5">{totals?.total_items || 0} ITEMS</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 py-1 border-b border-slate-900/40">
-                <div className="p-2 bg-slate-900 rounded-lg text-slate-400">
+              <div className="flex items-center gap-3 py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+                <div className="p-2 bg-slate-900 light:bg-slate-200/80 rounded-lg text-slate-400 light:text-slate-600">
                   <Boxes className="w-4 h-4" />
                 </div>
                 <div>
                   <span className="text-[10px] text-slate-550 uppercase font-black">Total Quantity</span>
-                  <p className="text-white font-bold font-mono mt-0.5">{totals?.total_quantity || 0} PCS</p>
+                  <p className="text-white light:text-slate-900 light:text-slate-900 font-bold font-mono mt-0.5">{totals?.total_quantity || 0} PCS</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 py-1 border-b border-slate-900/40">
-                <div className="p-2 bg-slate-900 rounded-lg text-brand-lime">
+              <div className="flex items-center gap-3 py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+                <div className="p-2 bg-slate-900 light:bg-slate-200/80 rounded-lg text-brand-lime light:text-lime-700">
                   <DollarSign className="w-4 h-4" />
                 </div>
                 <div>
                   <span className="text-[10px] text-slate-550 uppercase font-black">Net Assets Value</span>
-                  <p className="text-brand-lime font-black font-mono mt-0.5 text-sm">{currency}{totals?.total_valuation.toFixed(2)}</p>
+                  <p className="text-brand-lime light:text-lime-700 font-black font-mono mt-0.5 text-sm">{currency}{totals?.total_valuation.toFixed(2)}</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Quick specs notes cards */}
-          <div className="rounded-3xl bg-brand-navy-light/10 border border-slate-900/60 p-5 shadow-2xl backdrop-blur-xl">
-            <h3 className="text-xs font-black uppercase tracking-widest text-white flex items-center gap-1.5 border-b border-slate-900 pb-2">
+          <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl">
+            <h3 className="text-xs font-black uppercase tracking-widest text-white light:text-slate-900 flex items-center gap-1.5 border-b border-slate-900 light:border-slate-200 pb-2">
               Valuation formula
             </h3>
-            <div className="pt-3 text-[10px] text-slate-400 leading-relaxed space-y-2">
+            <div className="pt-3 text-[10px] text-slate-400 light:text-slate-600 leading-relaxed space-y-2">
               <p><strong>FIFO Model:</strong> Values ending quantities based on costs of the most recent purchases.</p>
               <p><strong>WAC Model:</strong> Values ending quantities based on weighted average of all inward costs.</p>
             </div>
@@ -987,15 +987,15 @@ ORDER BY si.name ASC;`}
       {/* Methodology Info Modal overlay */}
       {showValuationInfo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-          <div className="w-full max-w-lg bg-brand-navy-dark border border-slate-800 rounded-3xl p-6 md:p-8 space-y-4 shadow-2xl text-xs">
-            <div className="flex items-center justify-between border-b border-slate-900 pb-3">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Info className="w-5 h-5 text-brand-lime" />
+          <div className="w-full max-w-lg bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-3xl p-6 md:p-8 space-y-4 shadow-2xl text-xs">
+            <div className="flex items-center justify-between border-b border-slate-900 light:border-slate-200 pb-3">
+              <h3 className="text-sm font-bold text-white light:text-slate-900 flex items-center gap-2">
+                <Info className="w-5 h-5 text-brand-lime light:text-lime-700" />
                 Valuation Methodology Formulas
               </h3>
               <button
                 onClick={() => setShowValuationInfo(false)}
-                className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-slate-900"
+                className="p-1 rounded-full text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black hover:bg-slate-900 light:bg-slate-200/80"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1003,14 +1003,14 @@ ORDER BY si.name ASC;`}
 
             <div className="space-y-4 text-slate-350 leading-relaxed font-semibold">
               <div className="space-y-1">
-                <h5 className="font-extrabold text-white">First-In, First-Out (FIFO)</h5>
+                <h5 className="font-extrabold text-white light:text-slate-900">First-In, First-Out (FIFO)</h5>
                 <p>Calculated by sorting inward transactions chronologically. When an outward transaction occurs, items are deducted from the earliest available batch. The closing value is computed as the sum of remaining items valued at their respective batch cost rates.</p>
               </div>
 
               <div className="space-y-1">
-                <h5 className="font-extrabold text-white">Weighted Average Cost (WAC)</h5>
+                <h5 className="font-extrabold text-white light:text-slate-900">Weighted Average Cost (WAC)</h5>
                 <p>A running average unit rate is maintained. Every time a new purchase is recorded:
-                  <span className="block my-2 font-mono text-white text-center bg-slate-950/50 p-2 rounded-lg">New Rate = (Current Value + New Value) / (Current Qty + New Qty)</span>
+                  <span className="block my-2 font-mono text-white light:text-slate-900 text-center bg-slate-950 light:bg-slate-100/50 p-2 rounded-lg">New Rate = (Current Value + New Value) / (Current Qty + New Qty)</span>
                   All sales and closing values are evaluated at this single, unified running average cost.
                 </p>
               </div>
@@ -1019,7 +1019,7 @@ ORDER BY si.name ASC;`}
             <div className="flex justify-end pt-3">
               <button
                 onClick={() => setShowValuationInfo(false)}
-                className="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-800"
+                className="px-5 py-2 bg-slate-900 light:bg-slate-200/80 hover:bg-slate-800 text-slate-300 light:text-slate-700 rounded-xl border border-slate-800 light:border-slate-200"
               >
                 Close details
               </button>
