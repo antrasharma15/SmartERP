@@ -65,3 +65,15 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #ef4444;
 }
+
+/* Hide Netlify Collaborative Deploy Preview Toolbar Drawer */
+#netlify-drawer-outer,
+.netlify-drawer,
+netlify-drawer,
+#netlify-drawer,
+iframe[src*="netlify"],
+netlify-drawer-container {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
