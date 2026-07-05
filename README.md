@@ -67,18 +67,27 @@ KEYbooks is a keyboard-driven, web-based ERP application inspired by Tally and Z
 
 ## Screenshots
 
-*Placeholders for user screenshots:*
+Here are visual references of the implemented pages and modules in KEYbooks:
 
-```markdown
-![KEYbooks Gateway Dashboard](/docs/screenshots/dashboard.png)
-*Figure 1: Keyboard-driven Gateway dashboard.*
+### 1. Landing Screen & Application Homepage
+![KEYbooks Landing Screen](docs/HOME.jpeg)
+*Figure 1: High-contrast theme-aware landing page.*
 
-![Cash & Bank Book Register](/docs/screenshots/cash_bank_book.png)
-*Figure 2: Cash & Bank ledger running balances.*
+### 2. Core Functional Modules
+![KEYbooks Features Showcase](docs/FEATURES.jpeg)
+*Figure 2: Interactive grid highlighting functional modules, accounting DAY books, and inventory valuations.*
 
-![Live Balance Sheet Report](/docs/screenshots/balance_sheet.png)
-*Figure 3: Dynamically generated Balance Sheet.*
-```
+### 3. Authentication & Gateways
+![KEYbooks Sign In Portal](docs/SIGN%20IN%20AND%20LOGIN.jpeg)
+*Figure 3: Secure Sign In portal with user verification flows and brute-force protection.*
+
+### 4. Interactive Specifications & Specs Drawer
+![KEYbooks QA & Specifications Drawer](docs/QA.jpeg)
+*Figure 4: Audit logger, concurrent mutex settings, and database query explorer tab.*
+
+### 5. Academic Scope & Internship Context
+![KEYbooks Scope Guidelines](docs/ABOUT.jpeg)
+*Figure 5: Project specifications and details guidelines page.*
 
 ---
 
