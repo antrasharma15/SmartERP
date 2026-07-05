@@ -67,27 +67,27 @@ KEYbooks is a keyboard-driven, web-based ERP application inspired by Tally and Z
 
 ## Screenshots
 
-Here are visual references of the implemented pages and modules in KEYbooks:
+Here are visual references of the implemented screens and reports in KEYbooks:
 
 ### 1. Landing Screen & Application Homepage
 ![KEYbooks Landing Screen](frontend/src/assets/landing.jpeg)
-*Figure 1: High-contrast theme-aware landing page.*
+*Figure 1: High-contrast theme-aware homepage and landing screen.*
 
-### 2. Core Functional Modules
-![KEYbooks Features Showcase](frontend/src/assets/signup.jpeg)
-*Figure 2: Interactive grid highlighting functional modules, accounting DAY books, and inventory valuations.*
+### 2. Secure User Sign Up
+![KEYbooks Sign Up Screen](frontend/src/assets/signup.jpeg)
+*Figure 2: User registration page with client-side validation and password strength enforcement.*
 
-### 3. Authentication & Gateways
-![KEYbooks Sign In Portal](frontend/src/assets/Dashboard.jpeg)
-*Figure 3: Secure Sign In portal with user verification flows and brute-force protection.*
+### 3. Main Workspace Dashboard
+![KEYbooks Dashboard Gateway](frontend/src/assets/Dashboard.jpeg)
+*Figure 3: Main dashboard gateway displaying companies, navigation shortcuts, and active shortcuts menu.*
 
-### 4. Interactive Specifications & Specs Drawer
-![KEYbooks QA & Specifications Drawer](frontend/src/assets/balsheet.jpeg)
-*Figure 4: Audit logger, concurrent mutex settings, and database query explorer tab.*
+### 4. Dynamic Balance Sheet Statement
+![KEYbooks Balance Sheet Report](frontend/src/assets/balsheet.jpeg)
+*Figure 4: Dynamically calculated Trial Balance and Balance Sheet generated from transactional ledger data.*
 
-### 5. Academic Scope & Internship Context
-![KEYbooks Scope Guidelines](docs/ABOUT.jpeg)
-*Figure 5: Project specifications and details guidelines page.*
+### 5. Profit & Loss Statement Report
+![KEYbooks Profit & Loss Statement](frontend/src/assets/proloss.jpeg)
+*Figure 5: Live Profit & Loss statement statement tracking company revenue, expenses, and net profit margins.*
 
 ---
 
