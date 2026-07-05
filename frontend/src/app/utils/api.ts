@@ -65,6 +65,14 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
   }
 
   if (!response.ok) {
+    if (response.status === 401) {
+      if (typeof window !== "undefined") {
+        console.warn("[apiFetch] Unauthorized request (401). Cleaning session and redirecting to login.");
+        localStorage.removeItem("user");
+        localStorage.removeItem("activeCompany");
+        window.location.href = "/login";
+      }
+    }
     throw new Error(data.message || `Request failed with status ${response.status}`);
   }
 
