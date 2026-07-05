@@ -49,42 +49,42 @@ export default function LandingPage() {
       tagline: "Keyboard-First Ledger Accounting",
       description:
         "Create Payment, Receipt, Sales, and Purchase vouchers easily. The system automatically enforces debit and credit balance matching before saving transactions.",
-      icon: <Layers className="w-8 h-8 text-brand-lime" />
+      icon: <Layers className="w-8 h-8 text-brand-red" />
     },
     {
       title: "Stock & Inventory Report",
       tagline: "FIFO & WAC Material Valuation",
       description:
         "Compute stock quantities and valuations across multiple Godowns. Supports FIFO (First-In, First-Out) and Weighted Average Cost (WAC) models with real-time reorder warnings.",
-      icon: <Warehouse className="w-8 h-8 text-brand-lime" />
+      icon: <Warehouse className="w-8 h-8 text-brand-red" />
     },
     {
       title: "Cash & Bank Book",
       tagline: "Running Balance Ledger Statements",
       description:
         "Inspect cash registers and bank accounts chronological movements. Filter by date ranges to check opening, current, and closing running balances.",
-      icon: <BookOpen className="w-8 h-8 text-brand-lime" />
+      icon: <BookOpen className="w-8 h-8 text-brand-red" />
     },
     {
       title: "Chronological Day Book",
       tagline: "Consolidated Daily Audit Register",
       description:
         "View every voucher recorded in the system on a single flat list. Includes opposite ledger mappings, debit/credit totals, and double-entry split drill-downs.",
-      icon: <Calendar className="w-8 h-8 text-brand-lime" />
+      icon: <Calendar className="w-8 h-8 text-brand-red" />
     },
     {
       title: "Live Financial Reports",
       tagline: "Balance Sheet & Trial Balance",
       description:
         "Instantly compile Profit & Loss, Balance Sheets, and Trial Balances. Calculated dynamically from double-entry ledger splits with active date range filters.",
-      icon: <FileText className="w-8 h-8 text-brand-lime" />
+      icon: <FileText className="w-8 h-8 text-brand-red" />
     },
     {
       title: "Multi-User Safety Locks",
       tagline: "Governance & Change Auditing",
       description:
         "Prevent write conflicts with concurrency locks when editing settings. Tracks master changes using automated system audit logs.",
-      icon: <ShieldAlert className="w-8 h-8 text-brand-lime" />
+      icon: <ShieldAlert className="w-8 h-8 text-brand-red" />
     }
   ];
 
@@ -144,16 +144,16 @@ export default function LandingPage() {
           />
           <path
             d="M100 800 C 200 550, 450 350, 780 200"
-            stroke="#bef264"
+            stroke="#ef4444"
             strokeWidth="6"
           />
           <path d="M 750 180 L 730 180 L 745 200 Z" fill="#38bdf8" />
           <path d="M 700 100 L 680 110 L 690 85 Z" fill="#0ea5e9" />
-          <path d="M 780 200 L 760 215 L 775 180 Z" fill="#bef264" />
+          <path d="M 780 200 L 760 215 L 775 180 Z" fill="#ef4444" />
 
           <circle cx="280" cy="580" r="10" fill="#0ea5e9" className="animate-pulse" />
-          <circle cx="430" cy="400" r="12" fill="#bef264" className="animate-ping [animation-duration:3s]" />
-          <circle cx="430" cy="400" r="8" fill="#bef264" />
+          <circle cx="430" cy="400" r="12" fill="#ef4444" className="animate-ping [animation-duration:3s]" />
+          <circle cx="430" cy="400" r="8" fill="#ef4444" />
           <circle cx="580" cy="270" r="15" fill="#38bdf8" className="opacity-75" />
         </svg>
       </div>
@@ -164,14 +164,14 @@ export default function LandingPage() {
           <Link href="/" className="flex items-center gap-3 group">
             <div className="flex flex-col gap-1 w-8 h-8 justify-center">
               <span className="w-8 h-1 bg-white rounded-full transition-transform group-hover:translate-x-1"></span>
-              <span className="w-6 h-1 bg-brand-lime rounded-full transition-transform group-hover:translate-x-2"></span>
+              <span className="w-6 h-1 bg-brand-red rounded-full transition-transform group-hover:translate-x-2"></span>
               <span className="w-7 h-1 bg-sky-400 rounded-full transition-transform group-hover:translate-x-1.5"></span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xl font-bold text-white light:text-slate-900 tracking-wide">
                 KEY
               </span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">
+              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-red text-brand-navy-dark rounded font-mono">
                 books
               </span>
             </div>
@@ -180,25 +180,25 @@ export default function LandingPage() {
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300 light:text-slate-700">
             <Link
               href="#features"
-              className="hover:text-brand-lime transition-colors duration-200"
+              className="hover:text-brand-red transition-colors duration-200"
             >
               Features
             </Link>
             <Link
               href="#roadmap"
-              className="hover:text-brand-lime transition-colors duration-200"
+              className="hover:text-brand-red transition-colors duration-200"
             >
               Roadmap
             </Link>
             <Link
               href="#about"
-              className="hover:text-brand-lime transition-colors duration-200"
+              className="hover:text-brand-red transition-colors duration-200"
             >
               About
             </Link>
             <Link
               href="#faq"
-              className="hover:text-brand-lime transition-colors duration-200"
+              className="hover:text-brand-red transition-colors duration-200"
             >
               FAQ
             </Link>
@@ -220,7 +220,7 @@ export default function LandingPage() {
             </Link>
             <Link
               href="/login"
-              className="px-5 py-2 text-sm font-semibold rounded-full bg-[#0f2249] light:bg-slate-200 border border-slate-800 light:border-slate-300 text-slate-200 light:text-slate-800 hover:text-white light:hover:text-black hover:bg-[#0b1528] light:hover:bg-slate-300 hover:border-brand-lime/50 transition-all duration-300 shadow-lg shadow-black/50"
+              className="px-5 py-2 text-sm font-semibold rounded-full bg-[#0f2249] light:bg-slate-200 border border-slate-800 light:border-slate-300 text-slate-200 light:text-slate-800 hover:text-white light:hover:text-black hover:bg-[#0b1528] light:hover:bg-slate-300 hover:border-brand-red/50 transition-all duration-300 shadow-lg shadow-black/50"
             >
               Launch Application
             </Link>
@@ -243,28 +243,28 @@ export default function LandingPage() {
             <Link
               href="#features"
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-brand-lime transition-colors"
+              className="hover:text-brand-red transition-colors"
             >
               Features
             </Link>
             <Link
               href="#roadmap"
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-brand-lime transition-colors"
+              className="hover:text-brand-red transition-colors"
             >
               Roadmap
             </Link>
             <Link
               href="#about"
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-brand-lime transition-colors"
+              className="hover:text-brand-red transition-colors"
             >
               About Us
             </Link>
             <Link
               href="#faq"
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-brand-lime transition-colors"
+              className="hover:text-brand-red transition-colors"
             >
               FAQ
             </Link>
@@ -290,7 +290,7 @@ export default function LandingPage() {
             <Link
               href="/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full py-3.5 text-center font-bold text-brand-navy-dark bg-brand-lime rounded-full hover:bg-white transition-all shadow-lg"
+              className="w-full py-3.5 text-center font-bold text-brand-navy-dark bg-brand-red rounded-full hover:bg-white transition-all shadow-lg"
             >
               Launch Application
             </Link>
@@ -326,7 +326,7 @@ export default function LandingPage() {
           <div className="flex flex-wrap items-center gap-5 pt-4">
             <Link
               href="/login"
-              className="group px-8 py-3.5 flex items-center gap-2 rounded-full font-bold text-brand-navy-dark bg-brand-lime hover:bg-white transition-all duration-300 shadow-xl shadow-brand-lime/10 transform hover:-translate-y-0.5 active:translate-y-0"
+              className="group px-8 py-3.5 flex items-center gap-2 rounded-full font-bold text-brand-navy-dark bg-brand-red hover:bg-white transition-all duration-300 shadow-xl shadow-brand-red/10 transform hover:-translate-y-0.5 active:translate-y-0"
             >
               Launch Application
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -363,7 +363,7 @@ export default function LandingPage() {
                 <div className="mb-6 p-3 w-14 h-14 flex items-center justify-center rounded-xl bg-[#0f2249] light:bg-slate-200/80/50 light:bg-slate-200/50 border border-[#0b1528] group-hover:border-[#0b1528] light:border-slate-300rand-lime/30 transition-colors">
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-bold text-white light:text-slate-900 light:text-slate-900 mb-2 group-hover:text-brand-lime transition-colors">
+                <h3 className="text-xl font-bold text-white light:text-slate-900 light:text-slate-900 mb-2 group-hover:text-brand-red transition-colors">
                   {feature.title}
                 </h3>
                 <h4 className="text-sm font-semibold text-sky-400 light:text-sky-600 mb-4 leading-snug">
@@ -382,7 +382,7 @@ export default function LandingPage() {
       <section id="roadmap" className="py-24 border-[#0b1528] light:border-slate-300 border-[#0b1528]/45 light:border-slate-200 scroll-mt-20 bg-brand-navy-mid/10 light:bg-slate-200/40">
         <div className="max-w-7xl mx-auto px-6">
           <div className="max-w-2xl mb-12">
-            <span className="text-sm font-extrabold uppercase tracking-widest text-brand-lime">
+            <span className="text-sm font-extrabold uppercase tracking-widest text-brand-red">
               Project Roadmap
             </span>
             <h2 className="text-3xl md:text-5xl font-extrabold text-white light:text-slate-900 light:text-slate-900 tracking-tight mt-2">
@@ -425,7 +425,7 @@ export default function LandingPage() {
       <section id="about" className="py-24 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-5 space-y-6">
-            <span className="text-sm font-extrabold uppercase tracking-widest text-brand-lime">
+            <span className="text-sm font-extrabold uppercase tracking-widest text-brand-red">
               Project Description
             </span>
             <h2 className="text-3xl md:text-5xl font-extrabold text-white light:text-slate-900 light:text-slate-900 tracking-tight leading-tight">
@@ -434,7 +434,7 @@ export default function LandingPage() {
             <div className="pt-4">
               <Link
                 href="/login"
-                className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-bold text-brand-navy-dark bg-brand-lime hover:bg-white transition-all duration-300 shadow-xl shadow-brand-lime/10"
+                className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-bold text-brand-navy-dark bg-brand-red hover:bg-white transition-all duration-300 shadow-xl shadow-brand-red/10"
               >
                 Launch Application
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -457,7 +457,7 @@ export default function LandingPage() {
       <section id="faq" className="bg-[#020617]/45 light:bg-[#f1f5f9]/45 border-t border-[#0b1528]/45 light:border-slate-200 py-24 scroll-mt-20 relative">
         <div className="absolute bottom-0 left-0 w-80 h-80 pointer-events-none opacity-10">
           <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
-            <circle cx="20" cy="80" r="30" stroke="#bef264" strokeWidth="2" />
+            <circle cx="20" cy="80" r="30" stroke="#ef4444" strokeWidth="2" />
             <path d="M20 80 L50 40 L80 10" stroke="#0ea5e9" strokeWidth="2" />
             <path d="M80 10 L60 10 L80 30 Z" fill="#0ea5e9" />
           </svg>
@@ -474,12 +474,12 @@ export default function LandingPage() {
                 >
                   <button
                     onClick={() => toggleFaq(index)}
-                    className="w-full py-4 flex items-center justify-between text-left text-white light:text-slate-900 light:text-slate-900 hover:text-brand-lime group transition-colors duration-200"
+                    className="w-full py-4 flex items-center justify-between text-left text-white light:text-slate-900 light:text-slate-900 hover:text-brand-red group transition-colors duration-200"
                   >
                     <span className="text-lg md:text-xl font-medium pr-8">
                       {faq.question}
                     </span>
-                    <span className="p-1 rounded-full bg-slate-900 light:bg-slate-200/80 group-hover:bg-slate-800 text-slate-400 light:text-slate-600 group-hover:text-brand-lime transition-all shrink-0">
+                    <span className="p-1 rounded-full bg-slate-900 light:bg-slate-200/80 group-hover:bg-slate-800 text-slate-400 light:text-slate-600 group-hover:text-brand-red transition-all shrink-0">
                       {isOpen ? (
                         <ChevronUp className="w-5 h-5" />
                       ) : (
@@ -507,7 +507,7 @@ export default function LandingPage() {
           <div className="mt-16 flex justify-center">
             <Link
               href="/login"
-              className="group px-8 py-3.5 flex items-center gap-2 rounded-full font-bold text-brand-navy-dark bg-brand-lime hover:bg-white transition-all duration-300 shadow-xl shadow-brand-lime/10"
+              className="group px-8 py-3.5 flex items-center gap-2 rounded-full font-bold text-brand-navy-dark bg-brand-red hover:bg-white transition-all duration-300 shadow-xl shadow-brand-red/10"
             >
               Launch Application
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -524,7 +524,7 @@ export default function LandingPage() {
               <span className="text-xl font-bold text-white light:text-slate-900 tracking-wide">
                 KEY
               </span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">
+              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-red text-brand-navy-dark rounded font-mono">
                 books
               </span>
             </div>
@@ -539,22 +539,22 @@ export default function LandingPage() {
             </h4>
             <ul className="space-y-2 text-sm text-slate-400 light:text-slate-600">
               <li>
-                <Link href="#features" className="hover:text-brand-lime transition-colors">
+                <Link href="#features" className="hover:text-brand-red transition-colors">
                   Features
                 </Link>
               </li>
               <li>
-                <Link href="#roadmap" className="hover:text-brand-lime transition-colors">
+                <Link href="#roadmap" className="hover:text-brand-red transition-colors">
                   Roadmap
                 </Link>
               </li>
               <li>
-                <Link href="#about" className="hover:text-brand-lime transition-colors">
+                <Link href="#about" className="hover:text-brand-red transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="#faq" className="hover:text-brand-lime transition-colors">
+                <Link href="#faq" className="hover:text-brand-red transition-colors">
                   FAQ
                 </Link>
               </li>
@@ -568,10 +568,10 @@ export default function LandingPage() {
             <ul className="space-y-2 text-sm text-slate-400 light:text-slate-600">
               <li>
                 <a
-                  href="https://github.com/antrasharma15/SmartERP"
+                  href="https://github.com/antrasharma15/KEYbooks"
                   target="_blank"
                   rel="noreferrer"
-                  className="hover:text-brand-lime transition-colors"
+                  className="hover:text-brand-red transition-colors"
                 >
                   GitHub Repository
                 </a>

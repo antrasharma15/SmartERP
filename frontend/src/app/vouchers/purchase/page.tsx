@@ -722,7 +722,7 @@ export default function CreatePurchaseVoucherPage() {
               
               <div className="pt-2 flex justify-between items-center">
                 <span className="text-[10px] uppercase font-black text-slate-500 light:text-slate-500">Status</span>
-                <span className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 light:text-emerald-700 font-mono rounded text-[10px] uppercase font-black">
+                <span className="px-2 py-0.5 bg-red-500/10 border border-red-500/20 text-red-400 light:text-lime-700 font-mono rounded text-[10px] uppercase font-black">
                   BALANCED
                 </span>
               </div>

@@ -85,7 +85,7 @@ export default function DashboardPage() {
     }, 3000);
   };
 
-  // Menu items (Gateway of SmartERP)
+  // Menu items (Gateway of KEYbooks)
   // Expanded for all Day 5 / doc specifications
   const menuItems = [
     { label: "Masters", isHeader: true },
@@ -520,7 +520,7 @@ export default function DashboardPage() {
         <section className="lg:col-span-3 rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl">
           <div className="border-b border-slate-900 light:border-slate-200 pb-3 mb-4 flex items-center justify-between">
             <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 light:text-slate-600">
-              Gateway of SmartERP
+              Gateway of KEYbooks
             </h2>
             <span className="text-[9px] bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 px-1.5 py-0.5 rounded font-mono text-slate-500 light:text-slate-500">
               ↑↓ & Enter
@@ -693,10 +693,10 @@ export default function DashboardPage() {
                   <div>
                     <div className="flex justify-between text-xs mb-1">
                       <span>Direct Income</span>
-                      <span className="font-bold text-emerald-400 light:text-emerald-700">{currency}{totalIncome.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      <span className="font-bold text-red-400 light:text-lime-700">{currency}{totalIncome.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="w-full bg-slate-900 light:bg-slate-200/80 h-2 rounded-full overflow-hidden">
-                      <div className="bg-emerald-400 h-full" style={{ width: `${totalIncome + totalExpenses > 0 ? (totalIncome / (totalIncome + totalExpenses)) * 100 : 0}%` }}></div>
+                      <div className="bg-red-400 h-full" style={{ width: `${totalIncome + totalExpenses > 0 ? (totalIncome / (totalIncome + totalExpenses)) * 100 : 0}%` }}></div>
                     </div>
                   </div>
 

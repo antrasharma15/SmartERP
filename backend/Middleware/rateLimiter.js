@@ -1,9 +1,11 @@
 const rateLimit = require('express-rate-limit');
 
+const isDevOrTest = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
+
 // Rate limiter for login and registration endpoints to prevent brute-force attacks
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'production' ? 5 : 100, // Limit each IP to 5 requests in prod, 100 in dev/test
+  max: isDevOrTest ? 100 : 5, // Default to strict limit (5) unless explicitly in dev/test mode
   message: {
     message: 'Too many authentication attempts from this IP. Please try again after 15 minutes.'
   },
@@ -14,7 +16,7 @@ const authLimiter = rateLimit({
 // Rate limiter for forgot-password/reset requests to prevent spamming
 const forgotPasswordLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: process.env.NODE_ENV === 'production' ? 3 : 100, // Limit each IP to 3 requests in prod, 100 in dev/test
+  max: isDevOrTest ? 100 : 3, // Default to strict limit (3) unless explicitly in dev/test mode
   message: {
     message: 'Too many password reset requests from this IP. Please try again after an hour.'
   },

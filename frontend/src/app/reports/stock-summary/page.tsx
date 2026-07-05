@@ -460,7 +460,7 @@ export default function StockSummaryReportPage() {
                               </td>
                               <td className="py-3 px-4 text-center font-semibold text-sky-400">{cat.count} Items</td>
                               <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{cat.openingQty} PCS</td>
-                              <td className="py-3 px-4 text-right font-mono text-emerald-400 light:text-emerald-700">+{cat.inwards}</td>
+                              <td className="py-3 px-4 text-right font-mono text-red-400 light:text-lime-700">+{cat.inwards}</td>
                               <td className="py-3 px-4 text-right font-mono text-rose-400">-{cat.outwards}</td>
                               <td className="py-3 px-4 text-right font-mono font-bold text-slate-200 light:text-slate-800">{cat.closingQty} PCS</td>
                               <td className="py-3 px-4 text-right font-mono font-black text-white light:text-slate-900">{currency}{cat.value.toFixed(2)}</td>
@@ -508,7 +508,7 @@ export default function StockSummaryReportPage() {
                                   </td>
                                   <td className="py-3 px-4 font-mono text-slate-500 light:text-slate-500">{row.sku || "-"}</td>
                                   <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{openingSim} PCS</td>
-                                  <td className="py-3 px-4 text-right font-mono text-emerald-400 light:text-emerald-700">+{inwardsSim}</td>
+                                  <td className="py-3 px-4 text-right font-mono text-red-400 light:text-lime-700">+{inwardsSim}</td>
                                   <td className="py-3 px-4 text-right font-mono text-rose-400">-{outwardsSim}</td>
                                   <td className="py-3 px-4 text-right font-mono font-bold text-slate-200 light:text-slate-800">{baseQty} PCS</td>
                                   <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{currency}{Number(row.purchase_price).toFixed(2)}</td>
@@ -569,7 +569,7 @@ export default function StockSummaryReportPage() {
                                 </td>
                                 <td className="py-3 px-4 font-bold">{v.party}</td>
                                 <td className="py-3 px-4 text-right">
-                                  <span className={`font-black uppercase text-[10px] ${v.flow === "Inward" ? "text-emerald-400 light:text-emerald-700" : "text-rose-400"}`}>
+                                  <span className={`font-black uppercase text-[10px] ${v.flow === "Inward" ? "text-red-400 light:text-lime-700" : "text-rose-400"}`}>
                                     {v.flow}
                                   </span>
                                 </td>
@@ -665,7 +665,7 @@ export default function StockSummaryReportPage() {
                             <tr key={item.id} className="border-b border-slate-900 light:border-slate-200/30 light:border-slate-150 hover:bg-slate-900 light:bg-slate-200/80/10 text-slate-300 light:text-slate-700">
                               <td className="py-3 px-4 font-bold text-white light:text-slate-900">{item.name}</td>
                               <td className="py-3 px-4 text-right font-mono font-bold text-slate-200 light:text-slate-800">{baseQty} PCS</td>
-                              <td className="py-3 px-4 text-right font-mono text-emerald-400 light:text-emerald-700">{g1}</td>
+                              <td className="py-3 px-4 text-right font-mono text-red-400 light:text-lime-700">{g1}</td>
                               <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{g2}</td>
                               <td className="py-3 px-4 text-right font-mono text-amber-400">{g3}</td>
                               <td className="py-3 px-4 text-right font-mono text-rose-400">{g4}</td>

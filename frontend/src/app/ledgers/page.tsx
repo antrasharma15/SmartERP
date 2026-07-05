@@ -601,7 +601,7 @@ export default function LedgersPage() {
               </div>
               <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
                 <span className="text-slate-400 light:text-slate-600">Bank Accounts</span>
-                <span className="font-bold text-emerald-400 light:text-emerald-700 font-mono">{stats.bankCount}</span>
+                <span className="font-bold text-red-400 light:text-lime-700 font-mono">{stats.bankCount}</span>
               </div>
               <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
                 <span className="text-slate-400 light:text-slate-600">Cash Registers</span>

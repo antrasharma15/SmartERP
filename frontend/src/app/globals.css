@@ -6,6 +6,7 @@
   --background: #020617;
   --foreground: #f8fafc;
   --color-brand-lime: #bef264;
+  --color-brand-red: #ef4444;
   --color-brand-navy-dark: #020617;
   --color-brand-navy-mid: #060c18;
   --color-brand-navy-light: #0b1528;
@@ -15,6 +16,8 @@
 .light {
   --background: #f8fafc;
   --foreground: #0f172a;
+  --color-brand-lime: #15803d;
+  --color-brand-red: #dc2626;
   --color-brand-navy-dark: #f8fafc;
   --color-brand-navy-mid: #f1f5f9;
   --color-brand-navy-light: #e2e8f0;
@@ -25,6 +28,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-brand-lime: var(--color-brand-lime);
+  --color-brand-red: var(--color-brand-red);
   --color-brand-navy-dark: var(--color-brand-navy-dark);
   --color-brand-navy-mid: var(--color-brand-navy-mid);
   --color-brand-navy-light: var(--color-brand-navy-light);
@@ -59,5 +63,5 @@ body {
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #bef264;
+  background: #ef4444;
 }

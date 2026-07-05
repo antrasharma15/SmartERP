@@ -343,7 +343,7 @@ export default function DayBookReportPage() {
                                     v.voucher_type.toLowerCase() === "receipt"
                                       ? "bg-brand-lime/10 light:bg-lime-100/60 text-brand-lime light:text-lime-700"
                                       : v.voucher_type.toLowerCase() === "sales"
-                                      ? "bg-emerald-500/10 text-emerald-400 light:text-emerald-700"
+                                      ? "bg-red-500/10 text-red-400 light:text-lime-700"
                                       : v.voucher_type.toLowerCase() === "payment"
                                       ? "bg-rose-500/10 light:bg-rose-100/60 text-rose-450 light:text-rose-700"
                                       : "bg-sky-500/10 text-sky-400"
@@ -373,7 +373,7 @@ export default function DayBookReportPage() {
                           {/* Aggregate totals row */}
                           <tr className="bg-slate-950 light:bg-slate-100/60 font-black border-t border-slate-900 light:border-slate-200 text-slate-200 light:text-slate-800 uppercase tracking-wide">
                             <td className="py-4 px-4" colSpan={4}>Consolidated Day Book Total</td>
-                            <td className="py-4 px-4 text-right font-mono text-emerald-400 light:text-emerald-700">{currency}{totalDebit.toFixed(2)}</td>
+                            <td className="py-4 px-4 text-right font-mono text-red-400 light:text-lime-700">{currency}{totalDebit.toFixed(2)}</td>
                             <td className="py-4 px-4 text-right font-mono text-white light:text-slate-900">{currency}{totalCredit.toFixed(2)}</td>
                             <td></td>
                           </tr>

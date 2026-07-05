@@ -748,7 +748,7 @@ export default function SettingsPage() {
 
             <button
               onClick={handleExportCSV}
-              className="w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left text-slate-400 light:text-slate-600 hover:bg-emerald-500/10 hover:text-emerald-400 light:text-emerald-700 transition font-semibold"
+              className="w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left text-slate-400 light:text-slate-600 hover:bg-red-500/10 hover:text-red-400 light:text-lime-700 transition font-semibold"
             >
               <Download className="w-4 h-4" />
               Export Transactions
@@ -761,7 +761,7 @@ export default function SettingsPage() {
           {loading ? (
             <div className="py-32 flex flex-col items-center justify-center gap-3 text-slate-400 light:text-slate-600">
               <Loader2 className="w-8 h-8 animate-spin text-brand-lime light:text-lime-700" />
-              <p className="text-xs">Loading SmartERP configuration datasets...</p>
+              <p className="text-xs">Loading KEYbooks configuration datasets...</p>
             </div>
           ) : (
             <div className="space-y-6">
@@ -1220,7 +1220,7 @@ export default function SettingsPage() {
                       <button
                         onClick={handleForceReleaseLock}
                         disabled={submitting}
-                        className="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white light:text-slate-900 light:text-slate-900 font-extrabold text-xs rounded-xl transition"
+                        className="px-5 py-2.5 bg-red-500 hover:bg-lime-600 text-white light:text-slate-900 light:text-slate-900 font-extrabold text-xs rounded-xl transition"
                       >
                         Force Release Lock
                       </button>

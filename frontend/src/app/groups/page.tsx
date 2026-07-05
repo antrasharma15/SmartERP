@@ -490,7 +490,7 @@ export default function GroupsPage() {
                         </td>
                         <td className="py-3 px-4">
                           <span className={`px-2 py-0.5 border rounded-md text-[10px] uppercase font-semibold ${
-                            group.type === "asset" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 light:text-emerald-700" :
+                            group.type === "asset" ? "bg-red-500/10 border-red-500/20 text-red-400 light:text-lime-700" :
                             group.type === "liability" ? "bg-sky-500/10 border-sky-500/20 text-sky-400" :
                             group.type === "income" ? "bg-purple-500/10 border-purple-500/20 text-purple-400" :
                             "bg-rose-500/10 light:bg-rose-100/60 border-rose-500/20 text-rose-400"
@@ -556,7 +556,7 @@ export default function GroupsPage() {
               </div>
               <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
                 <span className="text-slate-400 light:text-slate-600">Asset Groups</span>
-                <span className="font-bold text-emerald-400 light:text-emerald-700 font-mono">{stats.assetCount}</span>
+                <span className="font-bold text-red-400 light:text-lime-700 font-mono">{stats.assetCount}</span>
               </div>
               <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
                 <span className="text-slate-400 light:text-slate-600">Liability Groups</span>

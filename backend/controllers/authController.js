@@ -38,15 +38,20 @@ const register = async (req, res) => {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    // 2. Check for duplicate emails safely
+    // 2. Check for duplicate emails safely (OWASP User Enumeration prevention)
     const existingUser = await UserModel.findUserByEmail(normalizedEmail);
     if (existingUser) {
-      // Security Decision: To prevent email harvesting, we can return a generic response, 
-      // but in standard user signup, returning 'Email already in use' is common for UX.
-      // However, to strictly follow 'do not reveal whether email exists' request from user, 
-      // we return a generic message and send a notification mail to the existing user instead.
-      // For UX and simplicity, returning a generic registration message is safest.
-      return res.status(400).json({ message: 'Email address is not available.' });
+      // Send a notification email to the existing user informing them of the registration attempt
+      await sendMail({
+        to: normalizedEmail,
+        subject: 'KEYbooks Account Registration Attempt',
+        text: `Hello ${existingUser.name},\n\nSomeone attempted to register a new account on KEYbooks using this email address. Since you already have an active account, please sign in with your credentials. If you forgot your password, use the forgot password recovery option.\n\nIf this was not you, you can safely ignore this email.`,
+        html: `<p>Hello <strong>${existingUser.name}</strong>,</p><p>Someone attempted to register a new account on KEYbooks using this email address.</p><p>Since you already have an active account, please sign in with your credentials. If you forgot your password, please use the forgot password recovery option.</p><p>If this was not you, you can safely ignore this email.</p>`
+      });
+
+      return res.status(201).json({ 
+        message: 'Registration successful. A verification link has been sent to your email.' 
+      });
     }
 
     // 3. Generate verification token and secure hash
@@ -69,7 +74,7 @@ const register = async (req, res) => {
     
     await sendMail({
       to: normalizedEmail,
-      subject: 'Verify your SmartERP Account',
+      subject: 'Verify your KEYbooks Account',
       text: `Hello ${name},\n\nPlease verify your email by clicking: ${verifyLink}\n\nThis link is active for 24 hours.`,
       html: `<p>Hello <strong>${name}</strong>,</p><p>Please verify your email by clicking the link below:</p><p><a href="${verifyLink}">${verifyLink}</a></p><p>This link is active for 24 hours.</p>`
     });
@@ -216,7 +221,7 @@ const forgotPassword = async (req, res) => {
 
     await sendMail({
       to: normalizedEmail,
-      subject: 'Reset your SmartERP Password',
+      subject: 'Reset your KEYbooks Password',
       text: `Hello ${user.name},\n\nPlease reset your password by clicking: ${resetLink}\n\nThis link is active for 1 hour.`,
       html: `<p>Hello <strong>${user.name}</strong>,</p><p>Please reset your password by clicking the link below:</p><p><a href="${resetLink}">${resetLink}</a></p><p>This link is active for 1 hour.</p>`
     });

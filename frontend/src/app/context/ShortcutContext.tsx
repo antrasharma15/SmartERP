@@ -102,7 +102,7 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
               </div>
               <div>
                 <h2 className="text-lg font-black text-white light:text-slate-900 flex items-center gap-1.5">
-                  SmartERP Keyboard Shortcuts Guide
+                  KEYbooks Keyboard Shortcuts Guide
                 </h2>
                 <p className="text-[10px] text-slate-400 light:text-slate-600 mt-0.5">
                   Tally ERP-style keyboard operations. Navigate the system without mouse clicks.
@@ -158,7 +158,7 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
             <div className="flex justify-between items-center pt-4 border-t border-slate-900 light:border-slate-200 text-[10px] text-slate-500 light:text-slate-500 font-mono">
               <span>Press ? or ESC to toggle this guide</span>
-              <span className="text-brand-lime light:text-lime-700 font-bold">SmartERP BI Suite</span>
+              <span className="text-brand-lime light:text-lime-700 font-bold">KEYbooks BI Suite</span>
             </div>
           </div>
         </div>

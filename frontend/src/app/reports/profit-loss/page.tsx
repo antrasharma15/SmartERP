@@ -182,11 +182,11 @@ export default function ProfitLossReportPage() {
           <div className={`p-5 rounded-2xl border text-xs font-semibold flex items-center justify-between ${
             isLoss 
               ? "bg-red-500/10 border-red-500/20 text-red-400"
-              : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 light:text-emerald-700"
+              : "bg-red-500/10 border-red-500/20 text-red-400 light:text-lime-700"
           }`}>
             <div className="flex items-center gap-3">
               <div className={`p-2.5 rounded-xl border ${
-                isLoss ? "bg-red-500/20 border-red-500/30" : "bg-emerald-500/20 border-emerald-500/30"
+                isLoss ? "bg-red-500/20 border-red-500/30" : "bg-red-500/20 border-red-500/30"
               }`}>
                 {isLoss ? <TrendingDown className="w-5 h-5" /> : <TrendingUp className="w-5 h-5" />}
               </div>

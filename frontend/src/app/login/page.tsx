@@ -133,10 +133,18 @@ export default function LoginPage() {
         <div className="md:w-1/2 p-8 md:p-14 flex flex-col justify-center bg-white">
           <div className="space-y-8 max-w-sm mx-auto w-full">
             
-            {/* Logo */}
-            <div className="flex items-center gap-1 text-xl">
-              <span className="font-extrabold text-[#2563eb]">My</span>
-              <span className="font-extrabold text-slate-800 tracking-wide font-serif">SmartERP</span>
+            {/* Logo & Back button */}
+            <div className="flex items-center justify-between">
+              <Link href="/" className="flex items-center gap-1 text-xl hover:opacity-85 transition">
+                <span className="font-extrabold text-[#2563eb]">KEY</span>
+                <span className="font-extrabold text-slate-800 tracking-wide font-serif">books</span>
+              </Link>
+              <Link
+                href="/"
+                className="text-xs font-bold text-slate-400 light:text-slate-600 hover:text-[#2563eb] flex items-center gap-1 transition"
+              >
+                ← Back to Home
+              </Link>
             </div>
 
             {/* Title */}
@@ -150,7 +158,7 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="p-3.5 rounded-xl bg-red-50/50 border border-red-100 text-xs text-red-500">
+              <div className="p-3.5 rounded-xl bg-red-50/50 border border-lime-100 text-xs text-red-500">
                 {error}
               </div>
             )}

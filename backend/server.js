@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/authRoutes');
 const companyRoutes = require('./routes/companyRoutes');
@@ -19,6 +20,8 @@ const { protect } = require('./Middleware/authMiddleware');
 const { checkLock } = require('./Middleware/lockMiddleware');
 
 const app = express();
+
+app.use(helmet());
 
 // Configure CORS to support HTTP-only cookies with credentials
 const allowedOrigins = [
@@ -52,11 +55,15 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser()); // Required to parse HTTP-only JWT cookies
 
-// Request Logging Middleware for diagnostics
+// Request Logging Middleware for diagnostics (redacts sensitive variables)
 app.use((req, res, next) => {
   console.log(`[BACKEND REQUEST] ${req.method} ${req.url} - Origin: ${req.headers.origin}`);
   if (req.method !== 'GET' && req.body) {
-    console.log('Body:', JSON.stringify(req.body));
+    const sanitizedBody = { ...req.body };
+    if (sanitizedBody.password) sanitizedBody.password = '[REDACTED]';
+    if (sanitizedBody.newPassword) sanitizedBody.newPassword = '[REDACTED]';
+    if (sanitizedBody.token) sanitizedBody.token = '[REDACTED]';
+    console.log('Body:', JSON.stringify(sanitizedBody));
   }
   next();
 });
@@ -77,7 +84,7 @@ app.use('/api/reports', protect, checkLock, reportRoutes);
 app.use('/api/settings', protect, checkLock, settingsRoutes);
 
 app.get('/', (req, res) => {
-  res.send('SmartERP backend is running');
+  res.send('KEYbooks backend is running');
 });
 
 const PORT = process.env.PORT || 5000;

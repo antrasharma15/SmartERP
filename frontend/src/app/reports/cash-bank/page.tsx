@@ -433,7 +433,7 @@ export default function CashBankBookReportPage() {
                                   )}
                                 </td>
                                 <td className="py-3 px-4 font-bold">{tx.particulars}</td>
-                                <td className="py-3 px-4 text-right font-mono text-emerald-400 light:text-emerald-700 font-bold">
+                                <td className="py-3 px-4 text-right font-mono text-red-400 light:text-lime-700 font-bold">
                                   {tx.debit > 0 ? `+${currency}${tx.debit.toFixed(2)}` : "-"}
                                 </td>
                                 <td className="py-3 px-4 text-right font-mono text-rose-455 light:text-rose-700">

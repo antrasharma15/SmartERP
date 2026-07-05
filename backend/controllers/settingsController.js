@@ -179,7 +179,7 @@ const inviteCompanyUser = async (req, res) => {
     // Find the user by email
     const userRes = await pool.query('SELECT id, name FROM users WHERE email = $1', [email.trim().toLowerCase()]);
     if (userRes.rows.length === 0) {
-      return res.status(404).json({ message: 'User not found. They must register in SmartERP first.' });
+      return res.status(404).json({ message: 'User not found. They must register in KEYbooks first.' });
     }
     const invitee = userRes.rows[0];
 

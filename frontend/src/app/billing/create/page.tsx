@@ -646,7 +646,7 @@ export default function CreateInvoicePage() {
                     ? "bg-slate-800 border-slate-700 text-slate-400 light:text-slate-600"
                     : hasStockAlert 
                     ? "bg-red-500/10 border-red-500/20 text-red-400" 
-                    : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 light:text-emerald-700"
+                    : "bg-red-500/10 border-red-500/20 text-red-400 light:text-lime-700"
                 }`}>
                   {invoiceType !== "gst" ? "DRAFT MODE" : hasStockAlert ? "OUT OF STOCK" : "APPROVED"}
                 </span>

@@ -8,12 +8,12 @@ const {
   resetPassword,
   logout
 } = require('../controllers/authController');
-const { forgotPasswordLimiter } = require('../Middleware/rateLimiter');
+const { authLimiter, forgotPasswordLimiter } = require('../Middleware/rateLimiter');
 
 // Authentication & Session Endpoints
-router.post('/register', register);
+router.post('/register', authLimiter, register);
 router.post('/verify', verifyEmail);
-router.post('/login', login);
+router.post('/login', authLimiter, login);
 router.post('/logout', logout);
 
 // Password Reset Lifecycle Endpoints

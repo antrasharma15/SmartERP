@@ -29,7 +29,7 @@ const sendMail = async ({ to, subject, text, html }) => {
   });
 
   const mailOptions = {
-    from: process.env.SMTP_FROM || '"SmartERP Security" <security@mysmarterp.com>',
+    from: process.env.SMTP_FROM || '"KEYbooks Security" <security@myKEYbooks.com>',
     to,
     subject,
     text,

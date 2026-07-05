@@ -204,7 +204,7 @@ export default function TrialBalanceReportPage() {
         {totals && (
           <div className={`p-4 rounded-2xl border text-xs font-semibold flex items-center justify-between ${
             isBalanced 
-              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 light:text-emerald-700"
+              ? "bg-red-500/10 border-red-500/20 text-red-400 light:text-lime-700"
               : "bg-red-500/10 border-red-500/20 text-red-400"
           }`}>
             <div className="flex items-center gap-2">

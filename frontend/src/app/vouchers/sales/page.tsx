@@ -751,7 +751,7 @@ export default function CreateSalesVoucherPage() {
                 <span className={`px-2 py-0.5 border font-mono rounded text-[10px] uppercase font-black ${
                   hasStockAlert 
                     ? "bg-red-500/10 border-red-500/20 text-red-400" 
-                    : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 light:text-emerald-700"
+                    : "bg-red-500/10 border-red-500/20 text-red-400 light:text-lime-700"
                 }`}>
                   {hasStockAlert ? "INSUFFICIENT STOCK" : "BALANCED"}
                 </span>
