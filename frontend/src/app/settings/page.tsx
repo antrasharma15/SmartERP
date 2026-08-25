@@ -28,7 +28,7 @@ import {
   UserPlus
 } from "lucide-react";
 
-type TabType = "company" | "users" | "invoice" | "taxes" | "security" | "lock" | "audit";
+type TabType = "company" | "users" | "invoice" | "taxes" | "security" | "lock" | "audit" | "export";
 
 interface Company {
   id: string;
@@ -252,7 +252,7 @@ export default function SettingsPage() {
     try {
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get("tab");
-      if (tabParam && ["company", "users", "invoice", "taxes", "notifications", "security", "lock", "audit"].includes(tabParam)) {
+      if (tabParam && ["company", "users", "invoice", "taxes", "notifications", "security", "lock", "audit", "export"].includes(tabParam)) {
         setActiveTab(tabParam as TabType);
       }
     } catch (e) {}
@@ -304,7 +304,7 @@ export default function SettingsPage() {
 
       if (e.key === "ArrowDown" || e.key === "ArrowUp") {
         e.preventDefault();
-        const tabs: TabType[] = ["company", "users", "invoice", "taxes", "security", "lock", "audit"];
+        const tabs: TabType[] = ["company", "users", "invoice", "taxes", "security", "lock", "audit", "export"];
         const currentIdx = tabs.indexOf(activeTab);
         if (currentIdx === -1) return;
 
@@ -778,8 +778,14 @@ export default function SettingsPage() {
             <div className="h-[1px] bg-slate-900 light:bg-slate-200/80/50 my-2"></div>
 
             <button
-              onClick={handleExportCSV}
-              className="w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left text-slate-400 light:text-slate-600 hover:bg-red-500/10 hover:text-red-400 light:text-lime-700 transition font-semibold"
+              onClick={() => {
+                setActiveTab("export");
+              }}
+              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
+                activeTab === "export"
+                  ? "bg-red-600 text-white font-black"
+                  : "text-slate-400 light:text-slate-600 hover:bg-red-500/10 hover:text-red-400 light:hover:text-red-750 focus:outline-none"
+              }`}
             >
               <Download className="w-4 h-4" />
               Export Transactions
@@ -1330,6 +1336,30 @@ export default function SettingsPage() {
                       </button>
                     </div>
                   )}
+                </div>
+              )}
+
+              {activeTab === "export" && (
+                <div className="flex flex-col gap-6 text-slate-200 light:text-slate-800 animate-fade-in">
+                  <div>
+                    <h3 className="text-sm font-bold text-white light:text-slate-900 uppercase tracking-wide">Export Transaction Ledger Data</h3>
+                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Generate and download a comma-separated values (.csv) spreadsheet file of all your double-entry vouchers.</p>
+                  </div>
+
+                  <div className="border border-slate-900 light:border-slate-200 rounded-2xl bg-brand-navy-dark/10 p-8 text-center flex flex-col items-center gap-4">
+                    <Download className="w-12 h-12 text-red-500 animate-bounce" />
+                    <div>
+                      <p className="text-xs font-bold text-white light:text-slate-900">Your CSV export is ready to generate.</p>
+                      <p className="text-[10px] text-slate-500 light:text-slate-500 mt-1">This export contains all journal vouchers, ledger postings, accounts balances, and transaction details matching the current company workspace.</p>
+                    </div>
+                    <button
+                      onClick={handleExportCSV}
+                      className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-lg transition duration-200 flex items-center gap-2"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download CSV Database
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
