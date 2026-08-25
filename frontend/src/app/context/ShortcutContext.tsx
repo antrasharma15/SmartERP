@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { X, HelpCircle, Keyboard } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export interface ShortcutDefinition {
   keys: string;
@@ -26,7 +27,20 @@ export const useShortcutContext = () => {
 };
 
 export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [shortcuts, setShortcuts] = useState<ShortcutDefinition[]>([]);
+  const router = useRouter();
+  const [shortcuts, setShortcuts] = useState<ShortcutDefinition[]>([
+    { keys: "Alt+H", description: "Navigate Home", category: "Global" },
+    { keys: "Alt+L", description: "Ledgers Directory", category: "Global" },
+    { keys: "Alt+G", description: "Account Groups Directory", category: "Global" },
+    { keys: "Alt+S", description: "Stock Items Directory", category: "Global" },
+    { keys: "Alt+U", description: "Units Directory", category: "Global" },
+    { keys: "Alt+B", description: "Billing Register", category: "Global" },
+    { keys: "Alt+D", description: "Day Book Register", category: "Global" },
+    { keys: "Alt+A", description: "Balance Sheet Report", category: "Global" },
+    { keys: "Alt+P", description: "Profit & Loss Statement", category: "Global" },
+    { keys: "Alt+T", description: "Trial Balance Sheet", category: "Global" },
+    { keys: "Alt+R", description: "Stock Summary Valuation", category: "Global" }
+  ]);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   const registerShortcut = useCallback((def: ShortcutDefinition) => {
@@ -62,11 +76,50 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         e.preventDefault();
         setIsHelpOpen(false);
       }
+
+      // Global Navigation Triggers: Alt + Key
+      if (e.altKey) {
+        const key = e.key.toLowerCase();
+        if (key === "g" || key === "n") {
+          e.preventDefault();
+          router.push("/groups");
+        } else if (key === "l") {
+          e.preventDefault();
+          router.push("/ledgers");
+        } else if (key === "a") {
+          e.preventDefault();
+          router.push("/reports/balance-sheet");
+        } else if (key === "s") {
+          e.preventDefault();
+          router.push("/inventory?tab=items");
+        } else if (key === "u") {
+          e.preventDefault();
+          router.push("/inventory?tab=units");
+        } else if (key === "b") {
+          e.preventDefault();
+          router.push("/billing");
+        } else if (key === "d") {
+          e.preventDefault();
+          router.push("/reports/day-book");
+        } else if (key === "p") {
+          e.preventDefault();
+          router.push("/reports/profit-loss");
+        } else if (key === "t") {
+          e.preventDefault();
+          router.push("/reports/trial-balance");
+        } else if (key === "r") {
+          e.preventDefault();
+          router.push("/reports/stock-summary");
+        } else if (key === "h") {
+          e.preventDefault();
+          router.push("/dashboard");
+        }
+      }
     };
 
     window.addEventListener("keydown", handleGlobalKeyDown);
     return () => window.removeEventListener("keydown", handleGlobalKeyDown);
-  }, [isHelpOpen]);
+  }, [isHelpOpen, router]);
 
   // Group shortcuts by category
   const globalShortcuts = shortcuts.filter((s) => s.category === "Global");
