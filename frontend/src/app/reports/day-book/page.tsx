@@ -71,6 +71,27 @@ export default function DayBookReportPage() {
     return () => window.removeEventListener("activeCompanyChanged", updateCurrency);
   }, []);
 
+  // Listen for Escape key to return to dashboard
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        const isTyping = 
+          document.activeElement?.tagName === "INPUT" || 
+          document.activeElement?.tagName === "SELECT" || 
+          document.activeElement?.tagName === "TEXTAREA" ||
+          document.activeElement?.getAttribute("contenteditable") === "true";
+          
+        if (isTyping) {
+          (document.activeElement as HTMLElement).blur();
+          return;
+        }
+        router.push("/dashboard");
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [router]);
+
   useEffect(() => {
     const currentUser = getCurrentUser();
     if (!currentUser) {
