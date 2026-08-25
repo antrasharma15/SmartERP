@@ -337,6 +337,7 @@ export default function DashboardPage() {
     { keys: "Alt+U", action: () => router.push("/inventory?tab=units"), description: "Units Directory", category: "Global" },
     { keys: "Alt+V", action: () => router.push("/vouchers"), description: "Voucher Entry Portal", category: "Global" },
     { keys: "Alt+B", action: () => router.push("/billing"), description: "Billing Register", category: "Global" },
+    { keys: "Alt+C", action: () => router.push("/reports/cash-bank"), description: "Cash/Bank Book Register", category: "Global" },
     { keys: "Alt+D", action: () => router.push("/reports/day-book"), description: "Day Book Register", category: "Global" },
     { keys: "Alt+P", action: () => router.push("/reports/profit-loss"), description: "Profit & Loss Statement", category: "Global" },
     { keys: "Alt+T", action: () => router.push("/reports/trial-balance"), description: "Trial Balance Sheet", category: "Global" },

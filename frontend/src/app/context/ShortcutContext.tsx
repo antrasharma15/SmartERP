@@ -37,6 +37,7 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     { keys: "Alt+U", description: "Units Directory", category: "Global" },
     { keys: "Alt+V", description: "Voucher Entry Portal", category: "Global" },
     { keys: "Alt+B", description: "Billing Register", category: "Global" },
+    { keys: "Alt+C", description: "Cash/Bank Book Register", category: "Global" },
     { keys: "Alt+D", description: "Day Book Register", category: "Global" },
     { keys: "Alt+A", description: "Balance Sheet Report", category: "Global" },
     { keys: "Alt+P", description: "Profit & Loss Statement", category: "Global" },
@@ -103,6 +104,9 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         } else if (key === "b") {
           e.preventDefault();
           router.push("/billing");
+        } else if (key === "c") {
+          e.preventDefault();
+          router.push("/reports/cash-bank");
         } else if (key === "d") {
           e.preventDefault();
           router.push("/reports/day-book");
