@@ -291,6 +291,37 @@ export default function SettingsPage() {
     return () => clearTimeout(timer);
   }, [lockCountdown]);
 
+  // Listen for arrow keys to switch settings tabs
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isTyping = 
+        document.activeElement?.tagName === "INPUT" || 
+        document.activeElement?.tagName === "SELECT" || 
+        document.activeElement?.tagName === "TEXTAREA" ||
+        document.activeElement?.getAttribute("contenteditable") === "true";
+
+      if (isTyping) return;
+
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        const tabs: TabType[] = ["company", "users", "invoice", "taxes", "security", "lock", "audit"];
+        const currentIdx = tabs.indexOf(activeTab);
+        if (currentIdx === -1) return;
+
+        let nextIdx = currentIdx;
+        if (e.key === "ArrowDown") {
+          nextIdx = (currentIdx + 1) % tabs.length;
+        } else if (e.key === "ArrowUp") {
+          nextIdx = (currentIdx - 1 + tabs.length) % tabs.length;
+        }
+        setActiveTab(tabs[nextIdx]);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeTab]);
+
   // Fetch all configuration lists
   const loadAllSettings = async (companyId: string) => {
     setLoading(true);
