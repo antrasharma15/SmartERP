@@ -330,8 +330,8 @@ export default function DashboardPage() {
     // Alt-key triggers
     { keys: "Alt+L", action: () => router.push("/ledgers"), description: "Ledgers Directory", category: "Global" },
     { keys: "Alt+A", action: () => router.push("/reports/balance-sheet"), description: "Balance Sheet Report", category: "Global" },
-    { keys: "Alt+G", action: () => router.push("/groups"), description: "Account Groups Directory", category: "Global" },
     { keys: "Alt+N", action: () => router.push("/groups"), description: "Account Groups Directory", category: "Global" },
+    { keys: "Alt+O", action: () => router.push("/groups"), description: "Account Groups Directory", category: "Global" },
     { keys: "Alt+S", action: () => router.push("/inventory?tab=items"), description: "Stock Items Directory", category: "Global" },
     { keys: "Alt+U", action: () => router.push("/inventory?tab=units"), description: "Units Directory", category: "Global" },
     { keys: "Alt+B", action: () => router.push("/billing"), description: "Billing Register", category: "Global" },

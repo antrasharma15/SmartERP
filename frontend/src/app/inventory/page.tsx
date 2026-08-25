@@ -262,7 +262,7 @@ export default function InventoryDashboardPage() {
       if (e.ctrlKey && ["f", "F", "n", "N", "e", "E", "d", "D", "s", "S", "u", "U", "g", "G"].includes(e.key)) {
         e.preventDefault();
       }
-      if (e.altKey && ["s", "S", "g", "G", "u", "U", "a", "A"].includes(e.key)) {
+      if (e.altKey && ["s", "S", "g", "G", "u", "U", "a", "A", "n", "N"].includes(e.key)) {
         e.preventDefault();
       }
 
@@ -303,8 +303,8 @@ export default function InventoryDashboardPage() {
         return;
       }
 
-      // ALT + G (New Group)
-      if (e.altKey && (e.key === "g" || e.key === "G")) {
+      // ALT + G or ALT + N (New Group)
+      if (e.altKey && (e.key === "g" || e.key === "G" || e.key === "n" || e.key === "N")) {
         e.preventDefault();
         setActiveTab("groups");
         handleOpenCreateModal("group");
@@ -606,7 +606,7 @@ export default function InventoryDashboardPage() {
                 onClick={() => handleOpenCreateModal("group")}
                 className="px-4 py-2 bg-slate-900 light:bg-slate-200/80 hover:bg-slate-800 border border-slate-800 light:border-slate-200 text-slate-300 light:text-slate-700 font-bold rounded-xl text-xs transition duration-200"
               >
-                + Group (Alt+G)
+                + Group (Alt+N)
               </button>
               <button
                 onClick={() => handleOpenCreateModal("unit")}
@@ -841,7 +841,7 @@ export default function InventoryDashboardPage() {
           {/* Guide Legend */}
           <div className="flex justify-between items-center bg-slate-950 light:bg-slate-100/20 light:bg-slate-100 border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-3 rounded-2xl text-[10px] text-slate-400 light:text-slate-600 font-mono">
             <span>Use ↑↓ keys to select, Enter to edit, Tab to switch categories</span>
-            <span>ALT+S = New Item | ALT+G = New Group | ALT+U = New Unit | ESC = Dashboard</span>
+            <span>ALT+S = New Item | ALT+N = New Group | ALT+U = New Unit | ESC = Dashboard</span>
           </div>
         </section>
 
