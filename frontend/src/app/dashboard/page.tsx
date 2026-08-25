@@ -453,6 +453,14 @@ export default function DashboardPage() {
     return () => window.removeEventListener("keydown", handleModalKeys);
   }, [isCommandSearchOpen, isCalculatorOpen, filteredCommands, selectedCommandIndex]);
 
+  // Scroll selected Tally menu item into view
+  useEffect(() => {
+    const selectedItemEl = document.querySelector(`[data-menu-index="${selectedMenuIndex}"]`);
+    if (selectedItemEl) {
+      selectedItemEl.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }, [selectedMenuIndex]);
+
   return (
     <div className="min-h-screen bg-brand-navy-dark text-slate-100 flex flex-col select-none relative overflow-hidden">
       {/* Header bar */}
@@ -593,6 +601,7 @@ export default function DashboardPage() {
               return (
                 <button
                   key={idx}
+                  data-menu-index={idx}
                   onClick={() => {
                     setSelectedMenuIndex(idx);
                     item.action?.();
