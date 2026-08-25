@@ -606,7 +606,7 @@ export default function DashboardPage() {
                     setSelectedMenuIndex(idx);
                     item.action?.();
                   }}
-                  className={`w-full py-2 px-3 flex items-center justify-between rounded-lg transition-all duration-150 text-left ${
+                  className={`w-full py-2 px-3 flex items-center justify-between rounded-lg transition-all duration-150 text-left scroll-mt-24 ${
                     isSelected
                       ? "bg-brand-lime text-brand-navy-dark font-black shadow-lg shadow-brand-lime/10"
                       : "text-slate-300 light:text-slate-800 font-semibold hover:bg-brand-navy-light/40 hover:text-white light:hover:bg-slate-100 light:hover:text-black"

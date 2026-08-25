@@ -707,7 +707,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("company")}
               data-tab-id="company"
-              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
+              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold scroll-mt-24 ${
                 activeTab === "company" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
             >
@@ -718,7 +718,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("users")}
               data-tab-id="users"
-              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
+              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold scroll-mt-24 ${
                 activeTab === "users" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
             >
@@ -729,7 +729,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("invoice")}
               data-tab-id="invoice"
-              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
+              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold scroll-mt-24 ${
                 activeTab === "invoice" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
             >
@@ -740,7 +740,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("taxes")}
               data-tab-id="taxes"
-              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
+              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold scroll-mt-24 ${
                 activeTab === "taxes" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
             >
@@ -751,7 +751,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("security")}
               data-tab-id="security"
-              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
+              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold scroll-mt-24 ${
                 activeTab === "security" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
             >
@@ -762,7 +762,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("lock")}
               data-tab-id="lock"
-              className={`w-full py-2.5 px-3 flex items-center justify-between rounded-xl text-left transition font-semibold ${
+              className={`w-full py-2.5 px-3 flex items-center justify-between rounded-xl text-left transition font-semibold scroll-mt-24 ${
                 activeTab === "lock" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
             >
@@ -780,7 +780,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("audit")}
               data-tab-id="audit"
-              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
+              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold scroll-mt-24 ${
                 activeTab === "audit" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
             >
@@ -795,7 +795,7 @@ export default function SettingsPage() {
                 setActiveTab("export");
               }}
               data-tab-id="export"
-              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
+              className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold scroll-mt-24 ${
                 activeTab === "export"
                   ? "bg-red-600 text-white font-black"
                   : "text-slate-400 light:text-slate-600 hover:bg-red-500/10 hover:text-red-400 light:hover:text-red-750 focus:outline-none"
