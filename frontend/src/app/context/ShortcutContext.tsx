@@ -42,7 +42,16 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     { keys: "Alt+A", description: "Balance Sheet Report", category: "Global" },
     { keys: "Alt+P", description: "Profit & Loss Statement", category: "Global" },
     { keys: "Alt+T", description: "Trial Balance Sheet", category: "Global" },
-    { keys: "Alt+K / Alt+R", description: "Stock Summary Valuation", category: "Global" }
+    { keys: "Alt+K / Alt+R", description: "Stock Summary Valuation", category: "Global" },
+    { keys: "F1", description: "Change Active Company", category: "Global" },
+    { keys: "F2", description: "Change Financial Period", category: "Global" },
+    { keys: "F3", description: "View Company Details", category: "Global" },
+    { keys: "F4", description: "Toggle Calculator Widget", category: "Global" },
+    { keys: "F8", description: "Sales Voucher Entry", category: "Global" },
+    { keys: "F9", description: "Purchase Voucher Entry", category: "Global" },
+    { keys: "Ctrl+K", description: "Toggle Command Search Panel", category: "Global" },
+    { keys: "Ctrl+Q", description: "Logout Session", category: "Global" },
+    { keys: "?", description: "Toggle Keyboard Shortcuts Help", category: "Global" }
   ]);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
