@@ -215,7 +215,7 @@ export default function ReportsGatewayPage() {
                   className={`p-4 rounded-2xl border transition duration-150 cursor-pointer flex items-center justify-between ${
                     isSelected
                       ? "bg-brand-lime/10 light:bg-lime-100/60 border-brand-lime/30 text-white light:text-slate-900 light:text-slate-900 font-bold"
-                      : "bg-brand-navy-dark/40 border-slate-900 light:border-slate-200/50 light:border-slate-200 text-slate-350 hover:bg-slate-900 light:bg-slate-200/80/20"
+                      : "bg-brand-navy-dark/40 border-slate-900 light:border-slate-200 text-slate-350 hover:text-white light:hover:text-slate-900 hover:bg-slate-900/60 light:hover:bg-slate-100"
                   }`}
                 >
                   <div className="flex items-center gap-4">
