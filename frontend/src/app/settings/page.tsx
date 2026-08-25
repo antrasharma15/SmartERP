@@ -699,7 +699,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("company")}
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
-                activeTab === "company" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900 light:bg-slate-200/80/30 hover:text-white light:text-slate-900 light:hover:text-black"
+                activeTab === "company" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
             >
               <Building2 className="w-4 h-4" />
@@ -709,7 +709,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("users")}
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
-                activeTab === "users" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900 light:bg-slate-200/80/30 hover:text-white light:text-slate-900 light:hover:text-black"
+                activeTab === "users" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
             >
               <Users className="w-4 h-4" />
@@ -719,7 +719,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("invoice")}
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
-                activeTab === "invoice" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900 light:bg-slate-200/80/30 hover:text-white light:text-slate-900 light:hover:text-black"
+                activeTab === "invoice" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
             >
               <FileText className="w-4 h-4" />
@@ -729,7 +729,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("taxes")}
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
-                activeTab === "taxes" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900 light:bg-slate-200/80/30 hover:text-white light:text-slate-900 light:hover:text-black"
+                activeTab === "taxes" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
             >
               <Percent className="w-4 h-4" />
@@ -741,7 +741,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("security")}
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
-                activeTab === "security" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900 light:bg-slate-200/80/30 hover:text-white light:text-slate-900 light:hover:text-black"
+                activeTab === "security" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
             >
               <KeyRound className="w-4 h-4" />
@@ -751,7 +751,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("lock")}
               className={`w-full py-2.5 px-3 flex items-center justify-between rounded-xl text-left transition font-semibold ${
-                activeTab === "lock" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900 light:bg-slate-200/80/30 hover:text-white light:text-slate-900 light:hover:text-black"
+                activeTab === "lock" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
             >
               <span className="flex items-center gap-2.5">
@@ -768,7 +768,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setActiveTab("audit")}
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
-                activeTab === "audit" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900 light:bg-slate-200/80/30 hover:text-white light:text-slate-900 light:hover:text-black"
+                activeTab === "audit" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
             >
               <History className="w-4 h-4" />
