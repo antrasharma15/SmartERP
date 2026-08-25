@@ -32,6 +32,7 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     { keys: "Alt+H", description: "Navigate Home", category: "Global" },
     { keys: "Alt+L", description: "Ledgers Directory", category: "Global" },
     { keys: "Alt+N / Alt+O", description: "Account Groups Directory (Alt+G is used by Gemini)", category: "Global" },
+    { keys: "Alt+I", description: "Inventory Dashboard", category: "Global" },
     { keys: "Alt+S", description: "Stock Items Directory", category: "Global" },
     { keys: "Alt+U", description: "Units Directory", category: "Global" },
     { keys: "Alt+V", description: "Voucher Entry Portal", category: "Global" },
@@ -40,7 +41,7 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     { keys: "Alt+A", description: "Balance Sheet Report", category: "Global" },
     { keys: "Alt+P", description: "Profit & Loss Statement", category: "Global" },
     { keys: "Alt+T", description: "Trial Balance Sheet", category: "Global" },
-    { keys: "Alt+R", description: "Stock Summary Valuation", category: "Global" }
+    { keys: "Alt+K / Alt+R", description: "Stock Summary Valuation", category: "Global" }
   ]);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
@@ -111,7 +112,10 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         } else if (key === "t") {
           e.preventDefault();
           router.push("/reports/trial-balance");
-        } else if (key === "r") {
+        } else if (key === "i") {
+          e.preventDefault();
+          router.push("/inventory");
+        } else if (key === "r" || key === "k") {
           e.preventDefault();
           router.push("/reports/stock-summary");
         } else if (key === "h") {

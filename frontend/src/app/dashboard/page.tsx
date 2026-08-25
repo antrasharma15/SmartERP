@@ -332,6 +332,7 @@ export default function DashboardPage() {
     { keys: "Alt+A", action: () => router.push("/reports/balance-sheet"), description: "Balance Sheet Report", category: "Global" },
     { keys: "Alt+N", action: () => router.push("/groups"), description: "Account Groups Directory", category: "Global" },
     { keys: "Alt+O", action: () => router.push("/groups"), description: "Account Groups Directory", category: "Global" },
+    { keys: "Alt+I", action: () => router.push("/inventory"), description: "Inventory Dashboard", category: "Global" },
     { keys: "Alt+S", action: () => router.push("/inventory?tab=items"), description: "Stock Items Directory", category: "Global" },
     { keys: "Alt+U", action: () => router.push("/inventory?tab=units"), description: "Units Directory", category: "Global" },
     { keys: "Alt+V", action: () => router.push("/vouchers"), description: "Voucher Entry Portal", category: "Global" },
@@ -339,6 +340,7 @@ export default function DashboardPage() {
     { keys: "Alt+D", action: () => router.push("/reports/day-book"), description: "Day Book Register", category: "Global" },
     { keys: "Alt+P", action: () => router.push("/reports/profit-loss"), description: "Profit & Loss Statement", category: "Global" },
     { keys: "Alt+T", action: () => router.push("/reports/trial-balance"), description: "Trial Balance Sheet", category: "Global" },
+    { keys: "Alt+K", action: () => router.push("/reports/stock-summary"), description: "Stock Summary Report", category: "Global" },
     { keys: "Alt+R", action: () => router.push("/reports/stock-summary"), description: "Stock Summary Valuation", category: "Global" },
 
     // Function keys
