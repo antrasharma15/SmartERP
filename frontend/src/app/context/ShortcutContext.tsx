@@ -31,7 +31,7 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [shortcuts, setShortcuts] = useState<ShortcutDefinition[]>([
     { keys: "Alt+H", description: "Navigate Home", category: "Global" },
     { keys: "Alt+L", description: "Ledgers Directory", category: "Global" },
-    { keys: "Alt+G", description: "Account Groups Directory", category: "Global" },
+    { keys: "Alt+N / Alt+O", description: "Account Groups Directory (Alt+G is used by Gemini)", category: "Global" },
     { keys: "Alt+S", description: "Stock Items Directory", category: "Global" },
     { keys: "Alt+U", description: "Units Directory", category: "Global" },
     { keys: "Alt+B", description: "Billing Register", category: "Global" },
@@ -80,7 +80,7 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       // Global Navigation Triggers: Alt + Key
       if (e.altKey) {
         const key = e.key.toLowerCase();
-        if (key === "g" || key === "n") {
+        if (key === "g" || key === "n" || key === "o") {
           e.preventDefault();
           router.push("/groups");
         } else if (key === "l") {
