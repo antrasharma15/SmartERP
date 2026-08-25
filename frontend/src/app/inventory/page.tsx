@@ -83,6 +83,17 @@ export default function InventoryDashboardPage() {
   // Active Tab
   const [activeTab, setActiveTab] = useState<TabType>("items");
 
+  // Read active tab parameter from URL on load
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get("tab");
+      if (tabParam === "items" || tabParam === "groups" || tabParam === "units") {
+        setActiveTab(tabParam as TabType);
+      }
+    }
+  }, []);
+
   // Data lists
   const [items, setItems] = useState<StockItem[]>([]);
   const [groups, setGroups] = useState<StockGroup[]>([]);
