@@ -34,6 +34,7 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     { keys: "Alt+N / Alt+O", description: "Account Groups Directory (Alt+G is used by Gemini)", category: "Global" },
     { keys: "Alt+S", description: "Stock Items Directory", category: "Global" },
     { keys: "Alt+U", description: "Units Directory", category: "Global" },
+    { keys: "Alt+V", description: "Voucher Entry Portal", category: "Global" },
     { keys: "Alt+B", description: "Billing Register", category: "Global" },
     { keys: "Alt+D", description: "Day Book Register", category: "Global" },
     { keys: "Alt+A", description: "Balance Sheet Report", category: "Global" },
@@ -95,6 +96,9 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         } else if (key === "u") {
           e.preventDefault();
           router.push("/inventory?tab=units");
+        } else if (key === "v") {
+          e.preventDefault();
+          router.push("/vouchers");
         } else if (key === "b") {
           e.preventDefault();
           router.push("/billing");
