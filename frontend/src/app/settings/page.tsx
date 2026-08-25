@@ -322,6 +322,14 @@ export default function SettingsPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeTab]);
 
+  // Scroll selected settings tab into view
+  useEffect(() => {
+    const activeBtn = document.querySelector(`[data-tab-id="${activeTab}"]`);
+    if (activeBtn) {
+      activeBtn.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }, [activeTab]);
+
   // Fetch all configuration lists
   const loadAllSettings = async (companyId: string) => {
     setLoading(true);
@@ -698,6 +706,7 @@ export default function SettingsPage() {
           <nav className="flex flex-col gap-1 text-xs">
             <button
               onClick={() => setActiveTab("company")}
+              data-tab-id="company"
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
                 activeTab === "company" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
@@ -708,6 +717,7 @@ export default function SettingsPage() {
 
             <button
               onClick={() => setActiveTab("users")}
+              data-tab-id="users"
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
                 activeTab === "users" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
@@ -718,6 +728,7 @@ export default function SettingsPage() {
 
             <button
               onClick={() => setActiveTab("invoice")}
+              data-tab-id="invoice"
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
                 activeTab === "invoice" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
@@ -728,6 +739,7 @@ export default function SettingsPage() {
 
             <button
               onClick={() => setActiveTab("taxes")}
+              data-tab-id="taxes"
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
                 activeTab === "taxes" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
@@ -736,10 +748,9 @@ export default function SettingsPage() {
               Tax Settings
             </button>
 
-
-
             <button
               onClick={() => setActiveTab("security")}
+              data-tab-id="security"
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
                 activeTab === "security" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
@@ -750,6 +761,7 @@ export default function SettingsPage() {
 
             <button
               onClick={() => setActiveTab("lock")}
+              data-tab-id="lock"
               className={`w-full py-2.5 px-3 flex items-center justify-between rounded-xl text-left transition font-semibold ${
                 activeTab === "lock" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
@@ -767,6 +779,7 @@ export default function SettingsPage() {
 
             <button
               onClick={() => setActiveTab("audit")}
+              data-tab-id="audit"
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
                 activeTab === "audit" ? "bg-brand-lime text-brand-navy-dark font-black" : "text-slate-400 light:text-slate-600 hover:bg-slate-900/60 light:hover:bg-slate-100 hover:text-white light:hover:text-slate-900 focus:outline-none"
               }`}
@@ -781,6 +794,7 @@ export default function SettingsPage() {
               onClick={() => {
                 setActiveTab("export");
               }}
+              data-tab-id="export"
               className={`w-full py-2.5 px-3 flex items-center gap-2.5 rounded-xl text-left transition font-semibold ${
                 activeTab === "export"
                   ? "bg-red-600 text-white font-black"

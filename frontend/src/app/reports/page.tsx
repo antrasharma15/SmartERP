@@ -151,6 +151,14 @@ export default function ReportsGatewayPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedRowIndex, router]);
 
+  // Scroll selected report item into view
+  useEffect(() => {
+    const selectedItemEl = document.querySelector(`[data-row-index="${selectedRowIndex}"]`);
+    if (selectedItemEl) {
+      selectedItemEl.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }, [selectedRowIndex]);
+
   return (
     <div className="min-h-screen bg-brand-navy-dark text-slate-100 flex flex-col select-none relative overflow-hidden font-sans">
       {/* Header bar */}
@@ -208,6 +216,7 @@ export default function ReportsGatewayPage() {
               return (
                 <div
                   key={item.label}
+                  data-row-index={idx}
                   onClick={() => {
                     setSelectedRowIndex(idx);
                     item.action();
