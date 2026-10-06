@@ -77,7 +77,18 @@ async function runTests() {
       email: testEmail,
       password: testPassword
     });
-    assert('Register duplicate email returns 400', dupRes.status === 400, dupRes);
+    // Registering a known email must be indistinguishable from registering a
+    // fresh one: same status, same message. Returning 400 "already exists"
+    // would let an attacker enumerate which emails hold accounts. The
+    // duplicate is refused at the DB (users_email_key UNIQUE) and the real
+    // owner is emailed instead. See authController.register.
+    // Same status, and a message that never discloses the account exists.
+    // (In production both paths return the identical "verification link sent"
+    // string; the dev-only auto-verify branch is what makes them differ here,
+    // so assert the disclosure property rather than exact equality.)
+    const leaks = /exist|already|taken|registered|in use|duplicate/i.test(dupRes.body.message || '');
+    assert('Duplicate email does not disclose that the account exists',
+      dupRes.status === regRes.status && !leaks, dupRes);
 
     // 3. Register invalid email
     console.log('\nCase 3: Register invalid email...');

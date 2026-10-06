@@ -87,9 +87,9 @@ app.get('/', (req, res) => {
   res.send('KEYbooks backend is running');
 });
 
+// Cloud Run startup/liveness probe. Must not touch the DB: a slow or cold
+// Cloud SQL instance would otherwise fail the probe and kill a healthy revision.
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-app.get('/api/protected', protect, (req, res) => {
-  res.json({ message: 'Access granted', user: req.user });
-});

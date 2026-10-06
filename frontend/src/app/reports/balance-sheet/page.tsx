@@ -1,8 +1,11 @@
 "use client";
 
+import Loader from "../../components/Loader";
+
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch, getCurrentUser } from "../../utils/api";
+import AppLayout from "../../components/AppLayout";
 import {
   Building2,
   Calendar,
@@ -10,8 +13,10 @@ import {
   Loader2,
   AlertCircle,
   BarChart3,
-  CheckCircle2
+  CheckCircle2,
+  Download
 } from "lucide-react";
+import { exportToCsv } from "../../utils/exportCsv";
 
 interface BSRow {
   name: string;
@@ -65,9 +70,9 @@ export default function BalanceSheetReportPage() {
     console.log(`[BalanceSheet] Fetching balances from ${start} to ${end}`);
     try {
       const data = await apiFetch(`/reports/balance-sheet?company_id=${companyId}&start_date=${start}&end_date=${end}`);
-      setAssetItems(data.report.assets || []);
-      setLiabilityItems(data.report.liabilities || []);
-      setTotals(data.report.totals || null);
+      setAssetItems(data.report?.assets || []);
+      setLiabilityItems(data.report?.liabilities || []);
+      setTotals(data.report?.totals || null);
     } catch (err: any) {
       console.error("[BalanceSheet Error] Load failed:", err);
       setError(err.message || "Failed to load Balance Sheet.");
@@ -80,6 +85,31 @@ export default function BalanceSheetReportPage() {
     if (company) {
       fetchBalanceSheet(company.id, startDate, endDate);
     }
+  };
+
+  const handleExportCsv = () => {
+    const headers = [
+      "Section",
+      "Account Name",
+      `Amount (${company?.currency || "₹"})`
+    ];
+    const rows: (string | number)[][] = [];
+    rows.push(["LIABILITIES & EQUITY", "", ""]);
+    liabilityItems.forEach(item => {
+      rows.push(["Liability/Equity", item.name, Number(item.amount).toFixed(2)]);
+    });
+    rows.push(["TOTAL LIABILITIES & EQUITY", "", Number(totals?.liabilities_total || 0).toFixed(2)]);
+    rows.push(["", "", ""]);
+    rows.push(["ASSETS", "", ""]);
+    assetItems.forEach(item => {
+      rows.push(["Asset", item.name, Number(item.amount).toFixed(2)]);
+    });
+    rows.push(["TOTAL ASSETS", "", Number(totals?.assets_total || 0).toFixed(2)]);
+    if (totals) {
+      rows.push(["", "", ""]);
+      rows.push(["DIFFERENCE", "", Number(totals.balance_difference || 0).toFixed(2)]);
+    }
+    exportToCsv("Balance_Sheet_Report", headers, rows);
   };
 
   // Keyboard navigation
@@ -104,109 +134,83 @@ export default function BalanceSheetReportPage() {
   const holdsParity = totals && totals.balance_difference < 0.01;
 
   return (
-    <div className="min-h-screen bg-brand-navy-dark text-slate-100 flex flex-col select-none relative overflow-hidden font-sans">
-      {/* Header bar */}
-      <header className="border-b border-brand-navy-light bg-brand-navy-dark/70 backdrop-blur-md sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <button
-              onClick={() => router.push("/reports")}
-              className="p-2 rounded-xl bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 hover:border-brand-lime/40 transition duration-200"
-              title="Return to Reports Menu (ESC)"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/dashboard")}>
-              <span className="text-xl font-extrabold text-white light:text-slate-900 tracking-wide">KEY</span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">books</span>
-            </div>
-            <div className="h-6 w-[1px] bg-slate-800"></div>
-            <div className="flex items-center gap-2 text-brand-lime light:text-lime-700 font-bold">
-              <Building2 className="w-5 h-5" />
-              <span>{company?.name}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <span className="text-xs font-mono bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 px-3 py-1 rounded text-slate-400 light:text-slate-600">
-              Esc to Back
-            </span>
-          </div>
-        </div>
-      </header>
-
-      {/* Main content grid */}
-      <main className="flex-1 max-w-[1400px] mx-auto px-6 py-8 w-full space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900 light:border-slate-200 pb-4">
+    <AppLayout
+      pageTitle="Company Balance Sheet"
+      pageSubtitle="Displays structural assets, capital equity accounts, and payables at a specific point in time."
+    >
+      <div className="space-y-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800 light:border-slate-200 pb-4">
           <div>
-            <h1 className="text-2xl font-black text-white light:text-slate-900 flex items-center gap-2">
-              <BarChart3 className="w-6 h-6 text-brand-lime light:text-lime-700" />
-              Company Balance Sheet
-            </h1>
-            <p className="text-xs text-slate-400 light:text-slate-600 mt-1">
-              Displays structural assets, capital equity accounts, and payables at a specific point in time.
-            </p>
+            <h2 className="text-xl font-extrabold text-white light:text-slate-900 flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-red-500" />
+              Balance Sheet Statement
+            </h2>
           </div>
 
-          {/* Date Picker Controls */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 border border-slate-900 light:border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold">
+          {/* Date Picker Controls & CSV Export */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2 bg-slate-950 light:bg-slate-50 border border-slate-800 light:border-slate-300 px-3.5 py-2 rounded-xl text-sm font-semibold">
               <Calendar className="w-4 h-4 text-slate-400 light:text-slate-600" />
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="bg-transparent outline-none text-white light:text-slate-900 font-mono"
+                className="bg-transparent outline-none text-white light:text-slate-900 font-mono text-sm"
               />
-              <span className="text-slate-600">to</span>
+              <span className="text-slate-500">to</span>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="bg-transparent outline-none text-white light:text-slate-900 font-mono"
+                className="bg-transparent outline-none text-white light:text-slate-900 font-mono text-sm"
               />
             </div>
             <button
               onClick={handleDateChange}
-              className="px-4 py-2 bg-brand-lime text-brand-navy-dark font-bold hover:bg-white rounded-xl text-xs transition"
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-sm shadow-sm transition"
             >
               Update View
+            </button>
+            <button
+              onClick={handleExportCsv}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-800 light:bg-slate-100 hover:bg-slate-700 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-bold rounded-xl text-sm shadow-sm transition"
+              title="Export Balance Sheet to CSV"
+            >
+              <Download className="w-4 h-4 text-red-500" />
+              <span>Export CSV</span>
             </button>
           </div>
         </div>
 
         {/* Verification Status */}
         {totals && (
-          <div className={`p-4 rounded-2xl border text-xs font-semibold flex items-center justify-between ${
+          <div className={`p-4 rounded-2xl border text-sm font-bold flex items-center justify-between ${
             holdsParity 
-              ? "bg-red-500/10 border-red-500/20 text-red-400 light:text-lime-700"
+              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 light:text-emerald-700"
               : "bg-red-500/10 border-red-500/20 text-red-400"
           }`}>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               {holdsParity ? (
                 <>
-                  <CheckCircle2 className="w-4.5 h-4.5 shrink-0" />
+                  <CheckCircle2 className="w-5 h-5 shrink-0" />
                   <span>Balance sheet equation holds perfect parity: Assets match Liabilities & Equity.</span>
                 </>
               ) : (
                 <>
-                  <AlertCircle className="w-4.5 h-4.5 shrink-0" />
+                  <AlertCircle className="w-5 h-5 shrink-0" />
                   <span>Equations unbalanced. Assets do not equal liabilities plus reserves.</span>
                 </>
               )}
             </div>
-            <div className="font-mono text-right font-black">
-              Diff: {company?.currency || "$"}{totals.balance_difference.toFixed(2)}
+            <div className="font-mono text-right font-black text-sm">
+              Diff: {company?.currency || "₹"}{totals.balance_difference.toFixed(2)}
             </div>
           </div>
         )}
 
         {/* Dual Columns view */}
         {loading ? (
-          <div className="py-24 flex flex-col items-center justify-center gap-3 text-slate-400 light:text-slate-600">
-            <Loader2 className="w-8 h-8 animate-spin text-brand-lime light:text-lime-700" />
-            <p className="text-xs">Reconciling statements...</p>
-          </div>
+          <Loader kind="scale" label="Reconciling statements" />
         ) : error ? (
           <div className="py-16 text-center space-y-3">
             <div className="inline-flex p-3 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
@@ -218,60 +222,60 @@ export default function BalanceSheetReportPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Left Column: Liabilities & Capital */}
-            <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-6 shadow-2xl backdrop-blur-xl flex flex-col justify-between space-y-4">
+            <div className="rounded-3xl bg-slate-900/30 light:bg-white border border-slate-800 light:border-slate-200 p-6 shadow-xl backdrop-blur-xl flex flex-col justify-between space-y-6">
               <div className="space-y-4">
-                <h3 className="text-xs font-black uppercase tracking-wider text-red-400 border-b border-slate-900 light:border-slate-200 pb-2">
+                <h3 className="text-sm font-black uppercase tracking-wider text-red-500 border-b border-slate-800 light:border-slate-200 pb-2.5">
                   Liabilities, Equity & Capital Accounts
                 </h3>
                 {liabilityItems.length === 0 ? (
-                  <p className="text-slate-500 light:text-slate-500 italic py-6 text-center text-xs">No active liability items.</p>
+                  <p className="text-slate-500 italic py-8 text-center text-sm">No active liability items.</p>
                 ) : (
-                  <div className="space-y-2.5">
+                  <div className="space-y-3">
                     {liabilityItems.map((item, idx) => (
-                      <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 text-xs">
-                        <span className="text-slate-300 light:text-slate-700 font-bold">{item.name}</span>
-                        <span className="font-mono text-white light:text-slate-900 light:text-slate-800 font-semibold">
-                          {item.amount < 0 ? `-${company?.currency || "$"}${Math.abs(item.amount).toFixed(2)}` : `${company?.currency || "$"}${item.amount.toFixed(2)}`}
+                      <div key={idx} className="flex justify-between items-center py-1.5 border-b border-slate-800/50 light:border-slate-100 text-sm">
+                        <span className="text-slate-200 light:text-slate-800 font-bold">{item.name}</span>
+                        <span className="font-mono text-white light:text-slate-900 font-bold">
+                          {item.amount < 0 ? `-${company?.currency || "₹"}${Math.abs(item.amount).toFixed(2)}` : `${company?.currency || "₹"}${item.amount.toFixed(2)}`}
                         </span>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-              <div className="flex justify-between items-center bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-xl">
-                <span className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black">Total Liabilities & Equity</span>
-                <span className="font-mono font-black text-white light:text-slate-900">{company?.currency || "$"}{totals?.liabilities_total.toFixed(2)}</span>
+              <div className="flex justify-between items-center bg-slate-950 light:bg-slate-50 p-4 border border-slate-800 light:border-slate-200 rounded-2xl text-sm">
+                <span className="text-xs text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Total Liabilities & Equity</span>
+                <span className="font-mono font-black text-white light:text-slate-900 text-base">{company?.currency || "₹"}{totals?.liabilities_total.toFixed(2)}</span>
               </div>
             </div>
 
             {/* Right Column: Assets */}
-            <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-6 shadow-2xl backdrop-blur-xl flex flex-col justify-between space-y-4">
+            <div className="rounded-3xl bg-slate-900/30 light:bg-white border border-slate-800 light:border-slate-200 p-6 shadow-xl backdrop-blur-xl flex flex-col justify-between space-y-6">
               <div className="space-y-4">
-                <h3 className="text-xs font-black uppercase tracking-wider text-brand-lime light:text-lime-700 border-b border-slate-900 light:border-slate-200 pb-2">
+                <h3 className="text-sm font-black uppercase tracking-wider text-emerald-400 light:text-emerald-700 border-b border-slate-800 light:border-slate-200 pb-2.5">
                   Assets & Debit Values
                 </h3>
                 {assetItems.length === 0 ? (
-                  <p className="text-slate-500 light:text-slate-500 italic py-6 text-center text-xs">No active asset records.</p>
+                  <p className="text-slate-500 italic py-8 text-center text-sm">No active asset records.</p>
                 ) : (
-                  <div className="space-y-2.5">
+                  <div className="space-y-3">
                     {assetItems.map((item, idx) => (
-                      <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 text-xs">
-                        <span className="text-slate-300 light:text-slate-700 font-bold">{item.name}</span>
-                        <span className="font-mono text-white light:text-slate-900 light:text-slate-800 font-semibold">{company?.currency || "$"}{item.amount.toFixed(2)}</span>
+                      <div key={idx} className="flex justify-between items-center py-1.5 border-b border-slate-800/50 light:border-slate-100 text-sm">
+                        <span className="text-slate-200 light:text-slate-800 font-bold">{item.name}</span>
+                        <span className="font-mono text-white light:text-slate-900 font-bold">{company?.currency || "₹"}{item.amount.toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-              <div className="flex justify-between items-center bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-xl">
-                <span className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black">Total Assets</span>
-                <span className="font-mono font-black text-white light:text-slate-900">{company?.currency || "$"}{totals?.assets_total.toFixed(2)}</span>
+              <div className="flex justify-between items-center bg-slate-950 light:bg-slate-50 p-4 border border-slate-800 light:border-slate-200 rounded-2xl text-sm">
+                <span className="text-xs text-slate-400 light:text-slate-600 uppercase font-black tracking-wider">Total Assets</span>
+                <span className="font-mono font-black text-white light:text-slate-900 text-base">{company?.currency || "₹"}{totals?.assets_total.toFixed(2)}</span>
               </div>
             </div>
 
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   );
 }

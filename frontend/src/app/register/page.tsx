@@ -1,10 +1,13 @@
 "use client";
 
+import AuthHero from "../components/AuthHero";
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { apiFetch, getCurrentUser } from "../utils/api";
-import { Lock, Mail, Loader2, User, Eye, EyeOff } from "lucide-react";
+import Logo from "../components/Logo";
+import { Lock, Mail, Loader2, User, Eye, EyeOff, ArrowRight, Sparkles, CheckCircle2 } from "lucide-react";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -45,194 +48,132 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-slate-50 flex items-center justify-center p-4 md:p-6 select-none font-sans">
-      {/* Soft blurred background blobs to match the JPEG visual surroundings */}
-      <div className="absolute top-10 left-10 w-72 h-72 bg-sky-200/40 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl pointer-events-none"></div>
+    <div className="relative min-h-screen bg-[#020617] light:bg-slate-100 flex items-center justify-center p-4 md:p-8 select-none font-sans overflow-hidden">
+      {/* Background ambient lighting */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
-      {/* Central Card */}
-      <div className="w-full max-w-4xl bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(18,52,102,0.15)] overflow-hidden flex flex-col md:flex-row min-h-[620px] z-10">
+      {/* Main Container Card */}
+      <div className="w-full max-w-5xl bg-[#0b1528] light:bg-white border border-slate-800 light:border-slate-200/80 rounded-3xl shadow-[0_25px_60px_rgba(0,0,0,0.4)] light:shadow-[0_20px_50px_rgba(0,0,0,0.08)] overflow-hidden flex flex-col md:flex-row min-h-[640px] z-10">
         
-        {/* Left Side: Deep Blue panel with abstract circles and cartoon illustration */}
-        <div className="md:w-1/2 bg-gradient-to-br from-[#0e2c6c] via-[#0f3d9b] to-[#1253d2] p-8 md:p-12 flex flex-col justify-between items-center text-center relative overflow-hidden text-white light:text-slate-900">
-          {/* Abstract circles */}
-          <div className="absolute top-6 left-6 w-16 h-16 rounded-full bg-white/10"></div>
-          <div className="absolute top-1/2 -left-4 w-6 h-6 rounded-full bg-white/20"></div>
-          <div className="absolute bottom-12 right-12 w-12 h-12 rounded-full bg-white/10"></div>
+        <AuthHero
+          headline={<>Create account,<br />start bookkeeping</>}
+          sub={"Double-entry vouchers, automated ledger posting, and inventory registers that reconcile themselves."}
+          tags={["F8 Sales", "F9 Purchase", "Alt+B Billing", "? Shortcuts"]}
+        />
 
-          {/* Spacer */}
-          <div className="hidden md:block"></div>
-
-          {/* Cartoon Character / Bench Illustration SVG */}
-          <div className="relative w-full max-w-[280px] my-6 md:my-0 flex justify-center items-center">
-            <svg viewBox="0 0 280 200" className="w-full h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* Clouds */}
-              <ellipse cx="75" cy="50" rx="25" ry="10" fill="white" fillOpacity="0.2" />
-              <ellipse cx="205" cy="45" rx="25" ry="10" fill="white" fillOpacity="0.2" />
-              <ellipse cx="140" cy="20" rx="15" ry="6" fill="white" fillOpacity="0.1" />
-
-              {/* Lamp Post / Structure */}
-              <rect x="55" y="70" width="4" height="85" fill="#4b5563" />
-              <ellipse cx="57" cy="65" rx="12" ry="6" fill="#fbbf24" />
-
-              {/* Bench */}
-              <rect x="75" y="110" width="55" height="6" fill="#d1d5db" />
-              <rect x="85" y="116" width="4" height="40" fill="#9ca3af" />
-              <rect x="120" y="116" width="4" height="40" fill="#9ca3af" />
-
-              {/* Platform */}
-              <rect x="35" y="155" width="200" height="4" rx="2" fill="#93c5fd" />
-
-              {/* Floating screens / nodes */}
-              <rect x="150" y="80" width="30" height="40" rx="4" fill="white" fillOpacity="0.6" />
-              <rect x="155" y="90" width="20" height="4" rx="2" fill="#3b82f6" />
-              <rect x="155" y="98" width="15" height="3" rx="1.5" fill="#d1d5db" />
-              <rect x="155" y="105" width="20" height="3" rx="1.5" fill="#3b82f6" />
-              
-              <rect x="150" y="55" width="32" height="20" rx="6" fill="#3b82f6" />
-              <path d="M160 65 L164 69 L172 61" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-
-              {/* Green plant */}
-              <path d="M210 155 L210 135" stroke="#10b981" strokeWidth="3" />
-              <circle cx="200" cy="130" r="6" fill="#10b981" />
-              <circle cx="220" cy="130" r="6" fill="#10b981" />
-              <circle cx="210" cy="120" r="8" fill="#10b981" />
-
-              {/* Little Cartoon Man */}
-              {/* Trousers (Orange) */}
-              <rect x="108" y="132" width="26" height="15" rx="5" fill="#ea580c" />
-              {/* Shoes (Black) */}
-              <ellipse cx="114" cy="148" rx="8" ry="4" fill="#111827" />
-              <ellipse cx="128" cy="148" rx="8" ry="4" fill="#111827" />
-              {/* Shirt (Blue) */}
-              <rect x="100" y="100" width="30" height="34" rx="10" fill="#2563eb" />
-              <rect x="94" y="105" width="8" height="24" rx="4" fill="#2563eb" />
-              {/* Head */}
-              <circle cx="115" cy="85" r="15" fill="#fed7aa" />
-              {/* Hair */}
-              <path d="M100 80 C100 70, 130 70, 130 80 Z" fill="#111827" />
-              {/* Face Details */}
-              <circle cx="110" cy="83" r="2" fill="#111827" />
-              <circle cx="120" cy="83" r="2" fill="#111827" />
-              <path d="M112 90 Q115 93 118 90" stroke="#111827" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </div>
-
-          {/* Subtitle matching JPEG */}
-          <div className="space-y-2">
-            <h3 className="text-2xl font-serif font-semibold tracking-wide">
-              Manage Smarter,
-            </h3>
-            <p className="text-xl font-serif text-sky-200">
-              Grow Faster
-            </p>
-          </div>
-        </div>
-
-        {/* Right Side: Form panel */}
-        <div className="md:w-1/2 p-8 md:p-14 flex flex-col justify-center bg-white">
-          <div className="space-y-8 max-w-sm mx-auto w-full">
+        {/* Right Side: Authentication Form */}
+        <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-[#0b1528] light:bg-white">
+          <div className="space-y-6 max-w-sm mx-auto w-full">
             
-            {/* Logo & Back button */}
+            {/* Header: Logo & Back Link */}
             <div className="flex items-center justify-between">
-              <Link href="/" className="flex items-center gap-1 text-xl hover:opacity-85 transition">
-                <span className="font-extrabold text-[#2563eb]">KEY</span>
-                <span className="font-extrabold text-slate-800 tracking-wide font-serif">books</span>
-              </Link>
+              <Logo size="md" />
               <Link
                 href="/"
-                className="text-xs font-bold text-slate-400 light:text-slate-600 hover:text-[#2563eb] flex items-center gap-1 transition"
+                className="text-xs font-semibold text-slate-400 light:text-slate-500 hover:text-brand-red light:hover:text-brand-red transition-colors flex items-center gap-1"
               >
-                ← Back to Home
+                ← Home
               </Link>
             </div>
 
             {/* Title */}
-            <div className="space-y-2">
-              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                Create your Account
+            <div className="space-y-1">
+              <h2 className="text-2xl md:text-3xl font-extrabold text-white light:text-slate-900 tracking-tight">
+                Create Account
               </h2>
-              <p className="text-sm text-slate-400 light:text-slate-600">
-                Join us today! Please enter your details.
+              <p className="text-xs md:text-sm text-slate-400 light:text-slate-500">
+                Get started with your free ERP workspace today.
               </p>
             </div>
 
+            {/* Error & Success Messages */}
             {error && (
-              <div className="p-3.5 rounded-xl bg-red-50/50 border border-lime-100 text-xs text-red-500">
+              <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-xs font-medium text-red-400 light:text-red-600">
                 {error}
               </div>
             )}
 
             {success && (
-              <div className="p-3.5 rounded-xl bg-green-50/50 border border-green-100 text-xs text-lime-600">
-                Account created successfully! Redirecting to login...
+              <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs font-medium text-emerald-400 light:text-emerald-600">
+                Account created successfully! Redirecting to sign in...
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-3.5">
               {/* Full Name Input */}
               <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-300 light:text-slate-700 uppercase tracking-wider">
+                  Full Name
+                </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 light:text-slate-600">
-                    <User className="w-5 h-5" />
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <User className="w-4 h-4" />
                   </div>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3.5 bg-[#f3f4f6]/80 border border-transparent rounded-2xl text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 outline-none transition text-sm"
-                    placeholder="Enter full name"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-900/80 light:bg-slate-50 border border-slate-700/80 light:border-slate-300 rounded-xl text-white light:text-slate-900 placeholder-slate-500 text-sm focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-colors"
+                    placeholder="Bishnu Sahu"
                   />
                 </div>
               </div>
 
               {/* Email Input */}
               <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-300 light:text-slate-700 uppercase tracking-wider">
+                  Email Address
+                </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 light:text-slate-600">
-                    <Mail className="w-5 h-5" />
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <Mail className="w-4 h-4" />
                   </div>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3.5 bg-[#f3f4f6]/80 border border-transparent rounded-2xl text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 outline-none transition text-sm"
-                    placeholder="Enter email address"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-900/80 light:bg-slate-50 border border-slate-700/80 light:border-slate-300 rounded-xl text-white light:text-slate-900 placeholder-slate-500 text-sm focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-colors"
+                    placeholder="name@company.com"
                   />
                 </div>
               </div>
 
               {/* Password Input */}
               <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-300 light:text-slate-700 uppercase tracking-wider">
+                  Password
+                </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 light:text-slate-600">
-                    <Lock className="w-5 h-5" />
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <Lock className="w-4 h-4" />
                   </div>
                   <input
                     type={showPassword ? "text" : "password"}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-11 pr-11 py-3.5 bg-[#f3f4f6]/80 border border-transparent rounded-2xl text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 outline-none transition text-sm"
-                    placeholder="••••••••"
+                    className="w-full pl-10 pr-10 py-2.5 bg-slate-900/80 light:bg-slate-50 border border-slate-700/80 light:border-slate-300 rounded-xl text-white light:text-slate-900 placeholder-slate-500 text-sm focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-colors"
+                    placeholder="Min. 8 characters"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 light:text-slate-600 hover:text-slate-600"
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-200 light:hover:text-slate-700 transition-colors"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
-              {/* Register Button */}
+              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading || success}
-                className="w-full py-3.5 flex items-center justify-center gap-2 rounded-2xl font-bold text-white light:text-slate-900 bg-[#3b82f6] hover:bg-[#2563eb] active:scale-[0.99] disabled:bg-blue-400 transition duration-200 shadow-lg shadow-blue-500/10 text-sm mt-2"
+                className="w-full py-3.5 flex items-center justify-center gap-2 rounded-xl font-bold text-white bg-brand-red hover:bg-red-600 active:bg-red-700 disabled:opacity-50 transition-all duration-300 shadow-lg shadow-red-500/25 text-sm mt-2 transform hover:-translate-y-0.5"
               >
                 {loading ? (
                   <>
@@ -240,15 +181,19 @@ export default function RegisterPage() {
                     Creating Account...
                   </>
                 ) : (
-                  "Register"
+                  <>
+                    Create Free Account
+                    <ArrowRight className="w-4 h-4" />
+                  </>
                 )}
               </button>
             </form>
 
-            <div className="pt-4 text-center text-xs text-slate-400 light:text-slate-600">
+            {/* Footer */}
+            <div className="pt-2 text-center text-xs text-slate-400 light:text-slate-600">
               Already have an account?{" "}
-              <Link href="/login" className="text-[#3b82f6] hover:underline font-semibold">
-                Sign In instead
+              <Link href="/login" className="text-brand-red hover:underline font-bold">
+                Sign In
               </Link>
             </div>
           </div>

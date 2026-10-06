@@ -36,7 +36,7 @@ const updateCompanySettings = async (req, res) => {
        SET name = $1, address = $2, contact_email = $3, contact_phone = $4, currency = $5, logo_url = $6, updated_at = NOW()
        WHERE id = $7
        RETURNING *`,
-      [name, address || null, contact_email || null, contact_phone || null, currency || '$', logo_url || null, company_id]
+      [name, address || null, contact_email || null, contact_phone || null, currency || '₹', logo_url || null, company_id]
     );
 
     // Write audit log

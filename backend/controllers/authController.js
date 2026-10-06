@@ -174,12 +174,13 @@ const login = async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true, // Prevents XSS scripts reading cookie
       secure: process.env.NODE_ENV === 'production', // Only transmit over HTTPS in production
-      sameSite: 'strict', // Mitigates CSRF requests
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', // Use 'lax' in dev for cross-port support (port 3000 to 5000)
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days (in milliseconds)
     });
 
     res.json({
       message: 'Login successful',
+      token,
       user: { id: user.id, name: user.name, email: user.email }
     });
   } catch (err) {
@@ -276,7 +277,7 @@ const logout = async (req, res) => {
     res.clearCookie('token', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax'
     });
     res.json({ message: 'Logged out successfully' });
   } catch (err) {

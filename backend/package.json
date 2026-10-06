@@ -5,7 +5,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "db:start": "C:\\Users\\hp\\pgsql\\bin\\pg_ctl.exe start -D C:\\Users\\hp\\pgsql\\data -l C:\\Users\\hp\\pgsql\\logfile",
+    "db:stop": "C:\\Users\\hp\\pgsql\\bin\\pg_ctl.exe stop -D C:\\Users\\hp\\pgsql\\data",
+    "db:status": "C:\\Users\\hp\\pgsql\\bin\\pg_ctl.exe status -D C:\\Users\\hp\\pgsql\\data"
   },
   "keywords": [],
   "author": "",

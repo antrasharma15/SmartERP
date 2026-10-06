@@ -23,7 +23,8 @@ const createCompany = async (req, res) => {
     const company = await CompanyModel.createCompany(userId, req.body);
     res.status(201).json({ message: 'Company created successfully', company });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    console.error('[createCompany Error]:', err);
+    res.status(500).json({ message: err.message || 'Server error', error: err.message });
   }
 };
 
@@ -36,7 +37,8 @@ const getCompanies = async (req, res) => {
     const companies = await CompanyModel.getCompaniesByUserId(userId);
     res.json({ companies });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    console.error('[getCompanies Error]:', err);
+    res.status(500).json({ message: err.message || 'Server error', error: err.message });
   }
 };
 

@@ -1,8 +1,11 @@
 "use client";
 
+import Loader from "../../components/Loader";
+
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch, getCurrentUser } from "../../utils/api";
+import AppLayout from "../../components/AppLayout";
 import {
   Building2,
   ArrowLeft,
@@ -17,8 +20,10 @@ import {
   Info,
   X,
   FileCode,
-  ArrowRightLeft
+  ArrowRightLeft,
+  Download
 } from "lucide-react";
+import { exportToCsv } from "../../utils/exportCsv";
 
 interface Ledger {
   id: string;
@@ -46,7 +51,7 @@ export default function CashBankBookReportPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [company, setCompany] = useState<any>(null);
-  const [currency, setCurrency] = useState("$");
+  const [currency, setCurrency] = useState("₹");
 
   // Filters
   const [startDate, setStartDate] = useState("2026-04-01");
@@ -74,7 +79,7 @@ export default function CashBankBookReportPage() {
       if (activeCompanyStr) {
         try {
           const comp = JSON.parse(activeCompanyStr);
-          setCurrency(comp.currency || "$");
+          setCurrency(comp.currency || "₹");
           setCompany(comp);
         } catch (e) {}
       }
@@ -122,7 +127,7 @@ export default function CashBankBookReportPage() {
     try {
       const activeCompany = JSON.parse(activeCompanyStr);
       setCompany(activeCompany);
-      setCurrency(activeCompany.currency || "$");
+      setCurrency(activeCompany.currency || "₹");
       loadData(activeCompany.id);
     } catch (err) {
       router.push("/companies");
@@ -232,102 +237,97 @@ export default function CashBankBookReportPage() {
     }
   };
 
+  const handleExportCsv = () => {
+    const headers = [
+      "Date",
+      "Voucher No",
+      "Voucher Type",
+      "Particulars",
+      `Debit / Inward (${currency})`,
+      `Credit / Outward (${currency})`,
+      `Running Balance (${currency})`
+    ];
+    const rows = transactions.map((tx) => [
+      tx.date,
+      tx.vnum === "OB-00" ? "-" : tx.vnum,
+      tx.type,
+      tx.particulars,
+      tx.debit > 0 ? tx.debit.toFixed(2) : "0.00",
+      tx.credit > 0 ? tx.credit.toFixed(2) : "0.00",
+      tx.balance.toFixed(2)
+    ]);
+    exportToCsv(`${bookMode === "cash" ? "Cash" : "Bank"}_Book_Report`, headers, rows);
+  };
+
   return (
-    <div className="min-h-screen bg-brand-navy-dark text-slate-100 flex flex-col select-none relative overflow-hidden font-sans">
-      {/* Header bar */}
-      <header className="border-b border-brand-navy-light bg-brand-navy-dark/70 backdrop-blur-md sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="p-2 rounded-xl bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 hover:border-brand-lime/40 transition duration-200"
-              title="Return to Dashboard (ESC)"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/dashboard")}>
-              <span className="text-xl font-extrabold text-white light:text-slate-900 tracking-wide">KEY</span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">books</span>
-            </div>
-            <div className="h-6 w-[1px] bg-slate-800"></div>
-            <div className="flex items-center gap-2 text-brand-lime light:text-lime-700 font-bold">
-              <Building2 className="w-5 h-5" />
-              <span>{company?.name}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <span className="text-xs font-mono bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 px-3 py-1 rounded text-slate-400 light:text-slate-600">
-              Esc to Back
-            </span>
-          </div>
-        </div>
-      </header>
-
-      {/* Toolbar Filters */}
-      <section className="bg-brand-navy-mid light:bg-slate-100 border-b border-slate-900 light:border-slate-200/60 light:border-slate-200 py-4 px-6">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs font-semibold">
+    <AppLayout
+      pageTitle={bookMode === "cash" ? "Cash Book Journal" : "Bank Book Register"}
+      pageSubtitle="Audits liquid asset inflows, operational payments, and real-time ledger cash balances."
+    >
+      <div className="space-y-6">
+        {/* Top Control Bar with Datepicker & Mode Switches */}
+        <div className="bg-slate-900/40 light:bg-white border border-slate-800 light:border-slate-200 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4 text-sm font-semibold">
           <div className="flex flex-wrap items-center gap-4">
-            {/* Date Range selectors */}
-            <div className="flex items-center gap-2 bg-slate-900 light:bg-slate-200/80/40 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded-xl px-3 py-2">
+            {/* Date Range Picker */}
+            <div className="flex items-center gap-2 bg-slate-950 light:bg-slate-50 border border-slate-800 light:border-slate-300 rounded-xl px-3.5 py-2">
               <Calendar className="w-4 h-4 text-slate-400 light:text-slate-600" />
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="bg-transparent text-white light:text-slate-900 outline-none font-mono"
+                className="bg-transparent text-white light:text-slate-900 outline-none font-mono text-sm"
               />
-              <span className="text-slate-500 light:text-slate-500">to</span>
+              <span className="text-slate-500">to</span>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="bg-transparent text-white light:text-slate-900 outline-none font-mono"
+                className="bg-transparent text-white light:text-slate-900 outline-none font-mono text-sm"
               />
             </div>
 
             {/* Book Selector (Tabs) */}
-            <div className="flex bg-slate-900 light:bg-slate-200/80 border border-slate-850 p-1 rounded-xl">
+            <div className="flex bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 p-1 rounded-xl">
               <button
                 onClick={() => setBookMode("cash")}
-                className={`px-4 py-1.5 rounded-lg transition text-[10px] font-black uppercase flex items-center gap-1.5 ${
+                className={`px-4 py-1.5 rounded-lg transition text-xs font-bold uppercase flex items-center gap-1.5 ${
                   bookMode === "cash"
-                    ? "bg-brand-lime text-brand-navy-dark"
-                    : "text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
+                    ? "bg-red-600 text-white shadow-sm"
+                    : "text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black"
                 }`}
               >
-                <Wallet className="w-3.5 h-3.5" />
+                <Wallet className="w-4 h-4" />
                 Cash Book
               </button>
               <button
                 onClick={() => setBookMode("bank")}
-                className={`px-4 py-1.5 rounded-lg transition text-[10px] font-black uppercase flex items-center gap-1.5 ${
+                className={`px-4 py-1.5 rounded-lg transition text-xs font-bold uppercase flex items-center gap-1.5 ${
                   bookMode === "bank"
-                    ? "bg-brand-lime text-brand-navy-dark"
-                    : "text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
+                    ? "bg-red-600 text-white shadow-sm"
+                    : "text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black"
                 }`}
               >
-                <Landmark className="w-3.5 h-3.5" />
+                <Landmark className="w-4 h-4" />
                 Bank Book
               </button>
             </div>
 
             {/* Dynamic Bank Selector Dropdown */}
             {bookMode === "bank" && (
-              <div className="flex items-center gap-2 bg-slate-900 light:bg-slate-200/80/40 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded-xl px-3 py-2 animate-fade-in">
+              <div className="flex items-center gap-2 bg-slate-950 light:bg-slate-50 border border-slate-800 light:border-slate-300 rounded-xl px-3.5 py-2">
                 <Landmark className="w-4 h-4 text-slate-400 light:text-slate-600" />
                 <select
                   value={selectedBankLedgerId}
                   onChange={(e) => setSelectedBankLedgerId(e.target.value)}
-                  className="bg-transparent text-white light:text-slate-900 outline-none cursor-pointer font-bold"
+                  className="bg-transparent text-white light:text-slate-900 outline-none cursor-pointer font-bold text-sm"
                 >
                   {ledgers.filter((l) => l.ledger_type?.toLowerCase() === "bank").length === 0 ? (
-                    <option value="" className="bg-slate-955 text-slate-400 light:text-slate-600">No Bank Accounts Found</option>
+                    <option value="">No Bank Accounts Found</option>
                   ) : (
                     ledgers
                       .filter((l) => l.ledger_type?.toLowerCase() === "bank")
                       .map((l) => (
-                        <option key={l.id} value={l.id} className="bg-slate-955 text-white light:text-slate-900">
+                        <option key={l.id} value={l.id}>
                           {l.name}
                         </option>
                       ))
@@ -339,8 +339,16 @@ export default function CashBankBookReportPage() {
 
           <div className="flex items-center gap-3">
             <button
+              onClick={handleExportCsv}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-800 light:bg-slate-100 hover:bg-slate-700 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-bold rounded-xl text-sm shadow-sm transition"
+              title="Export Cash / Bank Book to CSV"
+            >
+              <Download className="w-4 h-4 text-red-500" />
+              <span>Export CSV</span>
+            </button>
+            <button
               onClick={() => setShowValuationInfo(true)}
-              className="p-1.5 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 hover:bg-slate-900 light:bg-slate-200/80 rounded-lg flex items-center gap-1"
+              className="p-2 text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black hover:bg-slate-800 light:hover:bg-slate-100 rounded-xl flex items-center gap-1.5 border border-slate-800 light:border-slate-200 transition text-xs font-semibold"
               title="Book Entry Rules"
             >
               <Info className="w-4 h-4" />
@@ -348,15 +356,13 @@ export default function CashBankBookReportPage() {
             </button>
           </div>
         </div>
-      </section>
 
-      {/* Main Tabs Navigation */}
-      <div className="max-w-7xl mx-auto w-full px-6 pt-6">
-        <div className="flex border-b border-slate-900 light:border-slate-200 gap-1 text-xs">
+        {/* Main Tabs Navigation */}
+        <div className="flex border-b border-slate-800 light:border-slate-200 gap-1 text-sm font-bold">
           <button
             onClick={() => setActiveTab("report")}
-            className={`px-5 py-3 font-bold border-b-2 transition flex items-center gap-2 ${
-              activeTab === "report" ? "border-brand-lime text-brand-lime light:text-lime-700 font-black" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
+            className={`px-5 py-3 border-b-2 transition flex items-center gap-2 ${
+              activeTab === "report" ? "border-red-600 text-red-500 font-extrabold" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black"
             }`}
           >
             <ArrowRightLeft className="w-4 h-4" />
@@ -364,131 +370,129 @@ export default function CashBankBookReportPage() {
           </button>
           <button
             onClick={() => setActiveTab("spec")}
-            className={`ml-auto px-5 py-3 font-extrabold border-b-2 transition flex items-center gap-2 text-sky-400 border-transparent hover:text-white light:text-slate-900 light:hover:text-black`}
+            className={`ml-auto px-5 py-3 border-b-2 transition flex items-center gap-2 ${
+              activeTab === "spec" ? "border-red-600 text-red-500 font-extrabold" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black"
+            }`}
           >
             <FileCode className="w-4 h-4 text-sky-400" />
             Systems Architect Specification
           </button>
         </div>
-      </div>
 
-      {/* Main Layout Grid */}
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: Report View - 9 span */}
-        <section className="lg:col-span-9 rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-6 shadow-2xl backdrop-blur-xl space-y-6 min-h-[500px]">
-          {loading ? (
-            <div className="py-32 flex flex-col items-center justify-center gap-3 text-slate-400 light:text-slate-600">
-              <Loader2 className="w-8 h-8 animate-spin text-brand-lime light:text-lime-700" />
-              <p className="text-xs">Balancing debit & credit movements...</p>
-            </div>
-          ) : error ? (
-            <div className="py-24 text-center space-y-4">
-              <AlertCircle className="w-12 h-12 text-rose-500 mx-auto" />
-              <p className="text-sm text-slate-355">{error}</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {activeTab === "report" && (
-                <div className="space-y-4">
-                  {!activeLedger ? (
-                    <div className="py-24 border border-dashed border-slate-800 light:border-slate-200/80 rounded-3xl text-center space-y-4">
-                      <Landmark className="w-12 h-12 text-slate-500 light:text-slate-500 mx-auto" />
-                      <div>
-                        <p className="text-slate-300 light:text-slate-700 font-bold text-sm">No {bookMode === "cash" ? "Cash" : "Bank"} Ledger Selected</p>
-                        <p className="text-xs text-slate-500 light:text-slate-500 mt-1 max-w-md mx-auto leading-relaxed">
-                          You haven't created any ledgers of type "{bookMode === "cash" ? "Cash" : "Bank"}" for the active company.
-                          Please navigate to the <span className="text-brand-lime light:text-lime-700 font-bold">Ledgers</span> page to register one.
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => router.push("/ledgers")}
-                        className="px-5 py-2.5 bg-brand-lime text-brand-navy-dark font-black text-xs rounded-xl hover:bg-white transition-all shadow-lg"
-                      >
-                        Create new ledger account
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      {/* Ledger summary card */}
-                      <div className="p-4 bg-brand-navy-dark border border-slate-900 light:border-slate-200 rounded-2xl flex items-center justify-between">
+        {/* Main Layout Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left Column: Report View - 9 span */}
+          <section className="lg:col-span-9 rounded-3xl bg-slate-900/30 light:bg-white border border-slate-800 light:border-slate-200 p-6 shadow-xl backdrop-blur-xl space-y-6 min-h-[500px]">
+            {loading ? (
+              <Loader kind="cash" label="Balancing debit & credit movements" />
+            ) : error ? (
+              <div className="py-24 text-center space-y-4">
+                <AlertCircle className="w-12 h-12 text-red-500 mx-auto" />
+                <p className="text-base text-slate-300 light:text-slate-700">{error}</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {activeTab === "report" && (
+                  <div className="space-y-4">
+                    {!activeLedger ? (
+                      <div className="py-24 border border-dashed border-slate-800 light:border-slate-200 rounded-3xl text-center space-y-4">
+                        <Landmark className="w-12 h-12 text-slate-500 mx-auto" />
                         <div>
-                          <h4 className="font-extrabold text-white light:text-slate-900 text-sm">{activeLedger.name}</h4>
-                          <p className="text-[10px] text-slate-500 light:text-slate-500 font-mono mt-0.5">Type: {activeLedger.ledger_type?.toUpperCase()} | Account Type: Dr normal</p>
+                          <p className="text-slate-300 light:text-slate-700 font-bold text-sm">No {bookMode === "cash" ? "Cash" : "Bank"} Ledger Selected</p>
+                          <p className="text-sm text-slate-500 light:text-slate-500 mt-1 max-w-md mx-auto leading-relaxed">
+                            You haven't created any ledgers of type "{bookMode === "cash" ? "Cash" : "Bank"}" for the active company.
+                            Please navigate to the <span className="text-red-500 font-bold">Ledgers</span> page to register one.
+                          </p>
                         </div>
-                        <div className="text-right">
-                          <span className="text-[9px] uppercase font-black text-slate-400 light:text-slate-600">Current Closing Balance</span>
-                          <p className="text-lg font-black text-brand-lime light:text-lime-700 font-mono">{currency}{closingBalance.toFixed(2)}</p>
-                        </div>
+                        <button
+                          onClick={() => router.push("/ledgers")}
+                          className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl transition shadow-lg"
+                        >
+                          Create new ledger account
+                        </button>
                       </div>
+                    ) : (
+                      <>
+                        {/* Ledger summary card */}
+                        <div className="p-5 bg-slate-950 light:bg-slate-50 border border-slate-800 light:border-slate-200 rounded-2xl flex items-center justify-between">
+                          <div>
+                            <h4 className="font-extrabold text-white light:text-slate-900 text-base">{activeLedger.name}</h4>
+                            <p className="text-xs text-slate-500 font-mono mt-0.5">Type: {activeLedger.ledger_type?.toUpperCase()} | Account Type: Dr normal</p>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-xs uppercase font-black text-slate-400 light:text-slate-600">Current Closing Balance</span>
+                            <p className="text-xl font-black text-white light:text-slate-900 font-mono">{currency}{closingBalance.toFixed(2)}</p>
+                          </div>
+                        </div>
 
-                      {/* Main Book Table */}
-                      <div className="overflow-hidden border border-slate-900 light:border-slate-200/50 light:border-slate-200 rounded-2xl bg-brand-navy-dark/20 light:bg-white">
-                        <table className="w-full text-left border-collapse text-xs">
-                          <thead>
-                            <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
-                              <th className="py-3 px-4">Date</th>
-                              <th className="py-3 px-4">Voucher No</th>
-                              <th className="py-3 px-4">Voucher Type</th>
-                              <th className="py-3 px-4">Particulars (Opposite Ledger)</th>
-                              <th className="py-3 px-4 text-right">Debit (Receipt / Inward)</th>
-                              <th className="py-3 px-4 text-right">Credit (Payment / Outward)</th>
-                              <th className="py-3 px-4 text-right">Running Balance</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {transactions.map((tx) => (
-                              <tr key={tx.id} className="border-b border-slate-900 light:border-slate-200/30 light:border-slate-150 hover:bg-slate-900 light:bg-slate-200/80/10 text-slate-300 light:text-slate-700">
-                                <td className="py-3 px-4 font-mono">{tx.date}</td>
-                                <td className="py-3 px-4 font-mono font-bold text-white light:text-slate-900">{tx.vnum === "OB-00" ? "-" : tx.vnum}</td>
-                                <td className="py-3 px-4">
-                                  {tx.vnum === "OB-00" ? (
-                                    <span className="text-[10px] text-slate-500 light:text-slate-500 font-black uppercase">Start</span>
-                                  ) : (
-                                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                                      tx.type === "Receipt"
-                                        ? "bg-brand-lime/10 light:bg-lime-100/60 text-brand-lime light:text-lime-700"
-                                        : "bg-rose-500/10 light:bg-rose-100/60 text-rose-400"
-                                    }`}>
-                                      {tx.type}
-                                    </span>
-                                  )}
-                                </td>
-                                <td className="py-3 px-4 font-bold">{tx.particulars}</td>
-                                <td className="py-3 px-4 text-right font-mono text-red-400 light:text-lime-700 font-bold">
-                                  {tx.debit > 0 ? `+${currency}${tx.debit.toFixed(2)}` : "-"}
-                                </td>
-                                <td className="py-3 px-4 text-right font-mono text-rose-455 light:text-rose-700">
-                                  {tx.credit > 0 ? `-${currency}${tx.credit.toFixed(2)}` : "-"}
-                                </td>
-                                <td className="py-3 px-4 text-right font-mono font-black text-white light:text-slate-900">
-                                  {currency}{tx.balance.toFixed(2)}
-                                </td>
+                        {/* Main Book Table */}
+                        <div className="overflow-hidden border border-slate-800 light:border-slate-200 rounded-2xl bg-slate-900/30 light:bg-white">
+                          <table className="w-full text-left border-collapse text-sm">
+                            <thead>
+                              <tr className="border-b border-slate-800 light:border-slate-200 bg-slate-950 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-xs">
+                                <th className="py-3.5 px-4">Date</th>
+                                <th className="py-3.5 px-4">Voucher No</th>
+                                <th className="py-3.5 px-4">Voucher Type</th>
+                                <th className="py-3.5 px-4">Particulars (Opposite Ledger)</th>
+                                <th className="py-3.5 px-4 text-right">Debit (Receipt / Inward)</th>
+                                <th className="py-3.5 px-4 text-right">Credit (Payment / Outward)</th>
+                                <th className="py-3.5 px-4 text-right">Running Balance</th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </>
-                  )}
-                </div>
-              )}
-
-              {/* Tab 2: Spec Doc */}
-              {activeTab === "spec" && (
-                <div className="space-y-6 text-xs text-slate-300 light:text-slate-700 leading-relaxed font-semibold max-h-[700px] overflow-y-auto pr-2">
-                  <div className="border-b border-slate-900 light:border-slate-200 pb-3">
-                    <h3 className="text-base font-extrabold text-white light:text-slate-900 flex items-center gap-2">
-                      <BookOpen className="w-5 h-5 text-sky-400" />
-                      Cash/Bank Book Systems Architect Design Spec
-                    </h3>
-                    <p className="text-[10px] text-slate-500 light:text-slate-500 mt-0.5">Reference documentation for the simplified internship-scoped cash and bank ledger balances.</p>
+                            </thead>
+                            <tbody className="text-sm">
+                              {transactions.map((tx) => (
+                                <tr key={tx.id} className="border-b border-slate-800/50 light:border-slate-100 hover:bg-slate-800/40 light:hover:bg-slate-100/60 text-slate-300 light:text-slate-700 transition">
+                                  <td className="py-3.5 px-4 font-mono font-medium">{tx.date}</td>
+                                  <td className="py-3.5 px-4 font-mono font-bold text-white light:text-slate-900">{tx.vnum === "OB-00" ? "-" : tx.vnum}</td>
+                                  <td className="py-3.5 px-4">
+                                    {tx.vnum === "OB-00" ? (
+                                      <span className="text-xs text-slate-500 font-bold uppercase">Start</span>
+                                    ) : (
+                                      <span className={`px-2.5 py-1 rounded text-xs font-bold uppercase ${
+                                        tx.type === "Receipt"
+                                          ? "bg-emerald-500/10 text-emerald-400 light:text-emerald-700"
+                                          : "bg-red-500/10 text-red-400"
+                                      }`}>
+                                        {tx.type}
+                                      </span>
+                                    )}
+                                  </td>
+                                  <td className="py-3.5 px-4 font-bold text-slate-200 light:text-slate-800">{tx.particulars}</td>
+                                  <td className="py-3.5 px-4 text-right font-mono text-emerald-400 light:text-emerald-700 font-bold">
+                                    {tx.debit > 0 ? `+${currency}${tx.debit.toFixed(2)}` : "-"}
+                                  </td>
+                                  <td className="py-3.5 px-4 text-right font-mono text-red-400 font-bold">
+                                    {tx.credit > 0 ? `-${currency}${tx.credit.toFixed(2)}` : "-"}
+                                  </td>
+                                  <td className="py-3.5 px-4 text-right font-mono font-black text-white light:text-slate-900">
+                                    {currency}{tx.balance.toFixed(2)}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </>
+                    )}
                   </div>
+                )}
 
-                  {/* Schema */}
-                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">1. Normalized Database Schema (3 Tables)</h4>
-                    <p className="text-[11px] text-slate-400 light:text-slate-600">Stores master accounts and corresponding double-entry postings for Payments and Receipts:</p>
-                    <pre className="p-3 bg-slate-950 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
+                {/* Tab 2: Spec Doc */}
+                {activeTab === "spec" && (
+                  <div className="space-y-6 text-xs text-slate-300 light:text-slate-700 leading-relaxed font-semibold max-h-[700px] overflow-y-auto pr-2">
+                    <div className="border-b border-slate-800 light:border-slate-200 pb-3">
+                      <h3 className="text-base font-extrabold text-white light:text-slate-900 flex items-center gap-2">
+                        <BookOpen className="w-5 h-5 text-sky-400" />
+                        Cash/Bank Book Systems Architect Design Spec
+                      </h3>
+                      <p className="text-[10px] text-slate-500 mt-0.5">Reference documentation for the simplified cash and bank ledger balances.</p>
+                    </div>
+
+                    {/* Schema */}
+                    <div className="space-y-3 bg-slate-950 light:bg-slate-50 p-4 border border-slate-800 light:border-slate-200 rounded-2xl">
+                      <h4 className="font-extrabold text-red-500 uppercase text-[10px] tracking-wider">1. Normalized Database Schema (3 Tables)</h4>
+                      <p className="text-[11px] text-slate-400 light:text-slate-600">Stores master accounts and corresponding double-entry postings for Payments and Receipts:</p>
+                      <pre className="p-3 bg-slate-900 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-300 light:text-sky-700 overflow-x-auto border border-slate-800 light:border-slate-200">
 {`-- 1. Ledger Accounts (Cash/Bank types)
 CREATE TABLE ledgers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -496,193 +500,70 @@ CREATE TABLE ledgers (
     name VARCHAR(255) NOT NULL,
     ledger_type VARCHAR(50), -- 'cash', 'bank', 'supplier', 'customer', 'expense', 'income'
     opening_balance DECIMAL(15,2) DEFAULT 0.00,
-    opening_balance_type VARCHAR(2) DEFAULT 'dr' -- 'dr' (debit), 'cr' (credit)
-);
-
--- 2. Vouchers (Payment/Receipt headers)
-CREATE TABLE vouchers (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    company_id UUID REFERENCES companies(id) ON DELETE CASCADE,
-    voucher_number VARCHAR(100) NOT NULL,
-    voucher_type VARCHAR(50) NOT NULL, -- 'payment', 'receipt'
-    voucher_date DATE NOT NULL,
-    narration TEXT,
-    reference VARCHAR(100),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 3. Voucher Entries (Debit/Credit postings)
-CREATE TABLE voucher_entries (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    voucher_id UUID REFERENCES vouchers(id) ON DELETE CASCADE,
-    ledger_id UUID REFERENCES ledgers(id) ON DELETE CASCADE,
-    debit_amount DECIMAL(15,2) DEFAULT 0.00,
-    credit_amount DECIMAL(15,2) DEFAULT 0.00,
-    party_name VARCHAR(255) -- Optional who paid/received
+    opening_balance_type VARCHAR(2) DEFAULT 'dr'
 );`}
-                    </pre>
-                  </div>
-
-                  {/* Accounting logic */}
-                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">2. Worked Ledger Entry Examples</h4>
-                    <div className="space-y-3 text-[11px] text-slate-400 light:text-slate-600">
-                      <div>
-                        <span className="font-bold text-white light:text-slate-900 block">Example 1: Cash Sale Receipt (RCT-102)</span>
-                        <p className="mt-0.5">Your company sells items worth ₹5,000 for immediate cash.</p>
-                        <ul className="list-disc pl-5 font-mono text-sky-400 mt-1">
-                          <li>Debit: Cash Account Ledger (₹5,000)</li>
-                          <li>Credit: Sales Account Ledger (₹5,000)</li>
-                        </ul>
-                      </div>
-                      <div className="border-t border-slate-900 light:border-slate-200/60 light:border-slate-200 pt-2">
-                        <span className="font-bold text-white light:text-slate-900 block">Example 2: Rent Payment (PAY-204)</span>
-                        <p className="mt-0.5">Your company pays ₹1,500 for office rent from HDFC Bank.</p>
-                        <ul className="list-disc pl-5 font-mono text-sky-400 mt-1">
-                          <li>Debit: Rent Expense Account Ledger (₹1,500)</li>
-                          <li>Credit: HDFC Bank Account Ledger (₹1,500)</li>
-                        </ul>
-                      </div>
+                      </pre>
                     </div>
                   </div>
+                )}
+              </div>
+            )}
+          </section>
 
-                  {/* API response */}
-                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">3. REST API Response (JSON)</h4>
-                    <pre className="p-3 bg-slate-950 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
-{`{
-  "ledger": {
-    "id": "c7604f56-6211-4770-98b2-5eb8ef103d15",
-    "name": "Cash",
-    "ledger_type": "cash",
-    "opening_balance": 10000.00
-  },
-  "report": {
-    "start_date": "2026-07-01",
-    "end_date": "2026-07-03",
-    "opening_balance": 10000.00,
-    "transactions": [
-      {
-        "date": "2026-07-02",
-        "voucher_number": "RCT-102",
-        "voucher_type": "receipt",
-        "particulars": "Sales - Cash Sale",
-        "debit": 5000.00,
-        "credit": 0.00,
-        "balance": 15000.00
-      },
-      {
-        "date": "2026-07-03",
-        "voucher_number": "PAY-204",
-        "voucher_type": "payment",
-        "particulars": "Office Supplies",
-        "debit": 0.00,
-        "credit": 1200.00,
-        "balance": 13800.00
-      }
-    ],
-    "closing_balance": 13800.00
-  }
-}`}
-                    </pre>
-                  </div>
+          {/* Right Column: Cards - 3 span */}
+          <section className="lg:col-span-3 space-y-6">
+            <div className="rounded-3xl bg-slate-900/30 light:bg-white border border-slate-800 light:border-slate-200 p-5 shadow-xl backdrop-blur-xl space-y-4">
+              <h3 className="text-xs font-black uppercase tracking-widest text-red-500 flex items-center gap-1.5 border-b border-slate-800 light:border-slate-200 pb-2">
+                Book Summary
+              </h3>
 
-                  {/* SQL queries */}
-                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">4. SQL Query with Running Balance Window</h4>
-                    <pre className="p-3 bg-slate-950 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
-{`WITH ledger_header AS (
-  SELECT id, name, opening_balance, opening_balance_type 
-  FROM ledgers 
-  WHERE id = 'CASH_LEDGER_UUID'
-),
-tx_history AS (
-  SELECT 
-    v.voucher_date,
-    v.voucher_number,
-    v.voucher_type,
-    ve.debit_amount,
-    ve.credit_amount,
-    ve.party_name,
-    SUM(ve.debit_amount - ve.credit_amount) OVER (
-      ORDER BY v.voucher_date ASC, v.created_at ASC
-    ) as net_change
-  FROM voucher_entries ve
-  JOIN vouchers v ON ve.voucher_id = v.id
-  WHERE ve.ledger_id = 'CASH_LEDGER_UUID'
-)
-SELECT 
-  t.voucher_date,
-  t.voucher_number,
-  t.voucher_type,
-  t.party_name as particulars,
-  t.debit_amount,
-  t.credit_amount,
-  (CASE WHEN lh.opening_balance_type = 'dr' THEN lh.opening_balance ELSE -lh.opening_balance END + t.net_change) as running_balance
-FROM tx_history t
-CROSS JOIN ledger_header lh
-ORDER BY t.voucher_date ASC;`}
-                    </pre>
-                  </div>
+              <div className="space-y-3 pt-1 text-xs">
+                <div className="flex items-center justify-between py-1 border-b border-slate-800/50 light:border-slate-100">
+                  <span className="text-slate-400 light:text-slate-600 font-bold">Ledger Selected</span>
+                  <span className="font-bold text-white light:text-slate-900">{activeLedger?.name || "-"}</span>
                 </div>
-              )}
-            </div>
-          )}
-        </section>
-
-        {/* Right Column: Cards - 3 span */}
-        <section className="lg:col-span-3 space-y-6">
-          <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-widest text-brand-lime light:text-lime-700 flex items-center gap-1.5 border-b border-slate-900 light:border-slate-200 pb-2">
-              Book summary
-            </h3>
-
-            <div className="space-y-3 pt-1 text-xs">
-              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
-                <span className="text-slate-400 light:text-slate-600 font-bold">Ledger Selected</span>
-                <span className="font-bold text-white light:text-slate-900">{activeLedger?.name || "-"}</span>
-              </div>
-              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
-                <span className="text-slate-400 light:text-slate-600 font-bold">Opening Balance</span>
-                <span className="font-mono text-white light:text-slate-900">{currency}{openingBalance.toFixed(2)}</span>
-              </div>
-              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
-                <span className="text-slate-400 light:text-slate-600 font-bold">Closing Balance</span>
-                <span className="font-mono text-brand-lime light:text-lime-700 font-black">{currency}{closingBalance.toFixed(2)}</span>
+                <div className="flex items-center justify-between py-1 border-b border-slate-800/50 light:border-slate-100">
+                  <span className="text-slate-400 light:text-slate-600 font-bold">Opening Balance</span>
+                  <span className="font-mono text-white light:text-slate-900">{currency}{openingBalance.toFixed(2)}</span>
+                </div>
+                <div className="flex items-center justify-between py-1 border-b border-slate-800/50 light:border-slate-100">
+                  <span className="text-slate-400 light:text-slate-600 font-bold">Closing Balance</span>
+                  <span className="font-mono text-white light:text-slate-900 font-black">{currency}{closingBalance.toFixed(2)}</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl">
-            <h3 className="text-xs font-black uppercase tracking-widest text-white light:text-slate-900 flex items-center gap-1.5 border-b border-slate-900 light:border-slate-200 pb-2">
-              Double-Entry Rule
-            </h3>
-            <div className="pt-3 text-[10px] text-slate-455 leading-relaxed space-y-2 font-bold">
-              <p>Debit increases assets (inflow of Cash or Bank balance).</p>
-              <p>Credit decreases assets (outflow of Cash or Bank balance).</p>
+            <div className="rounded-3xl bg-slate-900/30 light:bg-white border border-slate-800 light:border-slate-200 p-5 shadow-xl backdrop-blur-xl">
+              <h3 className="text-xs font-black uppercase tracking-widest text-white light:text-slate-900 flex items-center gap-1.5 border-b border-slate-800 light:border-slate-200 pb-2">
+                Double-Entry Rule
+              </h3>
+              <div className="pt-3 text-[10px] text-slate-400 light:text-slate-600 leading-relaxed space-y-2 font-semibold">
+                <p>Debit increases assets (inflow of Cash or Bank balance).</p>
+                <p>Credit decreases assets (outflow of Cash or Bank balance).</p>
+              </div>
             </div>
-          </div>
-        </section>
-      </main>
+          </section>
+        </div>
+      </div>
 
       {/* Rules Popup */}
       {showValuationInfo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-          <div className="w-full max-w-md bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-3xl p-6 md:p-8 space-y-4 shadow-2xl text-xs">
-            <div className="flex items-center justify-between border-b border-slate-900 light:border-slate-200 pb-3">
+          <div className="w-full max-w-md bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-6 md:p-8 space-y-4 shadow-2xl text-xs">
+            <div className="flex items-center justify-between border-b border-slate-800 light:border-slate-200 pb-3">
               <h3 className="text-sm font-bold text-white light:text-slate-900 flex items-center gap-2">
-                <Info className="w-5 h-5 text-brand-lime light:text-lime-700" />
+                <Info className="w-5 h-5 text-red-500" />
                 Voucher Entry Book Rules
               </h3>
               <button
                 onClick={() => setShowValuationInfo(false)}
-                className="p-1 rounded-full text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black hover:bg-slate-900 light:bg-slate-200/80"
+                className="p-1.5 rounded-full text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black hover:bg-slate-800 light:hover:bg-slate-100"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-4 text-slate-350 leading-relaxed font-semibold">
+            <div className="space-y-4 text-slate-300 light:text-slate-700 leading-relaxed font-semibold">
               <div className="space-y-1">
                 <h5 className="font-extrabold text-white light:text-slate-900">Payment Voucher</h5>
                 <p>Represents cash outflows. The Cash or Bank Ledger gets a credit amount (decrease in asset). The opposite expense or supplier ledger gets a debit amount.</p>
@@ -697,7 +578,7 @@ ORDER BY t.voucher_date ASC;`}
             <div className="flex justify-end pt-3">
               <button
                 onClick={() => setShowValuationInfo(false)}
-                className="px-5 py-2 bg-slate-900 light:bg-slate-200/80 hover:bg-slate-800 text-slate-300 light:text-slate-700 rounded-xl border border-slate-800 light:border-slate-200"
+                className="px-5 py-2 bg-slate-800 light:bg-slate-100 hover:bg-slate-700 text-slate-200 light:text-slate-800 rounded-xl border border-slate-700 light:border-slate-200 font-bold"
               >
                 Close
               </button>
@@ -705,6 +586,6 @@ ORDER BY t.voucher_date ASC;`}
           </div>
         </div>
       )}
-    </div>
+    </AppLayout>
   );
 }

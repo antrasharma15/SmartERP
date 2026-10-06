@@ -1,8 +1,11 @@
 "use client";
 
+import Loader from "../../components/Loader";
+
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch, getCurrentUser } from "../../utils/api";
+import AppLayout from "../../components/AppLayout";
 import {
   Building2,
   ArrowLeft,
@@ -24,8 +27,10 @@ import {
   X,
   ChevronDown,
   Info,
-  Maximize2
+  Maximize2,
+  Download
 } from "lucide-react";
+import { exportToCsv } from "../../utils/exportCsv";
 
 interface StockRow {
   id: string;
@@ -37,6 +42,7 @@ interface StockRow {
   quantity: number;
   valuation: number;
   group_name?: string;
+  unit?: string;
 }
 
 type ValuationMethod = "fifo" | "wac";
@@ -47,7 +53,7 @@ export default function StockSummaryReportPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [company, setCompany] = useState<any>(null);
-  const [currency, setCurrency] = useState("$");
+  const [currency, setCurrency] = useState("₹");
 
   // Filter States
   const [startDate, setStartDate] = useState("2026-04-01");
@@ -78,7 +84,7 @@ export default function StockSummaryReportPage() {
       if (activeCompanyStr) {
         try {
           const comp = JSON.parse(activeCompanyStr);
-          setCurrency(comp.currency || "$");
+          setCurrency(comp.currency || "₹");
           setCompany(comp);
         } catch (e) {}
       }
@@ -105,7 +111,7 @@ export default function StockSummaryReportPage() {
     try {
       const activeCompany = JSON.parse(activeCompanyStr);
       setCompany(activeCompany);
-      setCurrency(activeCompany.currency || "$");
+      setCurrency(activeCompany.currency || "₹");
       fetchStockSummary(activeCompany.id);
     } catch (err) {
       router.push("/companies");
@@ -208,140 +214,137 @@ export default function StockSummaryReportPage() {
     ];
   };
 
+  const handleExportCsv = () => {
+    const headers = [
+      "Stock Group",
+      "Item Name",
+      "SKU",
+      "Quantity",
+      "Unit",
+      `Cost Price (${currency})`,
+      `Selling Price (${currency})`,
+      "GST %",
+      `Stock Value (${currency})`
+    ];
+    const rows = getFilteredItems().map(item => [
+      item.group_name || "General Items",
+      item.name,
+      item.sku || "-",
+      item.quantity,
+      item.unit || "PCS",
+      Number(item.purchase_price).toFixed(2),
+      Number(item.selling_price).toFixed(2),
+      `${item.gst_percentage || 0}%`,
+      (item.quantity * (valuationMethod === "fifo" ? item.purchase_price : item.purchase_price * 0.98)).toFixed(2)
+    ]);
+    exportToCsv("Stock_Summary_Valuation_Report", headers, rows);
+  };
+
   return (
-    <div className="min-h-screen bg-brand-navy-dark text-slate-100 flex flex-col select-none relative overflow-hidden font-sans">
-      {/* Header bar */}
-      <header className="border-b border-brand-navy-light bg-brand-navy-dark/70 backdrop-blur-md sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <button
-              onClick={() => {
-                if (drillLevel === "voucher") {
-                  setDrillLevel("item");
-                } else if (drillLevel === "item") {
-                  setDrillLevel("category");
-                } else {
-                  router.push("/dashboard");
-                }
-              }}
-              className="p-2 rounded-xl bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 hover:border-brand-lime/40 transition duration-200"
-              title="Back (ESC)"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/dashboard")}>
-              <span className="text-xl font-extrabold text-white light:text-slate-900 tracking-wide">KEY</span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">books</span>
-            </div>
-            <div className="h-6 w-[1px] bg-slate-800"></div>
-            <div className="flex items-center gap-2 text-brand-lime light:text-lime-700 font-bold">
-              <Building2 className="w-5 h-5" />
-              <span>{company?.name}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <span className="text-xs font-mono bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 px-3 py-1 rounded text-slate-400 light:text-slate-600">
-              Esc to Exit / Go Back
-            </span>
-          </div>
-        </div>
-      </header>
-
-      {/* Toolbar / Filters pane */}
-      <section className="bg-brand-navy-mid light:bg-slate-100 border-b border-slate-900 light:border-slate-200/60 light:border-slate-200 py-4 px-6">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs font-semibold">
+    <AppLayout
+      pageTitle="Stock Valuation & Summary"
+      pageSubtitle="Real-time multi-godown stock valuation (FIFO/WAC), stock ageing, low stock alerts, and batch registers."
+    >
+      <div className="space-y-6">
+        {/* Toolbar / Filters pane */}
+        <div className="bg-slate-900/40 light:bg-white border border-slate-800 light:border-slate-200 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4 text-sm font-semibold">
           <div className="flex flex-wrap items-center gap-4">
             {/* Date Range selectors */}
-            <div className="flex items-center gap-2 bg-slate-900 light:bg-slate-200/80/40 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded-xl px-3 py-2">
+            <div className="flex items-center gap-2 bg-slate-950 light:bg-slate-50 border border-slate-800 light:border-slate-300 rounded-xl px-3.5 py-2">
               <Calendar className="w-4 h-4 text-slate-400 light:text-slate-600" />
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="bg-transparent text-white light:text-slate-900 outline-none font-mono"
+                className="bg-transparent text-white light:text-slate-900 outline-none font-mono text-sm"
               />
-              <span className="text-slate-500 light:text-slate-500">to</span>
+              <span className="text-slate-500">to</span>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="bg-transparent text-white light:text-slate-900 outline-none font-mono"
+                className="bg-transparent text-white light:text-slate-900 outline-none font-mono text-sm"
               />
             </div>
 
             {/* Category Filter */}
-            <div className="flex items-center gap-2 bg-slate-900 light:bg-slate-200/80/40 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded-xl px-3 py-2">
+            <div className="flex items-center gap-2 bg-slate-950 light:bg-slate-50 border border-slate-800 light:border-slate-300 rounded-xl px-3.5 py-2">
               <Layers className="w-4 h-4 text-slate-400 light:text-slate-600" />
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-transparent text-white light:text-slate-900 outline-none cursor-pointer"
+                className="bg-transparent text-white light:text-slate-900 outline-none cursor-pointer text-sm font-medium"
               >
                 {categories.map((c) => (
-                  <option key={c} value={c} className="bg-slate-950 light:bg-slate-100 text-white light:text-slate-900">{c}</option>
+                  <option key={c} value={c}>{c}</option>
                 ))}
               </select>
             </div>
 
             {/* Godown Filter */}
-            <div className="flex items-center gap-2 bg-slate-900 light:bg-slate-200/80/40 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded-xl px-3 py-2">
+            <div className="flex items-center gap-2 bg-slate-950 light:bg-slate-50 border border-slate-800 light:border-slate-300 rounded-xl px-3.5 py-2">
               <Warehouse className="w-4 h-4 text-slate-400 light:text-slate-600" />
               <select
                 value={selectedGodown}
                 onChange={(e) => setSelectedGodown(e.target.value)}
-                className="bg-transparent text-white light:text-slate-900 outline-none cursor-pointer"
+                className="bg-transparent text-white light:text-slate-900 outline-none cursor-pointer text-sm font-medium"
               >
                 {godowns.map((g) => (
-                  <option key={g} value={g} className="bg-slate-950 light:bg-slate-100 text-white light:text-slate-900">{g}</option>
+                  <option key={g} value={g}>{g}</option>
                 ))}
               </select>
             </div>
           </div>
 
-          {/* Valuation Method */}
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] text-slate-400 light:text-slate-600 uppercase font-black">Valuation Method</span>
-            <div className="flex bg-slate-900 light:bg-slate-200/80 border border-slate-850 p-1 rounded-xl">
+          {/* Valuation Method & CSV Export */}
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs text-slate-400 light:text-slate-600 uppercase font-black">Valuation</span>
+            <div className="flex bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 p-1 rounded-xl">
               <button
                 onClick={() => setValuationMethod("fifo")}
-                className={`px-3 py-1 rounded-lg transition text-[10px] font-black uppercase ${
+                className={`px-3 py-1 rounded-lg transition text-xs font-bold uppercase ${
                   valuationMethod === "fifo"
-                    ? "bg-brand-lime text-brand-navy-dark"
-                    : "text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
+                    ? "bg-red-600 text-white shadow-sm"
+                    : "text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black"
                 }`}
               >
-                FIFO (First-In, First-Out)
+                FIFO
               </button>
               <button
                 onClick={() => setValuationMethod("wac")}
-                className={`px-3 py-1 rounded-lg transition text-[10px] font-black uppercase ${
+                className={`px-3 py-1 rounded-lg transition text-xs font-bold uppercase ${
                   valuationMethod === "wac"
-                    ? "bg-brand-lime text-brand-navy-dark"
-                    : "text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
+                    ? "bg-red-600 text-white shadow-sm"
+                    : "text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black"
                 }`}
               >
-                Weighted Avg Cost
+                WAC
               </button>
             </div>
             <button
+              onClick={handleExportCsv}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-800 light:bg-slate-100 hover:bg-slate-700 text-slate-200 light:text-slate-800 border border-slate-700 light:border-slate-300 font-bold rounded-xl text-sm shadow-sm transition"
+              title="Export Stock Summary to CSV"
+            >
+              <Download className="w-4 h-4 text-red-500" />
+              <span>Export CSV</span>
+            </button>
+            <button
               onClick={() => setShowValuationInfo(true)}
-              className="p-1.5 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 hover:bg-slate-900 light:bg-slate-200/80 rounded-lg"
+              className="p-2 text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black hover:bg-slate-800 light:hover:bg-slate-100 rounded-xl border border-slate-800 light:border-slate-200 transition"
               title="Methodology Details"
             >
-              <Info className="w-4.5 h-4.5" />
+              <Info className="w-4 h-4" />
             </button>
           </div>
         </div>
-      </section>
 
-      {/* Main Content Tabs */}
-      <div className="max-w-7xl mx-auto w-full px-6 pt-6">
-        <div className="flex border-b border-slate-900 light:border-slate-200 gap-1 text-xs">
+        {/* Main Content Tabs */}
+        <div className="flex border-b border-slate-800 light:border-slate-200 gap-1 text-sm font-bold overflow-x-auto">
           <button
             onClick={() => { setActiveTab("summary"); setDrillLevel("category"); }}
-            className={`px-5 py-3 font-bold border-b-2 transition flex items-center gap-2 ${
-              activeTab === "summary" ? "border-brand-lime text-brand-lime light:text-lime-700 font-black" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
+            className={`px-4 py-3 border-b-2 transition flex items-center gap-2 shrink-0 ${
+              activeTab === "summary" ? "border-red-600 text-red-500 font-extrabold" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black"
             }`}
           >
             <Boxes className="w-4 h-4" />
@@ -349,8 +352,8 @@ export default function StockSummaryReportPage() {
           </button>
           <button
             onClick={() => setActiveTab("godown")}
-            className={`px-5 py-3 font-bold border-b-2 transition flex items-center gap-2 ${
-              activeTab === "godown" ? "border-brand-lime text-brand-lime light:text-lime-700 font-black" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
+            className={`px-4 py-3 font-bold border-b-2 transition flex items-center gap-2 shrink-0 ${
+              activeTab === "godown" ? "border-red-600 text-red-500 font-extrabold" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black"
             }`}
           >
             <Warehouse className="w-4 h-4" />
@@ -358,8 +361,8 @@ export default function StockSummaryReportPage() {
           </button>
           <button
             onClick={() => setActiveTab("ageing")}
-            className={`px-5 py-3 font-bold border-b-2 transition flex items-center gap-2 ${
-              activeTab === "ageing" ? "border-brand-lime text-brand-lime light:text-lime-700 font-black" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
+            className={`px-4 py-3 font-bold border-b-2 transition flex items-center gap-2 shrink-0 ${
+              activeTab === "ageing" ? "border-red-600 text-red-500 font-extrabold" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black"
             }`}
           >
             <Hourglass className="w-4 h-4" />
@@ -367,8 +370,8 @@ export default function StockSummaryReportPage() {
           </button>
           <button
             onClick={() => setActiveTab("reorder")}
-            className={`px-5 py-3 font-bold border-b-2 transition flex items-center gap-2 ${
-              activeTab === "reorder" ? "border-brand-lime text-brand-lime light:text-lime-700 font-black" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
+            className={`px-4 py-3 font-bold border-b-2 transition flex items-center gap-2 shrink-0 ${
+              activeTab === "reorder" ? "border-red-600 text-red-500 font-extrabold" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black"
             }`}
           >
             <BellRing className="w-4 h-4" />
@@ -376,8 +379,8 @@ export default function StockSummaryReportPage() {
           </button>
           <button
             onClick={() => setActiveTab("batch")}
-            className={`px-5 py-3 font-bold border-b-2 transition flex items-center gap-2 ${
-              activeTab === "batch" ? "border-brand-lime text-brand-lime light:text-lime-700 font-black" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
+            className={`px-4 py-3 font-bold border-b-2 transition flex items-center gap-2 shrink-0 ${
+              activeTab === "batch" ? "border-red-600 text-red-500 font-extrabold" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black"
             }`}
           >
             <QrCode className="w-4 h-4" />
@@ -385,408 +388,401 @@ export default function StockSummaryReportPage() {
           </button>
           <button
             onClick={() => setActiveTab("spec")}
-            className={`ml-auto px-5 py-3 font-extrabold border-b-2 transition flex items-center gap-2 text-sky-400 border-transparent hover:text-white light:text-slate-900 light:hover:text-black`}
+            className={`ml-auto px-4 py-3 font-bold border-b-2 transition flex items-center gap-2 shrink-0 ${
+              activeTab === "spec" ? "border-red-600 text-red-500 font-extrabold" : "border-transparent text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black"
+            }`}
           >
             <FileCode className="w-4 h-4 text-sky-400" />
-            Systems Architect Design Specs
+            Systems Architect Specs
           </button>
         </div>
-      </div>
 
-      {/* Main Grid */}
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: Principal Reports - 9 span */}
-        <section className="lg:col-span-9 rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-6 shadow-2xl backdrop-blur-xl space-y-6 min-h-[500px]">
-          
-          {loading ? (
-            <div className="py-32 flex flex-col items-center justify-center gap-3 text-slate-400 light:text-slate-600">
-              <Loader2 className="w-8 h-8 animate-spin text-brand-lime light:text-lime-700" />
-              <p className="text-xs">Computing double-entry stock quantities...</p>
-            </div>
-          ) : error ? (
-            <div className="py-24 text-center space-y-4">
-              <AlertCircle className="w-12 h-12 text-rose-500 mx-auto" />
-              <p className="text-sm text-slate-300 light:text-slate-700">{error}</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {/* Tab 1: Stock Summary with Drill Down */}
-              {activeTab === "summary" && (
-                <div className="space-y-4">
-                  {/* Drill-down breadcrumbs */}
-                  <div className="flex items-center gap-1.5 text-[10px] uppercase font-black tracking-wider text-slate-400 light:text-slate-600 bg-slate-950 light:bg-slate-100/20 light:bg-slate-100 p-2 rounded-xl border border-slate-900 light:border-slate-200">
-                    <span className="cursor-pointer hover:text-brand-lime light:text-lime-700" onClick={() => setDrillLevel("category")}>Groups Summary</span>
-                    {drillLevel !== "category" && (
-                      <>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                        <span className="cursor-pointer hover:text-brand-lime light:text-lime-700 text-white light:text-slate-900" onClick={() => setDrillLevel("item")}>
-                          {selectedGroupPath}
-                        </span>
-                      </>
-                    )}
-                    {drillLevel === "voucher" && (
-                      <>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                        <span className="text-brand-lime light:text-lime-700 font-black">{selectedItemPath?.name} Ledger</span>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Level 1: Category/Group Summary */}
-                  {drillLevel === "category" && (
-                    <div className="overflow-hidden border border-slate-900 light:border-slate-200/50 light:border-slate-200 rounded-2xl bg-brand-navy-dark/20 light:bg-white">
-                      <table className="w-full text-left border-collapse text-xs">
-                        <thead>
-                          <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
-                            <th className="py-3 px-4">Stock Group / Category</th>
-                            <th className="py-3 px-4 text-center">Items Count</th>
-                            <th className="py-3 px-4 text-right">Opening Qty</th>
-                            <th className="py-3 px-4 text-right">Inwards</th>
-                            <th className="py-3 px-4 text-right">Outwards</th>
-                            <th className="py-3 px-4 text-right">Closing Balance</th>
-                            <th className="py-3 px-4 text-right">Valuation ({currency})</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {getCategorySummary().map((cat) => (
-                            <tr
-                              key={cat.group}
-                              onClick={() => { setSelectedGroupPath(cat.group); setDrillLevel("item"); }}
-                              className="border-b border-slate-900 light:border-slate-200/30 light:border-slate-150 hover:bg-slate-900 light:bg-slate-200/80/20 text-slate-300 light:text-slate-700 cursor-pointer transition"
-                            >
-                              <td className="py-3 px-4 font-bold text-white light:text-slate-900 flex items-center gap-1">
-                                <ChevronRight className="w-4 h-4 text-brand-lime light:text-lime-700 shrink-0" />
-                                {cat.group}
-                              </td>
-                              <td className="py-3 px-4 text-center font-semibold text-sky-400">{cat.count} Items</td>
-                              <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{cat.openingQty} PCS</td>
-                              <td className="py-3 px-4 text-right font-mono text-red-400 light:text-lime-700">+{cat.inwards}</td>
-                              <td className="py-3 px-4 text-right font-mono text-rose-400">-{cat.outwards}</td>
-                              <td className="py-3 px-4 text-right font-mono font-bold text-slate-200 light:text-slate-800">{cat.closingQty} PCS</td>
-                              <td className="py-3 px-4 text-right font-mono font-black text-white light:text-slate-900">{currency}{cat.value.toFixed(2)}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left Column: Principal Reports - 9 span */}
+          <section className="lg:col-span-9 rounded-3xl bg-slate-900/30 light:bg-white border border-slate-800 light:border-slate-200 p-6 shadow-xl backdrop-blur-xl space-y-6 min-h-[500px]">
+            
+            {loading ? (
+              <Loader kind="stock" label="Computing double-entry stock quantities" />
+            ) : error ? (
+              <div className="py-24 text-center space-y-4">
+                <AlertCircle className="w-12 h-12 text-red-500 mx-auto" />
+                <p className="text-sm text-slate-300 light:text-slate-700">{error}</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Tab 1: Stock Summary with Drill Down */}
+                {activeTab === "summary" && (
+                  <div className="space-y-4">
+                    {/* Drill-down breadcrumbs */}
+                    <div className="flex items-center gap-2 text-xs uppercase font-bold tracking-wider text-slate-400 light:text-slate-600 bg-slate-950 light:bg-slate-50 p-3 rounded-xl border border-slate-800 light:border-slate-200">
+                      <span className="cursor-pointer hover:text-red-500" onClick={() => setDrillLevel("category")}>Groups Summary</span>
+                      {drillLevel !== "category" && (
+                        <>
+                          <ChevronRight className="w-4 h-4 text-slate-500" />
+                          <span className="cursor-pointer hover:text-red-500 text-white light:text-slate-900 font-bold" onClick={() => setDrillLevel("item")}>
+                            {selectedGroupPath}
+                          </span>
+                        </>
+                      )}
+                      {drillLevel === "voucher" && (
+                        <>
+                          <ChevronRight className="w-4 h-4 text-slate-500" />
+                          <span className="text-red-500 font-extrabold">{selectedItemPath?.name} Ledger</span>
+                        </>
+                      )}
                     </div>
-                  )}
 
-                  {/* Level 2: Item-wise Detail */}
-                  {drillLevel === "item" && (
-                    <div className="overflow-hidden border border-slate-900 light:border-slate-200/50 light:border-slate-200 rounded-2xl bg-brand-navy-dark/20 light:bg-white">
-                      <table className="w-full text-left border-collapse text-xs">
-                        <thead>
-                          <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
-                            <th className="py-3 px-4">Stock Item Name</th>
-                            <th className="py-3 px-4">SKU</th>
-                            <th className="py-3 px-4 text-right">Opening Qty</th>
-                            <th className="py-3 px-4 text-right">Inwards</th>
-                            <th className="py-3 px-4 text-right">Outwards</th>
-                            <th className="py-3 px-4 text-right">Closing Balance</th>
-                            <th className="py-3 px-4 text-right">Purchase Rate ({currency})</th>
-                            <th className="py-3 px-4 text-right">Valuation ({currency})</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {getFilteredItems()
-                            .filter(row => selectedCategory === "All" || (row.group_name || "General Items") === selectedGroupPath)
-                            .map((row) => {
-                              const baseQty = Number(row.quantity);
-                              const inwardsSim = Math.ceil(baseQty * 1.4);
-                              const outwardsSim = Math.ceil(baseQty * 0.4);
-                              const openingSim = Math.max(0, inwardsSim - outwardsSim - baseQty);
-
-                              return (
-                                <tr
-                                  key={row.id}
-                                  onClick={() => { setSelectedItemPath(row); setDrillLevel("voucher"); }}
-                                  className="border-b border-slate-900 light:border-slate-200/30 light:border-slate-150 hover:bg-slate-900 light:bg-slate-200/80/20 text-slate-300 light:text-slate-700 cursor-pointer transition"
-                                >
-                                  <td className="py-3 px-4 font-bold text-white light:text-slate-900 flex items-center gap-1">
-                                    <ChevronRight className="w-4 h-4 text-sky-400 shrink-0" />
-                                    {row.name}
-                                  </td>
-                                  <td className="py-3 px-4 font-mono text-slate-500 light:text-slate-500">{row.sku || "-"}</td>
-                                  <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{openingSim} PCS</td>
-                                  <td className="py-3 px-4 text-right font-mono text-red-400 light:text-lime-700">+{inwardsSim}</td>
-                                  <td className="py-3 px-4 text-right font-mono text-rose-400">-{outwardsSim}</td>
-                                  <td className="py-3 px-4 text-right font-mono font-bold text-slate-200 light:text-slate-800">{baseQty} PCS</td>
-                                  <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{currency}{Number(row.purchase_price).toFixed(2)}</td>
-                                  <td className="py-3 px-4 text-right font-mono font-black text-brand-lime light:text-lime-700">
-                                    {currency}{(baseQty * (valuationMethod === "fifo" ? row.purchase_price : row.purchase_price * 0.98)).toFixed(2)}
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-
-                  {/* Level 3: Voucher-level Detail */}
-                  {drillLevel === "voucher" && selectedItemPath && (
-                    <div className="space-y-4 animate-fade-in">
-                      <div className="p-4 bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-2xl flex items-center justify-between">
-                        <div>
-                          <h4 className="font-extrabold text-white light:text-slate-900 text-sm">{selectedItemPath.name}</h4>
-                          <p className="text-[10px] text-slate-500 light:text-slate-500 font-mono mt-0.5">SKU: {selectedItemPath.sku || "N/A"} | Group: {selectedItemPath.group_name}</p>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-[9px] uppercase font-black text-slate-400 light:text-slate-600">Current Balance</span>
-                          <p className="text-lg font-black text-brand-lime light:text-lime-700 font-mono">{selectedItemPath.quantity} PCS</p>
-                        </div>
-                      </div>
-
-                      <div className="overflow-hidden border border-slate-900 light:border-slate-200/50 light:border-slate-200 rounded-2xl bg-brand-navy-dark/20 light:bg-white">
-                        <table className="w-full text-left border-collapse text-xs">
+                    {/* Level 1: Category/Group Summary */}
+                    {drillLevel === "category" && (
+                      <div className="overflow-hidden border border-slate-800 light:border-slate-200 rounded-2xl bg-slate-900/30 light:bg-white">
+                        <table className="w-full text-left border-collapse text-sm">
                           <thead>
-                            <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
-                              <th className="py-2.5 px-4">Date</th>
-                              <th className="py-2.5 px-4">Voucher No</th>
-                              <th className="py-2.5 px-4">Voucher Type</th>
-                              <th className="py-2.5 px-4">Party / Ledger A/c</th>
-                              <th className="py-2.5 px-4 text-right">In/Out Flow</th>
-                              <th className="py-2.5 px-4 text-right">Quantity</th>
-                              <th className="py-2.5 px-4 text-right">Rate ({currency})</th>
-                              <th className="py-2.5 px-4 text-right">Voucher Value ({currency})</th>
+                            <tr className="border-b border-slate-800 light:border-slate-200 bg-slate-950 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-xs">
+                              <th className="py-3.5 px-4">Stock Group / Category</th>
+                              <th className="py-3.5 px-4 text-center">Items Count</th>
+                              <th className="py-3.5 px-4 text-right">Opening Qty</th>
+                              <th className="py-3.5 px-4 text-right">Inwards</th>
+                              <th className="py-3.5 px-4 text-right">Outwards</th>
+                              <th className="py-3.5 px-4 text-right">Closing Balance</th>
+                              <th className="py-3.5 px-4 text-right">Valuation ({currency})</th>
                             </tr>
                           </thead>
-                          <tbody>
-                            {getVoucherDetails(selectedItemPath).map((v) => (
-                              <tr key={v.id} className="border-b border-slate-900 light:border-slate-200/30 light:border-slate-150 hover:bg-slate-900 light:bg-slate-200/80/25 text-slate-300 light:text-slate-700">
-                                <td className="py-3 px-4 font-mono">{v.date}</td>
-                                <td className="py-3 px-4 font-mono font-bold text-white light:text-slate-900">{v.vnum}</td>
-                                <td className="py-3 px-4">
-                                  <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
-                                    v.type === "Purchase"
-                                      ? "bg-sky-500/10 text-sky-400"
-                                      : v.type === "Sales"
-                                      ? "bg-brand-lime/10 light:bg-lime-100/60 text-brand-lime light:text-lime-700"
-                                      : "bg-amber-500/10 text-amber-400"
-                                  }`}>
-                                    {v.type}
-                                  </span>
+                          <tbody className="text-sm">
+                            {getCategorySummary().map((cat) => (
+                              <tr
+                                key={cat.group}
+                                onClick={() => { setSelectedGroupPath(cat.group); setDrillLevel("item"); }}
+                                className="border-b border-slate-800/50 light:border-slate-100 hover:bg-slate-800/40 light:hover:bg-slate-100/60 text-slate-300 light:text-slate-700 cursor-pointer transition"
+                              >
+                                <td className="py-3.5 px-4 font-bold text-white light:text-slate-900 flex items-center gap-1.5">
+                                  <ChevronRight className="w-4 h-4 text-red-500 shrink-0" />
+                                  {cat.group}
                                 </td>
-                                <td className="py-3 px-4 font-bold">{v.party}</td>
-                                <td className="py-3 px-4 text-right">
-                                  <span className={`font-black uppercase text-[10px] ${v.flow === "Inward" ? "text-red-400 light:text-lime-700" : "text-rose-400"}`}>
-                                    {v.flow}
-                                  </span>
-                                </td>
-                                <td className="py-3 px-4 text-right font-mono font-semibold">{v.qty} PCS</td>
-                                <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{Number(v.rate).toFixed(2)}</td>
-                                <td className="py-3 px-4 text-right font-mono font-bold text-white light:text-slate-900">{Number(v.val).toFixed(2)}</td>
+                                <td className="py-3.5 px-4 text-center font-bold text-sky-400">{cat.count} Items</td>
+                                <td className="py-3.5 px-4 text-right font-mono text-slate-400 light:text-slate-600 font-medium">{cat.openingQty} PCS</td>
+                                <td className="py-3.5 px-4 text-right font-mono text-emerald-400 light:text-emerald-700 font-bold">+{cat.inwards}</td>
+                                <td className="py-3.5 px-4 text-right font-mono text-red-400 font-bold">-{cat.outwards}</td>
+                                <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-200 light:text-slate-800">{cat.closingQty} PCS</td>
+                                <td className="py-3.5 px-4 text-right font-mono font-black text-white light:text-slate-900">{currency}{cat.value.toFixed(2)}</td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
                       </div>
-                    </div>
-                  )}
-                </div>
-              )}
+                    )}
 
-              {/* Tab 2: Godown Stock Allocation */}
-              {activeTab === "godown" && (
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
-                      <Warehouse className="w-5 h-5 text-brand-lime light:text-lime-700" />
-                      Godown & Warehouse Inventory Allocation
-                    </h3>
-                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Physical distribution of stock assets across multiple secondary storehouse locations.</p>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {godowns.filter(g => g !== "All").map((g, idx) => {
-                      const seed = idx === 0 ? 0.5 : idx === 1 ? 0.3 : 0.2;
-                      const totalVal = getFilteredItems().reduce((acc, row) => acc + (row.quantity * row.purchase_price * seed), 0);
-                      const totalQty = getFilteredItems().reduce((acc, row) => acc + (row.quantity * seed), 0);
-
-                      return (
-                        <div key={g} className="p-5 bg-brand-navy-dark border border-slate-900 light:border-slate-200 rounded-3xl space-y-4">
-                          <div className="flex items-center justify-between border-b border-slate-900 light:border-slate-200 pb-2">
-                            <span className="font-bold text-white light:text-slate-900">{g}</span>
-                            <span className="px-2 py-0.5 bg-brand-lime/10 light:bg-lime-100/60 border border-brand-lime/20 text-brand-lime light:text-lime-700 font-mono rounded text-[10px]">ACTIVE</span>
-                          </div>
-                          
-                          <div className="grid grid-cols-2 gap-3 text-xs">
-                            <div>
-                              <span className="text-[9px] uppercase font-black text-slate-500 light:text-slate-500">Allocated Qty</span>
-                              <p className="text-white light:text-slate-900 font-mono font-bold mt-0.5">{totalQty.toFixed(0)} PCS</p>
-                            </div>
-                            <div className="text-right">
-                              <span className="text-[9px] uppercase font-black text-slate-500 light:text-slate-500">Stock Value</span>
-                              <p className="text-brand-lime light:text-lime-700 font-mono font-black mt-0.5">{currency}{totalVal.toFixed(2)}</p>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Tab 3: Stock Ageing Analysis */}
-              {activeTab === "ageing" && (
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
-                      <Hourglass className="w-5 h-5 text-brand-lime light:text-lime-700" />
-                      Stock Ageing Analysis
-                    </h3>
-                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Analyze how long inventory has been sitting in stock. Useful for tracking slow-moving assets.</p>
-                  </div>
-
-                  <div className="overflow-hidden border border-slate-900 light:border-slate-200/50 light:border-slate-200 rounded-2xl bg-brand-navy-dark/20 light:bg-white">
-                    <table className="w-full text-left border-collapse text-xs">
-                      <thead>
-                        <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
-                          <th className="py-2.5 px-4">Item Name</th>
-                          <th className="py-2.5 px-4 text-right">Total Qty</th>
-                          <th className="py-2.5 px-4 text-right">Under 30 Days</th>
-                          <th className="py-2.5 px-4 text-right">30 - 60 Days</th>
-                          <th className="py-2.5 px-4 text-right">60 - 90 Days</th>
-                          <th className="py-2.5 px-4 text-right">Over 90 Days</th>
-                          <th className="py-2.5 px-4 text-right">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {getFilteredItems().map((item) => {
-                          const baseQty = Number(item.quantity);
-                          const g1 = Math.round(baseQty * 0.5);
-                          const g2 = Math.round(baseQty * 0.3);
-                          const g3 = Math.round(baseQty * 0.15);
-                          const g4 = baseQty - g1 - g2 - g3;
-
-                          const isSlowMoving = g4 > (baseQty * 0.1);
-
-                          return (
-                            <tr key={item.id} className="border-b border-slate-900 light:border-slate-200/30 light:border-slate-150 hover:bg-slate-900 light:bg-slate-200/80/10 text-slate-300 light:text-slate-700">
-                              <td className="py-3 px-4 font-bold text-white light:text-slate-900">{item.name}</td>
-                              <td className="py-3 px-4 text-right font-mono font-bold text-slate-200 light:text-slate-800">{baseQty} PCS</td>
-                              <td className="py-3 px-4 text-right font-mono text-red-400 light:text-lime-700">{g1}</td>
-                              <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{g2}</td>
-                              <td className="py-3 px-4 text-right font-mono text-amber-400">{g3}</td>
-                              <td className="py-3 px-4 text-right font-mono text-rose-400">{g4}</td>
-                              <td className="py-3 px-4 text-right">
-                                <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                                  isSlowMoving ? "bg-red-500/10 text-red-400" : "bg-green-500/10 text-green-400"
-                                }`}>
-                                  {isSlowMoving ? "Slow Moving" : "Healthy"}
-                                </span>
-                              </td>
+                    {/* Level 2: Item-wise Detail */}
+                    {drillLevel === "item" && (
+                      <div className="overflow-hidden border border-slate-800 light:border-slate-200 rounded-2xl bg-slate-900/30 light:bg-white">
+                        <table className="w-full text-left border-collapse text-sm">
+                          <thead>
+                            <tr className="border-b border-slate-800 light:border-slate-200 bg-slate-950 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-xs">
+                              <th className="py-3.5 px-4">Stock Item Name</th>
+                              <th className="py-3.5 px-4">SKU</th>
+                              <th className="py-3.5 px-4 text-right">Opening Qty</th>
+                              <th className="py-3.5 px-4 text-right">Inwards</th>
+                              <th className="py-3.5 px-4 text-right">Outwards</th>
+                              <th className="py-3.5 px-4 text-right">Closing Balance</th>
+                              <th className="py-3.5 px-4 text-right">Purchase Rate ({currency})</th>
+                              <th className="py-3.5 px-4 text-right">Valuation ({currency})</th>
                             </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
+                          </thead>
+                          <tbody>
+                            {getFilteredItems()
+                              .filter(row => selectedCategory === "All" || (row.group_name || "General Items") === selectedGroupPath)
+                              .map((row) => {
+                                const baseQty = Number(row.quantity);
+                                const inwardsSim = Math.ceil(baseQty * 1.4);
+                                const outwardsSim = Math.ceil(baseQty * 0.4);
+                                const openingSim = Math.max(0, inwardsSim - outwardsSim - baseQty);
 
-              {/* Tab 4: Low Stock Alerts */}
-              {activeTab === "reorder" && (
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
-                      <BellRing className="w-5 h-5 text-brand-lime light:text-lime-700" />
-                      Reorder & Low Stock Alerts
-                    </h3>
-                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Identifies items that require immediate purchase orders because stock falls below safety levels.</p>
-                  </div>
+                                return (
+                                  <tr
+                                    key={row.id}
+                                    onClick={() => { setSelectedItemPath(row); setDrillLevel("voucher"); }}
+                                    className="border-b border-slate-800/50 light:border-slate-100 hover:bg-slate-800/40 light:hover:bg-slate-100/60 text-slate-300 light:text-slate-700 cursor-pointer transition"
+                                  >
+                                    <td className="py-3 px-4 font-bold text-white light:text-slate-900 flex items-center gap-1">
+                                      <ChevronRight className="w-4 h-4 text-sky-400 shrink-0" />
+                                      {row.name}
+                                    </td>
+                                    <td className="py-3 px-4 font-mono text-slate-500">{row.sku || "-"}</td>
+                                    <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{openingSim} PCS</td>
+                                    <td className="py-3 px-4 text-right font-mono text-emerald-400 light:text-emerald-700">+{inwardsSim}</td>
+                                    <td className="py-3 px-4 text-right font-mono text-red-400">-{outwardsSim}</td>
+                                    <td className="py-3 px-4 text-right font-mono font-bold text-slate-200 light:text-slate-800">{baseQty} PCS</td>
+                                    <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{currency}{Number(row.purchase_price).toFixed(2)}</td>
+                                    <td className="py-3 px-4 text-right font-mono font-black text-white light:text-slate-900">
+                                      {currency}{(baseQty * (valuationMethod === "fifo" ? row.purchase_price : row.purchase_price * 0.98)).toFixed(2)}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {getFilteredItems().map((item) => {
-                      const reorderLevel = Math.ceil(item.quantity * 1.2); // Simulate a reorder level
-                      const shortfall = reorderLevel - item.quantity;
-                      return (
-                        <div key={item.id} className="p-4 bg-brand-navy-dark border border-slate-900 light:border-slate-200 rounded-3xl flex items-center justify-between">
+                    {/* Level 3: Voucher-level Detail */}
+                    {drillLevel === "voucher" && selectedItemPath && (
+                      <div className="space-y-4">
+                        <div className="p-4 bg-slate-950 light:bg-slate-50 border border-slate-800 light:border-slate-200 rounded-2xl flex items-center justify-between">
                           <div>
-                            <span className="text-[9px] uppercase font-mono text-slate-500 light:text-slate-500">SKU: {item.sku || "N/A"}</span>
-                            <h4 className="font-bold text-white light:text-slate-900 text-xs">{item.name}</h4>
-                            <div className="flex gap-4 mt-2 text-[10px] text-slate-450 light:text-slate-500">
-                              <p>Available: <span className="font-mono text-red-400 font-bold">{item.quantity} PCS</span></p>
-                              <p>Reorder Safety: <span className="font-mono text-slate-350">{reorderLevel} PCS</span></p>
-                            </div>
+                            <h4 className="font-extrabold text-white light:text-slate-900 text-sm">{selectedItemPath.name}</h4>
+                            <p className="text-[10px] text-slate-500 font-mono mt-0.5">SKU: {selectedItemPath.sku || "N/A"} | Group: {selectedItemPath.group_name}</p>
                           </div>
-                          
                           <div className="text-right">
-                            <span className="text-[9px] uppercase font-black text-rose-400">Shortfall</span>
-                            <p className="text-lg font-black text-rose-500 font-mono">-{shortfall} PCS</p>
+                            <span className="text-[9px] uppercase font-bold text-slate-400 light:text-slate-600">Current Balance</span>
+                            <p className="text-lg font-black text-white light:text-slate-900 font-mono">{selectedItemPath.quantity} PCS</p>
                           </div>
                         </div>
-                      );
-                    })}
+
+                        <div className="overflow-hidden border border-slate-800 light:border-slate-200 rounded-2xl bg-slate-900/30 light:bg-white">
+                          <table className="w-full text-left border-collapse text-xs">
+                            <thead>
+                              <tr className="border-b border-slate-800 light:border-slate-200 bg-slate-950 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
+                                <th className="py-2.5 px-4">Date</th>
+                                <th className="py-2.5 px-4">Voucher No</th>
+                                <th className="py-2.5 px-4">Voucher Type</th>
+                                <th className="py-2.5 px-4">Party / Ledger A/c</th>
+                                <th className="py-2.5 px-4 text-right">In/Out Flow</th>
+                                <th className="py-2.5 px-4 text-right">Quantity</th>
+                                <th className="py-2.5 px-4 text-right">Rate ({currency})</th>
+                                <th className="py-2.5 px-4 text-right">Voucher Value ({currency})</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {getVoucherDetails(selectedItemPath).map((v) => (
+                                <tr key={v.id} className="border-b border-slate-800/50 light:border-slate-100 hover:bg-slate-800/40 light:hover:bg-slate-100/60 text-slate-300 light:text-slate-700">
+                                  <td className="py-3 px-4 font-mono">{v.date}</td>
+                                  <td className="py-3 px-4 font-mono font-bold text-white light:text-slate-900">{v.vnum}</td>
+                                  <td className="py-3 px-4">
+                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                                      v.type === "Purchase"
+                                        ? "bg-sky-500/10 text-sky-400"
+                                        : v.type === "Sales"
+                                        ? "bg-emerald-500/10 text-emerald-400 light:text-emerald-700"
+                                        : "bg-amber-500/10 text-amber-400"
+                                    }`}>
+                                      {v.type}
+                                    </span>
+                                  </td>
+                                  <td className="py-3 px-4 font-bold">{v.party}</td>
+                                  <td className="py-3 px-4 text-right">
+                                    <span className={`font-bold uppercase text-[10px] ${v.flow === "Inward" ? "text-emerald-400 light:text-emerald-700" : "text-red-400"}`}>
+                                      {v.flow}
+                                    </span>
+                                  </td>
+                                  <td className="py-3 px-4 text-right font-mono font-semibold">{v.qty} PCS</td>
+                                  <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{Number(v.rate).toFixed(2)}</td>
+                                  <td className="py-3 px-4 text-right font-mono font-bold text-white light:text-slate-900">{Number(v.val).toFixed(2)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Tab 5: Batch & Expiry tracking */}
-              {activeTab === "batch" && (
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
-                      <QrCode className="w-5 h-5 text-brand-lime light:text-lime-700" />
-                      Batch Code & Expiry tracking
-                    </h3>
-                    <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Traces inventory batch serial number details, manufacturing inputs, and expiry warning timestamps.</p>
-                  </div>
-
-                  <div className="overflow-hidden border border-slate-900 light:border-slate-200/50 light:border-slate-200 rounded-2xl bg-brand-navy-dark/20 light:bg-white">
-                    <table className="w-full text-left border-collapse text-xs">
-                      <thead>
-                        <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
-                          <th className="py-2.5 px-4">Item Name</th>
-                          <th className="py-2.5 px-4 font-mono">Batch Code</th>
-                          <th className="py-2.5 px-4 font-mono">Mfg Date</th>
-                          <th className="py-2.5 px-4 font-mono">Expiry Date</th>
-                          <th className="py-2.5 px-4 text-right">Available Qty</th>
-                          <th className="py-2.5 px-4 text-right">Days to Expire</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {getFilteredItems().map((item, idx) => {
-                          const batch = `B-${2026}-${idx + 101}`;
-                          const mfg = "2026-01-10";
-                          const exp = "2027-06-30";
-                          const daysLeft = Math.max(0, Math.floor((new Date(exp).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
-
-                          return (
-                            <tr key={item.id} className="border-b border-slate-900 light:border-slate-200/30 light:border-slate-150 hover:bg-slate-900 light:bg-slate-200/80/10 text-slate-300 light:text-slate-700">
-                              <td className="py-3 px-4 font-bold text-white light:text-slate-900">{item.name}</td>
-                              <td className="py-3 px-4 font-mono text-slate-400 light:text-slate-600">{batch}</td>
-                              <td className="py-3 px-4 font-mono text-slate-500 light:text-slate-500">{mfg}</td>
-                              <td className="py-3 px-4 font-mono text-rose-400 font-bold">{exp}</td>
-                              <td className="py-3 px-4 text-right font-mono font-bold text-slate-200 light:text-slate-800">{item.quantity} PCS</td>
-                              <td className="py-3 px-4 text-right font-mono text-brand-lime light:text-lime-700 font-black">{daysLeft} Days</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-
-              {/* Tab 6: Systems Architect Design Specs */}
-              {activeTab === "spec" && (
-                <div className="space-y-6 text-xs text-slate-300 light:text-slate-700 leading-relaxed font-semibold max-h-[700px] overflow-y-auto pr-2">
-                  <div className="border-b border-slate-900 light:border-slate-200 pb-3 flex items-center justify-between">
+                {/* Tab 2: Godown Stock Allocation */}
+                {activeTab === "godown" && (
+                  <div className="space-y-4">
                     <div>
-                      <h3 className="text-base font-extrabold text-white light:text-slate-900 flex items-center gap-2">
-                        <BookOpen className="w-5 h-5 text-sky-400" />
-                        ERP Inventory Systems Architect Specification
+                      <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                        <Warehouse className="w-5 h-5 text-red-500" />
+                        Godown & Warehouse Inventory Allocation
                       </h3>
-                      <p className="text-[10px] text-slate-500 light:text-slate-500 mt-0.5">Reference documentation for developers, database schemas, and mathematical valuation formulations.</p>
+                      <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Physical distribution of stock assets across multiple storehouse locations.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {godowns.filter(g => g !== "All").map((g, idx) => {
+                        const seed = idx === 0 ? 0.5 : idx === 1 ? 0.3 : 0.2;
+                        const totalVal = getFilteredItems().reduce((acc, row) => acc + (row.quantity * row.purchase_price * seed), 0);
+                        const totalQty = getFilteredItems().reduce((acc, row) => acc + (row.quantity * seed), 0);
+
+                        return (
+                          <div key={g} className="p-5 bg-slate-950 light:bg-slate-50 border border-slate-800 light:border-slate-200 rounded-3xl space-y-4">
+                            <div className="flex items-center justify-between border-b border-slate-800 light:border-slate-200 pb-2">
+                              <span className="font-bold text-white light:text-slate-900">{g}</span>
+                              <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 light:text-emerald-700 font-mono rounded text-[10px] font-bold">ACTIVE</span>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-3 text-xs">
+                              <div>
+                                <span className="text-[9px] uppercase font-bold text-slate-500">Allocated Qty</span>
+                                <p className="text-white light:text-slate-900 font-mono font-bold mt-0.5">{totalQty.toFixed(0)} PCS</p>
+                              </div>
+                              <div className="text-right">
+                                <span className="text-[9px] uppercase font-bold text-slate-500">Stock Value</span>
+                                <p className="text-white light:text-slate-900 font-mono font-bold mt-0.5">{currency}{totalVal.toFixed(2)}</p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
+                )}
 
-                  {/* Point 1: Database Schema */}
-                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">1. Normalized Database Schema</h4>
-                    <p className="text-[11px] text-slate-400 light:text-slate-600">Five tables form the core transactional storage for the inventory module:</p>
-                    <pre className="p-3 bg-slate-950 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
+                {/* Tab 3: Stock Ageing Analysis */}
+                {activeTab === "ageing" && (
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                        <Hourglass className="w-5 h-5 text-red-500" />
+                        Stock Ageing Analysis
+                      </h3>
+                      <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Analyze how long inventory has been sitting in stock. Useful for tracking slow-moving assets.</p>
+                    </div>
+
+                    <div className="overflow-hidden border border-slate-800 light:border-slate-200 rounded-2xl bg-slate-900/30 light:bg-white">
+                      <table className="w-full text-left border-collapse text-xs">
+                        <thead>
+                          <tr className="border-b border-slate-800 light:border-slate-200 bg-slate-950 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
+                            <th className="py-2.5 px-4">Item Name</th>
+                            <th className="py-2.5 px-4 text-right">Total Qty</th>
+                            <th className="py-2.5 px-4 text-right">Under 30 Days</th>
+                            <th className="py-2.5 px-4 text-right">30 - 60 Days</th>
+                            <th className="py-2.5 px-4 text-right">60 - 90 Days</th>
+                            <th className="py-2.5 px-4 text-right">Over 90 Days</th>
+                            <th className="py-2.5 px-4 text-right">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {getFilteredItems().map((item) => {
+                            const baseQty = Number(item.quantity);
+                            const g1 = Math.round(baseQty * 0.5);
+                            const g2 = Math.round(baseQty * 0.3);
+                            const g3 = Math.round(baseQty * 0.15);
+                            const g4 = baseQty - g1 - g2 - g3;
+
+                            const isSlowMoving = g4 > (baseQty * 0.1);
+
+                            return (
+                              <tr key={item.id} className="border-b border-slate-800/50 light:border-slate-100 hover:bg-slate-800/40 light:hover:bg-slate-100/60 text-slate-300 light:text-slate-700">
+                                <td className="py-3 px-4 font-bold text-white light:text-slate-900">{item.name}</td>
+                                <td className="py-3 px-4 text-right font-mono font-bold text-slate-200 light:text-slate-800">{baseQty} PCS</td>
+                                <td className="py-3 px-4 text-right font-mono text-emerald-400 light:text-emerald-700">{g1}</td>
+                                <td className="py-3 px-4 text-right font-mono text-slate-400 light:text-slate-600">{g2}</td>
+                                <td className="py-3 px-4 text-right font-mono text-amber-400">{g3}</td>
+                                <td className="py-3 px-4 text-right font-mono text-red-400">{g4}</td>
+                                <td className="py-3 px-4 text-right">
+                                  <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
+                                    isSlowMoving ? "bg-red-500/10 text-red-400" : "bg-emerald-500/10 text-emerald-400 light:text-emerald-700"
+                                  }`}>
+                                    {isSlowMoving ? "Slow Moving" : "Healthy"}
+                                  </span>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* Tab 4: Low Stock Alerts */}
+                {activeTab === "reorder" && (
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                        <BellRing className="w-5 h-5 text-red-500" />
+                        Reorder & Low Stock Alerts
+                      </h3>
+                      <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Identifies items that require immediate purchase orders because stock falls below safety levels.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {getFilteredItems().map((item) => {
+                        const reorderLevel = Math.ceil(item.quantity * 1.2);
+                        const shortfall = reorderLevel - item.quantity;
+                        return (
+                          <div key={item.id} className="p-4 bg-slate-950 light:bg-slate-50 border border-slate-800 light:border-slate-200 rounded-3xl flex items-center justify-between">
+                            <div>
+                              <span className="text-[9px] uppercase font-mono text-slate-500">SKU: {item.sku || "N/A"}</span>
+                              <h4 className="font-bold text-white light:text-slate-900 text-xs">{item.name}</h4>
+                              <div className="flex gap-4 mt-2 text-[10px] text-slate-400 light:text-slate-600">
+                                <p>Available: <span className="font-mono text-emerald-400 light:text-emerald-700 font-bold">{item.quantity} PCS</span></p>
+                                <p>Safety: <span className="font-mono text-slate-400 light:text-slate-600">{reorderLevel} PCS</span></p>
+                              </div>
+                            </div>
+                            
+                            <div className="text-right">
+                              <span className="text-[9px] px-2 py-0.5 rounded font-bold uppercase bg-red-500/10 text-red-400 border border-red-500/20">
+                                Low Stock
+                              </span>
+                              <p className="text-[10px] text-slate-400 light:text-slate-600 mt-2 font-mono">
+                                Shortfall: <span className="text-red-400 font-bold">{shortfall > 0 ? shortfall : 0} PCS</span>
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Tab 5: Batch Details */}
+                {activeTab === "batch" && (
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                        <Boxes className="w-5 h-5 text-red-500" />
+                        Batch-wise & Expiry Inventory Register
+                      </h3>
+                      <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Track lot identification codes, manufacture batches, and shelf-life expiration dates.</p>
+                    </div>
+
+                    <div className="overflow-hidden border border-slate-800 light:border-slate-200 rounded-2xl bg-slate-900/30 light:bg-white">
+                      <table className="w-full text-left border-collapse text-xs">
+                        <thead>
+                          <tr className="border-b border-slate-800 light:border-slate-200 bg-slate-950 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[9px]">
+                            <th className="py-3 px-4">Item Name</th>
+                            <th className="py-3 px-4">Batch Number</th>
+                            <th className="py-3 px-4">Expiry Date</th>
+                            <th className="py-3 px-4 text-right">Available Qty</th>
+                            <th className="py-3 px-4 text-right">Unit Rate</th>
+                            <th className="py-3 px-4 text-right">Batch Value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {getFilteredItems().map((item) => (
+                            <tr key={item.id} className="border-b border-slate-800/50 light:border-slate-100 text-slate-300 light:text-slate-700">
+                              <td className="py-3 px-4 font-bold text-white light:text-slate-900">{item.name}</td>
+                              <td className="py-3 px-4 font-mono text-slate-400">LOT-{item.id.slice(0, 6).toUpperCase()}</td>
+                              <td className="py-3 px-4 font-mono text-slate-400">2027-12-31</td>
+                              <td className="py-3 px-4 text-right font-mono font-bold">{item.quantity}</td>
+                              <td className="py-3 px-4 text-right font-mono">{currency}{Number(item.purchase_price || 0).toFixed(2)}</td>
+                              <td className="py-3 px-4 text-right font-mono font-bold text-white light:text-slate-900">{currency}{(item.quantity * Number(item.purchase_price || 0)).toFixed(2)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* Tab 6: Architecture Specs */}
+                {activeTab === "spec" && (
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-base font-bold text-white light:text-slate-900 flex items-center gap-2">
+                        <FileCode className="w-5 h-5 text-red-500" />
+                        System Architecture & Database Specifications
+                      </h3>
+                      <p className="text-[11px] text-slate-400 light:text-slate-600 mt-0.5">Technical documentation, relational ER schema, and valuation calculation mechanics.</p>
+                    </div>
+
+                    {/* Point 1: Core Relational Database Schema */}
+                    <div className="space-y-3 bg-slate-950 light:bg-slate-50 p-4 border border-slate-800 light:border-slate-200 rounded-2xl">
+                      <h4 className="font-extrabold text-red-500 uppercase text-[10px] tracking-wider">1. Relational Database Schema</h4>
+                      <p className="text-[11px] text-slate-400 light:text-slate-600">Five tables form the core transactional storage for the inventory module:</p>
+                      <pre className="p-3 bg-slate-900 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-400 light:text-sky-700 overflow-x-auto">
 {`-- 1. Stock Items Master
 CREATE TABLE stock_items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -818,8 +814,8 @@ CREATE TABLE stock_transactions (
     godown_id UUID REFERENCES godowns(id),
     voucher_id UUID REFERENCES vouchers(id) ON DELETE CASCADE,
     transaction_date DATE NOT NULL,
-    transaction_type VARCHAR(50), -- 'purchase', 'sales', 'transfer', 'production', 'adjustment'
-    quantity DECIMAL(15,4) NOT NULL, -- positive for inwards, negative for outwards
+    transaction_type VARCHAR(50),
+    quantity DECIMAL(15,4) NOT NULL,
     rate DECIMAL(15,4) NOT NULL,
     batch_code VARCHAR(100),
     expiry_date DATE
@@ -832,47 +828,47 @@ CREATE TABLE stock_balances (
     quantity DECIMAL(15,4) DEFAULT 0.0000,
     PRIMARY KEY (stock_item_id, godown_id)
 );`}
-                    </pre>
-                  </div>
+                      </pre>
+                    </div>
 
-                  {/* Point 2: Date Range Math */}
-                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">2. Date-Range Balancing Math</h4>
-                    <p className="text-[11px] text-slate-400 light:text-slate-600">For any date range [T_start, T_end]:</p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px]">
-                      <div className="p-3 bg-slate-950 light:bg-slate-100/20 light:bg-slate-100 border border-slate-900 light:border-slate-200 rounded-xl">
-                        <span className="font-bold text-white light:text-slate-900 block">Opening Stock at T_start</span>
-                        <p className="text-slate-400 light:text-slate-600 mt-1 font-mono">Opening = InitialQty + Sum(Qty where Date &lt; T_start)</p>
-                      </div>
-                      <div className="p-3 bg-slate-950 light:bg-slate-100/20 light:bg-slate-100 border border-slate-900 light:border-slate-200 rounded-xl">
-                        <span className="font-bold text-white light:text-slate-900 block">Closing Stock at T_end</span>
-                        <p className="text-slate-400 light:text-slate-600 mt-1 font-mono">Closing = Opening + Inwards(T_start, T_end) - Outwards(T_start, T_end)</p>
+                    {/* Point 2: Date Range Math */}
+                    <div className="space-y-3 bg-slate-950 light:bg-slate-50 p-4 border border-slate-800 light:border-slate-200 rounded-2xl">
+                      <h4 className="font-extrabold text-red-500 uppercase text-[10px] tracking-wider">2. Date-Range Balancing Math</h4>
+                      <p className="text-[11px] text-slate-400 light:text-slate-600">For any date range [T_start, T_end]:</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px]">
+                        <div className="p-3 bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 rounded-xl">
+                          <span className="font-bold text-white light:text-slate-900 block">Opening Stock at T_start</span>
+                          <p className="text-slate-400 light:text-slate-600 mt-1 font-mono">Opening = InitialQty + Sum(Qty where Date &lt; T_start)</p>
+                        </div>
+                        <div className="p-3 bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 rounded-xl">
+                          <span className="font-bold text-white light:text-slate-900 block">Closing Stock at T_end</span>
+                          <p className="text-slate-400 light:text-slate-600 mt-1 font-mono">Closing = Opening + Inwards(T_start, T_end) - Outwards(T_start, T_end)</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Point 3: FIFO & WAC Calculations */}
-                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">3. Valuation Methods Mechanics</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[11px]">
-                      <div className="space-y-1.5">
-                        <span className="font-bold text-white light:text-slate-900">First-In, First-Out (FIFO)</span>
-                        <p className="text-slate-400 light:text-slate-600">Transactions are tracked chronologically. When items are sold, they are valued using the cost price of the oldest available purchased batches. Closing stock represents the cost of the newest batches.</p>
-                      </div>
-                      <div className="space-y-1.5">
-                        <span className="font-bold text-white light:text-slate-900">Weighted Average Cost (WAC)</span>
-                        <p className="text-slate-400 light:text-slate-600">After each inward transaction, the new average unit cost is recomputed:
-                          <span className="block my-2 font-mono text-white light:text-slate-900 text-center bg-slate-950 light:bg-slate-100/50 p-2 rounded-lg">Average Rate = (Previous Value + New Inward Value) / (Previous Qty + New Inward Qty)</span>
-                          Sales are always drawn at the current calculated average unit rate.
-                        </p>
+                    {/* Point 3: FIFO & WAC Calculations */}
+                    <div className="space-y-3 bg-slate-950 light:bg-slate-50 p-4 border border-slate-800 light:border-slate-200 rounded-2xl">
+                      <h4 className="font-extrabold text-red-500 uppercase text-[10px] tracking-wider">3. Valuation Methods Mechanics</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[11px]">
+                        <div className="space-y-1.5">
+                          <span className="font-bold text-white light:text-slate-900">First-In, First-Out (FIFO)</span>
+                          <p className="text-slate-400 light:text-slate-600">Transactions are tracked chronologically. When items are sold, they are valued using the cost price of the oldest available purchased batches. Closing stock represents the cost of the newest batches.</p>
+                        </div>
+                        <div className="space-y-1.5">
+                          <span className="font-bold text-white light:text-slate-900">Weighted Average Cost (WAC)</span>
+                          <p className="text-slate-400 light:text-slate-600">After each inward transaction, the new average unit cost is recomputed:
+                            <span className="block my-2 font-mono text-white light:text-slate-900 text-center bg-slate-900 light:bg-slate-100 p-2 rounded-lg">Average Rate = (Previous Value + New Inward Value) / (Previous Qty + New Inward Qty)</span>
+                            Sales are always drawn at the current calculated average unit rate.
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Point 5: Sample JSON API Response */}
-                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">4. REST API JSON Payload Schema</h4>
-                    <pre className="p-3 bg-slate-950 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
+                    {/* Point 5: Sample JSON API Response */}
+                    <div className="space-y-3 bg-slate-950 light:bg-slate-50 p-4 border border-slate-800 light:border-slate-200 rounded-2xl">
+                      <h4 className="font-extrabold text-red-500 uppercase text-[10px] tracking-wider">4. REST API JSON Payload Schema</h4>
+                      <pre className="p-3 bg-slate-900 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-400 light:text-sky-700 overflow-x-auto">
 {`{
   "filters": {
     "start_date": "2026-04-01",
@@ -902,13 +898,13 @@ CREATE TABLE stock_balances (
     }
   }
 }`}
-                    </pre>
-                  </div>
+                      </pre>
+                    </div>
 
-                  {/* Point 6: Sample SQL query */}
-                  <div className="space-y-3 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 p-4 border border-slate-900 light:border-slate-200 rounded-2xl">
-                    <h4 className="font-extrabold text-brand-lime light:text-lime-700 uppercase text-[10px] tracking-wider">5. Sample SQL Query</h4>
-                    <pre className="p-3 bg-slate-950 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-300 overflow-x-auto">
+                    {/* Point 6: Sample SQL query */}
+                    <div className="space-y-3 bg-slate-950 light:bg-slate-50 p-4 border border-slate-800 light:border-slate-200 rounded-2xl">
+                      <h4 className="font-extrabold text-red-500 uppercase text-[10px] tracking-wider">5. Sample SQL Query</h4>
+                      <pre className="p-3 bg-slate-900 light:bg-slate-100 rounded-xl text-[10px] font-mono text-sky-400 light:text-sky-700 overflow-x-auto">
 {`-- Query to calculate opening, inward, outward, and closing quantities
 SELECT 
     si.id as item_id,
@@ -922,86 +918,87 @@ LEFT JOIN stock_transactions st ON st.stock_item_id = si.id
 WHERE si.company_id = 'c8b211f5-19a4-47d0-8bde-bfd8ef15330a'
 GROUP BY si.id, si.name
 ORDER BY si.name ASC;`}
-                    </pre>
+                      </pre>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+
+          {/* Right Column: Asset Summary - 3 span */}
+          <section className="lg:col-span-3 space-y-6">
+            {/* Main Stock card */}
+            <div className="rounded-3xl bg-slate-900/30 light:bg-white border border-slate-800 light:border-slate-200 p-5 shadow-xl backdrop-blur-xl space-y-4">
+              <h3 className="text-xs font-black uppercase tracking-widest text-red-500 flex items-center gap-1.5 border-b border-slate-800 light:border-slate-200 pb-2">
+                Valuation Summary
+              </h3>
+
+              <div className="space-y-3 pt-1 text-xs">
+                <div className="flex items-center gap-3 py-1 border-b border-slate-800/50 light:border-slate-100">
+                  <div className="p-2 bg-slate-800 light:bg-slate-100 rounded-lg text-slate-400 light:text-slate-600">
+                    <Layers className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-500 uppercase font-bold">Stock Lines</span>
+                    <p className="text-white light:text-slate-900 font-bold font-mono mt-0.5">{totals?.total_items || 0} ITEMS</p>
                   </div>
                 </div>
-              )}
-            </div>
-          )}
-        </section>
 
-        {/* Right Column: Asset Summary - 3 span */}
-        <section className="lg:col-span-3 space-y-6">
-          {/* Main Stock card */}
-          <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-widest text-brand-lime light:text-lime-700 flex items-center gap-1.5 border-b border-slate-900 light:border-slate-200 pb-2">
-              Valuation summary
-            </h3>
+                <div className="flex items-center gap-3 py-1 border-b border-slate-800/50 light:border-slate-100">
+                  <div className="p-2 bg-slate-800 light:bg-slate-100 rounded-lg text-slate-400 light:text-slate-600">
+                    <Boxes className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-500 uppercase font-bold">Total Quantity</span>
+                    <p className="text-white light:text-slate-900 font-bold font-mono mt-0.5">{totals?.total_quantity || 0} PCS</p>
+                  </div>
+                </div>
 
-            <div className="space-y-3 pt-1 text-xs">
-              <div className="flex items-center gap-3 py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
-                <div className="p-2 bg-slate-900 light:bg-slate-200/80 rounded-lg text-slate-400 light:text-slate-600">
-                  <Layers className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-550 uppercase font-black">Stock Lines</span>
-                  <p className="text-white light:text-slate-900 light:text-slate-900 font-bold font-mono mt-0.5">{totals?.total_items || 0} ITEMS</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
-                <div className="p-2 bg-slate-900 light:bg-slate-200/80 rounded-lg text-slate-400 light:text-slate-600">
-                  <Boxes className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-550 uppercase font-black">Total Quantity</span>
-                  <p className="text-white light:text-slate-900 light:text-slate-900 font-bold font-mono mt-0.5">{totals?.total_quantity || 0} PCS</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
-                <div className="p-2 bg-slate-900 light:bg-slate-200/80 rounded-lg text-brand-lime light:text-lime-700">
-                  <DollarSign className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-550 uppercase font-black">Net Assets Value</span>
-                  <p className="text-brand-lime light:text-lime-700 font-black font-mono mt-0.5 text-sm">{currency}{totals?.total_valuation.toFixed(2)}</p>
+                <div className="flex items-center gap-3 py-1 border-b border-slate-800/50 light:border-slate-100">
+                  <div className="p-2 bg-slate-800 light:bg-slate-100 rounded-lg text-red-500">
+                    <DollarSign className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-500 uppercase font-bold">Net Assets Value</span>
+                    <p className="text-white light:text-slate-900 font-bold font-mono mt-0.5 text-sm">{currency}{totals?.total_valuation.toFixed(2)}</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Quick specs notes cards */}
-          <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl">
-            <h3 className="text-xs font-black uppercase tracking-widest text-white light:text-slate-900 flex items-center gap-1.5 border-b border-slate-900 light:border-slate-200 pb-2">
-              Valuation formula
-            </h3>
-            <div className="pt-3 text-[10px] text-slate-400 light:text-slate-600 leading-relaxed space-y-2">
-              <p><strong>FIFO Model:</strong> Values ending quantities based on costs of the most recent purchases.</p>
-              <p><strong>WAC Model:</strong> Values ending quantities based on weighted average of all inward costs.</p>
+            {/* Quick specs notes cards */}
+            <div className="rounded-3xl bg-slate-900/30 light:bg-white border border-slate-800 light:border-slate-200 p-5 shadow-xl backdrop-blur-xl">
+              <h3 className="text-xs font-black uppercase tracking-widest text-white light:text-slate-900 flex items-center gap-1.5 border-b border-slate-800 light:border-slate-200 pb-2">
+                Valuation Formula
+              </h3>
+              <div className="pt-3 text-[10px] text-slate-400 light:text-slate-600 leading-relaxed space-y-2 font-semibold">
+                <p><strong className="text-white light:text-slate-900">FIFO Model:</strong> Values ending quantities based on costs of the most recent purchases.</p>
+                <p><strong className="text-white light:text-slate-900">WAC Model:</strong> Values ending quantities based on weighted average of all inward costs.</p>
+              </div>
             </div>
-          </div>
-        </section>
-      </main>
+          </section>
+        </div>
+      </div>
 
       {/* Methodology Info Modal overlay */}
       {showValuationInfo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-          <div className="w-full max-w-lg bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-3xl p-6 md:p-8 space-y-4 shadow-2xl text-xs">
-            <div className="flex items-center justify-between border-b border-slate-900 light:border-slate-200 pb-3">
+          <div className="w-full max-w-lg bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-6 md:p-8 space-y-4 shadow-2xl text-xs">
+            <div className="flex items-center justify-between border-b border-slate-800 light:border-slate-200 pb-3">
               <h3 className="text-sm font-bold text-white light:text-slate-900 flex items-center gap-2">
-                <Info className="w-5 h-5 text-brand-lime light:text-lime-700" />
+                <Info className="w-5 h-5 text-red-500" />
                 Valuation Methodology Formulas
               </h3>
               <button
                 onClick={() => setShowValuationInfo(false)}
-                className="p-1 rounded-full text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black hover:bg-slate-900 light:bg-slate-200/80"
+                className="p-1.5 rounded-full text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black hover:bg-slate-800 light:hover:bg-slate-100"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-4 text-slate-350 leading-relaxed font-semibold">
+            <div className="space-y-4 text-slate-300 light:text-slate-700 leading-relaxed font-semibold">
               <div className="space-y-1">
                 <h5 className="font-extrabold text-white light:text-slate-900">First-In, First-Out (FIFO)</h5>
                 <p>Calculated by sorting inward transactions chronologically. When an outward transaction occurs, items are deducted from the earliest available batch. The closing value is computed as the sum of remaining items valued at their respective batch cost rates.</p>
@@ -1010,7 +1007,7 @@ ORDER BY si.name ASC;`}
               <div className="space-y-1">
                 <h5 className="font-extrabold text-white light:text-slate-900">Weighted Average Cost (WAC)</h5>
                 <p>A running average unit rate is maintained. Every time a new purchase is recorded:
-                  <span className="block my-2 font-mono text-white light:text-slate-900 text-center bg-slate-950 light:bg-slate-100/50 p-2 rounded-lg">New Rate = (Current Value + New Value) / (Current Qty + New Qty)</span>
+                  <span className="block my-2 font-mono text-white light:text-slate-900 text-center bg-slate-950 light:bg-slate-100 p-2 rounded-lg border border-slate-800 light:border-slate-200">New Rate = (Current Value + New Value) / (Current Qty + New Qty)</span>
                   All sales and closing values are evaluated at this single, unified running average cost.
                 </p>
               </div>
@@ -1019,7 +1016,7 @@ ORDER BY si.name ASC;`}
             <div className="flex justify-end pt-3">
               <button
                 onClick={() => setShowValuationInfo(false)}
-                className="px-5 py-2 bg-slate-900 light:bg-slate-200/80 hover:bg-slate-800 text-slate-300 light:text-slate-700 rounded-xl border border-slate-800 light:border-slate-200"
+                className="px-5 py-2 bg-slate-800 light:bg-slate-100 hover:bg-slate-700 text-slate-200 light:text-slate-800 rounded-xl border border-slate-700 light:border-slate-200 font-bold"
               >
                 Close details
               </button>
@@ -1027,6 +1024,6 @@ ORDER BY si.name ASC;`}
           </div>
         </div>
       )}
-    </div>
+    </AppLayout>
   );
 }

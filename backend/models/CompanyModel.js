@@ -23,7 +23,8 @@ const createCompany = async (userId, companyData) => {
     financial_year_start,
     financial_year_end,
     contact_email,
-    contact_phone
+    contact_phone,
+    logo_url
   } = companyData;
 
   const client = await pool.connect();
@@ -34,13 +35,13 @@ const createCompany = async (userId, companyData) => {
     const companyRes = await client.query(
       `INSERT INTO companies (
         user_id, name, address, gst_number, state, 
-        financial_year_start, financial_year_end, contact_email, contact_phone
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+        financial_year_start, financial_year_end, contact_email, contact_phone, logo_url
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
       RETURNING *`,
       [
         userId, name, address || null, gst_number || null, state || null,
         financial_year_start || null, financial_year_end || null,
-        contact_email || null, contact_phone || null
+        contact_email || null, contact_phone || null, logo_url || null
       ]
     );
     const company = companyRes.rows[0];
@@ -129,20 +130,21 @@ const updateCompany = async (companyId, userId, companyData) => {
     financial_year_start,
     financial_year_end,
     contact_email,
-    contact_phone
+    contact_phone,
+    logo_url
   } = companyData;
 
   const result = await pool.query(
     `UPDATE companies 
      SET name = $1, address = $2, gst_number = $3, state = $4, 
          financial_year_start = $5, financial_year_end = $6, 
-         contact_email = $7, contact_phone = $8, updated_at = NOW()
-     WHERE id = $9
+         contact_email = $7, contact_phone = $8, logo_url = $9, updated_at = NOW()
+     WHERE id = $10
      RETURNING *`,
     [
       name, address || null, gst_number || null, state || null,
       financial_year_start || null, financial_year_end || null,
-      contact_email || null, contact_phone || null, companyId
+      contact_email || null, contact_phone || null, logo_url || null, companyId
     ]
   );
   return result.rows[0];

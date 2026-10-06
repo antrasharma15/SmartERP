@@ -1,7 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { X, HelpCircle, Keyboard } from "lucide-react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
+import { X, Keyboard } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export interface ShortcutDefinition {
@@ -12,7 +12,7 @@ export interface ShortcutDefinition {
 
 interface ShortcutContextType {
   registerShortcut: (def: ShortcutDefinition) => void;
-  unregisterShortcut: (keys: string) => void;
+  unregisterShortcut: (keys: string, description?: string) => void;
   shortcuts: ShortcutDefinition[];
   isHelpOpen: boolean;
   setIsHelpOpen: (open: boolean) => void;
@@ -24,6 +24,33 @@ export const useShortcutContext = () => {
   const context = useContext(ShortcutContext);
   if (!context) throw new Error("useShortcutContext must be used within ShortcutProvider");
   return context;
+};
+
+/** "Alt+A" -> "alt+a", so a claim can be matched against a live KeyboardEvent. */
+const normalizeKeys = (keys?: string) =>
+  typeof keys === "string"
+    ? keys.toLowerCase().split("+").map((p) => p.trim()).sort().join("+")
+    : "";
+
+/** Alt-key navigation targets owned by the provider. */
+const ALT_ROUTES: Record<string, string> = {
+  g: "/groups",
+  n: "/groups",
+  o: "/groups",
+  l: "/ledgers",
+  a: "/reports/balance-sheet",
+  s: "/inventory?tab=items",
+  u: "/inventory?tab=units",
+  v: "/vouchers",
+  b: "/billing",
+  c: "/reports/cash-bank",
+  d: "/reports/day-book",
+  p: "/reports/profit-loss",
+  t: "/reports/trial-balance",
+  i: "/inventory",
+  r: "/reports/stock-summary",
+  k: "/reports/stock-summary",
+  h: "/dashboard",
 };
 
 export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -51,90 +78,78 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     { keys: "F9", description: "Purchase Voucher Entry", category: "Global" },
     { keys: "Ctrl+K", description: "Toggle Command Search Panel", category: "Global" },
     { keys: "Ctrl+Q", description: "Logout Session", category: "Global" },
-    { keys: "?", description: "Toggle Keyboard Shortcuts Help", category: "Global" }
+    { keys: "?", description: "Toggle Keyboard Shortcuts Help", category: "Global" },
   ]);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
+  // Refcounted set of combos the *current page* has claimed. The global Alt
+  // navigator below defers to these, so e.g. Alt+A on /billing/create adds an
+  // invoice line instead of also navigating away and discarding the draft.
+  const claimed = useRef<Map<string, number>>(new Map());
+
   const registerShortcut = useCallback((def: ShortcutDefinition) => {
+    if (def.category === "Page Actions") {
+      const k = normalizeKeys(def.keys);
+      claimed.current.set(k, (claimed.current.get(k) || 0) + 1);
+    }
     setShortcuts((prev) => {
-      // Avoid duplicate registrations
       const exists = prev.some((item) => item.keys === def.keys && item.description === def.description);
       if (exists) return prev;
       return [...prev, def];
     });
   }, []);
 
-  const unregisterShortcut = useCallback((keys: string) => {
-    setShortcuts((prev) => prev.filter((item) => item.keys !== keys));
+  const unregisterShortcut = useCallback((keys: string, description?: string) => {
+    const k = normalizeKeys(keys);
+    const count = claimed.current.get(k);
+    if (count !== undefined) {
+      if (count <= 1) claimed.current.delete(k);
+      else claimed.current.set(k, count - 1);
+    }
+    // Match on description too: several pages register "Escape", and dropping
+    // them all because one unmounted left the cheat sheet wrong.
+    setShortcuts((prev) =>
+      prev.filter((item) =>
+        description === undefined ? item.keys !== keys : !(item.keys === keys && item.description === description)
+      )
+    );
   }, []);
 
-  // Register "?" key globally (except when typing in form controls)
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      const isTyping = 
-        document.activeElement?.tagName === "INPUT" || 
-        document.activeElement?.tagName === "SELECT" || 
-        document.activeElement?.tagName === "TEXTAREA" ||
-        document.activeElement?.getAttribute("contenteditable") === "true";
+      if (!e || typeof e.key !== "string") return;
+
+      const el = document.activeElement;
+      const isTyping =
+        el?.tagName === "INPUT" ||
+        el?.tagName === "SELECT" ||
+        el?.tagName === "TEXTAREA" ||
+        el?.getAttribute("contenteditable") === "true";
 
       if (isTyping) return;
 
       if (e.key === "?") {
         e.preventDefault();
         setIsHelpOpen((prev) => !prev);
+        return;
       }
 
       if (e.key === "Escape" && isHelpOpen) {
         e.preventDefault();
         setIsHelpOpen(false);
+        return;
       }
 
-      // Global Navigation Triggers: Alt + Key
-      if (e.altKey) {
+      // Global navigation: Alt + key.
+      // Ctrl/Meta must be clear — AltGr reports as Ctrl+Alt on Indian and
+      // European layouts, so typing an AltGr character used to navigate away.
+      if (e.altKey && !e.ctrlKey && !e.metaKey) {
         const key = e.key.toLowerCase();
-        if (key === "g" || key === "n" || key === "o") {
-          e.preventDefault();
-          router.push("/groups");
-        } else if (key === "l") {
-          e.preventDefault();
-          router.push("/ledgers");
-        } else if (key === "a") {
-          e.preventDefault();
-          router.push("/reports/balance-sheet");
-        } else if (key === "s") {
-          e.preventDefault();
-          router.push("/inventory?tab=items");
-        } else if (key === "u") {
-          e.preventDefault();
-          router.push("/inventory?tab=units");
-        } else if (key === "v") {
-          e.preventDefault();
-          router.push("/vouchers");
-        } else if (key === "b") {
-          e.preventDefault();
-          router.push("/billing");
-        } else if (key === "c") {
-          e.preventDefault();
-          router.push("/reports/cash-bank");
-        } else if (key === "d") {
-          e.preventDefault();
-          router.push("/reports/day-book");
-        } else if (key === "p") {
-          e.preventDefault();
-          router.push("/reports/profit-loss");
-        } else if (key === "t") {
-          e.preventDefault();
-          router.push("/reports/trial-balance");
-        } else if (key === "i") {
-          e.preventDefault();
-          router.push("/inventory");
-        } else if (key === "r" || key === "k") {
-          e.preventDefault();
-          router.push("/reports/stock-summary");
-        } else if (key === "h") {
-          e.preventDefault();
-          router.push("/dashboard");
-        }
+        const target = ALT_ROUTES[key];
+        if (!target) return;
+        if (claimed.current.has(normalizeKeys(`alt+${key}`))) return; // page owns this combo
+        e.preventDefault();
+        router.push(target);
       }
     };
 
@@ -142,97 +157,73 @@ export const ShortcutProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return () => window.removeEventListener("keydown", handleGlobalKeyDown);
   }, [isHelpOpen, router]);
 
-  // Group shortcuts by category
   const globalShortcuts = shortcuts.filter((s) => s.category === "Global");
   const pageShortcuts = shortcuts.filter((s) => s.category === "Page Actions");
 
   return (
     <ShortcutContext.Provider
-      value={{
-        registerShortcut,
-        unregisterShortcut,
-        shortcuts,
-        isHelpOpen,
-        setIsHelpOpen
-      }}
+      value={{ registerShortcut, unregisterShortcut, shortcuts, isHelpOpen, setIsHelpOpen }}
     >
       {children}
 
-      {/* Glassmorphic Help Cheat Sheet Overlay */}
       {isHelpOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fade-in font-sans text-xs">
-          <div className="w-full max-w-2xl bg-brand-navy-dark/95 border border-slate-800 light:border-slate-200 rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl relative">
-            <button
-              onClick={() => setIsHelpOpen(false)}
-              className="absolute top-6 right-6 p-1.5 rounded-full text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black hover:bg-slate-900 light:bg-slate-200/80 transition"
-              title="Close Guide (ESC)"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="flex items-center gap-3 border-b border-slate-900 light:border-slate-200 pb-4">
-              <div className="p-2.5 bg-brand-lime/10 light:bg-lime-100/60 border border-brand-lime/20 text-brand-lime light:text-lime-700 rounded-xl">
-                <Keyboard className="w-6 h-6" />
-              </div>
-              <div>
-                <h2 className="text-lg font-black text-white light:text-slate-900 flex items-center gap-1.5">
-                  KEYbooks Keyboard Shortcuts Guide
-                </h2>
-                <p className="text-[10px] text-slate-400 light:text-slate-600 mt-0.5">
-                  Tally ERP-style keyboard operations. Navigate the system without mouse clicks.
-                </p>
-              </div>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-[2px] animate-fade-in"
+          onClick={() => setIsHelpOpen(false)}
+        >
+          <div
+            className="panel animate-pop-in w-full max-w-3xl"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Keyboard shortcuts"
+          >
+            <div className="panel-head">
+              <span className="flex items-center gap-2">
+                <Keyboard className="w-4 h-4" style={{ color: "var(--accent)" }} />
+                Keyboard Shortcuts
+              </span>
+              <button onClick={() => setIsHelpOpen(false)} className="btn btn-ghost btn-sm" aria-label="Close">
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start max-h-[50vh] overflow-y-auto pr-2">
-              
-              {/* Left Column: Global Navigation shortcuts */}
-              <div className="space-y-3">
-                <h3 className="text-[10px] font-black uppercase tracking-wider text-brand-lime light:text-lime-700 border-b border-slate-900 light:border-slate-200 pb-1.5">
-                  Global System Keys
-                </h3>
-                {globalShortcuts.length === 0 ? (
-                  <p className="text-slate-500 light:text-slate-500 italic">No global shortcuts active.</p>
-                ) : (
-                  <div className="space-y-2">
-                    {globalShortcuts.map((s, idx) => (
-                      <div key={idx} className="flex justify-between items-center py-0.5 text-slate-300 light:text-slate-700 font-semibold">
-                        <span>{s.description}</span>
-                        <kbd className="px-2 py-1 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded font-mono text-[9px] text-white light:text-slate-900 shadow-inner">
-                          {s.keys}
-                        </kbd>
-                      </div>
-                    ))}
+            <div className="panel-body grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6 max-h-[60vh] overflow-y-auto">
+              <section className="space-y-1">
+                <h3 className="label doodle-underline mb-3">Global System Keys</h3>
+                {globalShortcuts.map((s, idx) => (
+                  <div key={`g${idx}`} className="flex justify-between items-center gap-4 py-1">
+                    <span className="text-[0.78rem]" style={{ color: "var(--ink-1)" }}>{s.description}</span>
+                    <kbd className="kbd">{s.keys}</kbd>
                   </div>
-                )}
-              </div>
+                ))}
+              </section>
 
-              {/* Right Column: Page Specific Actions shortcuts */}
-              <div className="space-y-3">
-                <h3 className="text-[10px] font-black uppercase tracking-wider text-red-400 border-b border-slate-900 light:border-slate-200 pb-1.5">
-                  Current Screen Actions
-                </h3>
+              <section className="space-y-1">
+                <h3 className="label doodle-underline mb-3">This Screen</h3>
                 {pageShortcuts.length === 0 ? (
-                  <p className="text-slate-500 light:text-slate-500 italic text-[10px]">No page action hotkeys active on this screen.</p>
+                  <p className="text-[0.75rem] italic" style={{ color: "var(--ink-3)" }}>
+                    No page hotkeys on this screen.
+                  </p>
                 ) : (
-                  <div className="space-y-2">
-                    {pageShortcuts.map((s, idx) => (
-                      <div key={idx} className="flex justify-between items-center py-0.5 text-slate-300 light:text-slate-700 font-semibold">
-                        <span>{s.description}</span>
-                        <kbd className="px-2 py-1 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded font-mono text-[9px] text-brand-lime light:text-lime-700 shadow-inner">
-                          {s.keys}
-                        </kbd>
-                      </div>
-                    ))}
-                  </div>
+                  pageShortcuts.map((s, idx) => (
+                    <div key={`p${idx}`} className="flex justify-between items-center gap-4 py-1">
+                      <span className="text-[0.78rem]" style={{ color: "var(--ink-1)" }}>{s.description}</span>
+                      <kbd className="kbd kbd-hot">{s.keys}</kbd>
+                    </div>
+                  ))
                 )}
-              </div>
-
+              </section>
             </div>
 
-            <div className="flex justify-between items-center pt-4 border-t border-slate-900 light:border-slate-200 text-[10px] text-slate-500 light:text-slate-500 font-mono">
-              <span>Press ? or ESC to toggle this guide</span>
-              <span className="text-brand-lime light:text-lime-700 font-bold">KEYbooks BI Suite</span>
+            <div
+              className="flex justify-between items-center px-4 py-2.5 text-[0.66rem] font-mono border-t"
+              style={{ borderColor: "var(--mat-edge)", color: "var(--ink-3)" }}
+            >
+              <span>
+                <kbd className="kbd">?</kbd> or <kbd className="kbd">Esc</kbd> to close
+              </span>
+              <span className="font-display font-bold" style={{ color: "var(--accent)" }}>KEYbooks</span>
             </div>
           </div>
         </div>

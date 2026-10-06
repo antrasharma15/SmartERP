@@ -11,7 +11,7 @@ async function runMigration() {
     await client.query(`
       ALTER TABLE companies 
       ADD COLUMN IF NOT EXISTS logo_url TEXT,
-      ADD COLUMN IF NOT EXISTS currency VARCHAR(10) DEFAULT '$'
+      ADD COLUMN IF NOT EXISTS currency VARCHAR(10) DEFAULT '₹'
     `);
     console.log('[Migration] Altered companies table successfully.');
 

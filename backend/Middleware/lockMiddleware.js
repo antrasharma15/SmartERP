@@ -22,7 +22,7 @@ const checkLock = async (req, res, next) => {
       return next();
     }
 
-    const companyId = req.headers['x-company-id'] || req.query.company_id || req.body.company_id;
+    const companyId = req.headers['x-company-id'] || req.query?.company_id || req.body?.company_id;
     if (!companyId) {
       // If no company context is provided, let it pass (could be user creation or setup)
       return next();

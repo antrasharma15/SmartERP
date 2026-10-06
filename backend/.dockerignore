@@ -1,0 +1,11 @@
+node_modules
+.env
+.env.*
+!.env.example
+npm-debug.log
+tests
+check_stock.js
+inspect_schema.js
+inspect_tables.js
+scratch_test_lock.js
+.git

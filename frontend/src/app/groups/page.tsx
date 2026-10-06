@@ -1,8 +1,12 @@
 "use client";
 
+import Loader from "../components/Loader";
+
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch, getCurrentUser } from "../utils/api";
+import AppLayout from "../components/AppLayout";
+import Logo from "../components/Logo";
 import {
   Building2,
   Calendar,
@@ -128,12 +132,25 @@ export default function GroupsPage() {
     );
   });
 
+  // Pagination states
+  const ITEMS_PER_PAGE = 20;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset page when search query changes
+  useEffect(() => {
+    setCurrentPage(1);
+    setSelectedRowIndex(0);
+  }, [searchQuery]);
+
+  const totalPages = Math.ceil(filteredGroups.length / ITEMS_PER_PAGE) || 1;
+  const paginatedGroups = filteredGroups.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
   // Keep index in bounds when list changes
   useEffect(() => {
-    if (selectedRowIndex >= filteredGroups.length && filteredGroups.length > 0) {
-      setSelectedRowIndex(filteredGroups.length - 1);
+    if (selectedRowIndex >= paginatedGroups.length && paginatedGroups.length > 0) {
+      setSelectedRowIndex(paginatedGroups.length - 1);
     }
-  }, [filteredGroups.length, selectedRowIndex]);
+  }, [paginatedGroups.length, selectedRowIndex]);
 
   // Global keyboard shortcuts engine
   useEffect(() => {
@@ -156,7 +173,7 @@ export default function GroupsPage() {
       if (e.ctrlKey && ["f", "F", "g", "G", "a", "A"].includes(e.key)) {
         e.preventDefault();
       }
-      if (e.altKey && ["g", "G", "a", "A"].includes(e.key)) {
+      if (e.altKey && ["g", "G", "a", "A", "n", "N"].includes(e.key)) {
         e.preventDefault();
       }
 
@@ -185,7 +202,7 @@ export default function GroupsPage() {
       // ALT + A or Enter (Alter Group)
       if ((e.altKey && (e.key === "a" || e.key === "A")) || (!isModalOpen && !isTypingInInput && e.key === "Enter")) {
         e.preventDefault();
-        const selectedGroup = filteredGroups[selectedRowIndex];
+        const selectedGroup = paginatedGroups[selectedRowIndex];
         if (selectedGroup) {
           console.log(`[GroupsPage Keyboard] Alter shortcut triggered for: ${selectedGroup.name}`);
           handleOpenEditModal(selectedGroup);
@@ -198,7 +215,7 @@ export default function GroupsPage() {
       // Delete Key
       if (!isModalOpen && !isTypingInInput && e.key === "Delete") {
         e.preventDefault();
-        const selectedGroup = filteredGroups[selectedRowIndex];
+        const selectedGroup = paginatedGroups[selectedRowIndex];
         if (selectedGroup) {
           console.log(`[GroupsPage Keyboard] Delete shortcut triggered for: ${selectedGroup.name}`);
           handleDeleteGroup(selectedGroup.id, selectedGroup.name);
@@ -215,20 +232,20 @@ export default function GroupsPage() {
       }
 
       // Table Arrow Key Navigation
-      if (!isModalOpen && !isTypingInInput) {
+      if (!isModalOpen && !isTypingInInput && paginatedGroups.length > 0) {
         if (e.key === "ArrowDown") {
           e.preventDefault();
-          setSelectedRowIndex(prev => (prev + 1) % filteredGroups.length);
+          setSelectedRowIndex(prev => (prev + 1) % paginatedGroups.length);
         } else if (e.key === "ArrowUp") {
           e.preventDefault();
-          setSelectedRowIndex(prev => (prev - 1 + filteredGroups.length) % filteredGroups.length);
+          setSelectedRowIndex(prev => (prev - 1 + paginatedGroups.length) % paginatedGroups.length);
         }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isModalOpen, filteredGroups, selectedRowIndex, router]);
+  }, [isModalOpen, paginatedGroups, selectedRowIndex, router]);
 
   // Open Create Modal
   const handleOpenCreateModal = () => {
@@ -357,55 +374,24 @@ export default function GroupsPage() {
   const eligibleParents = getEligibleParents();
 
   return (
-    <div className="min-h-screen bg-brand-navy-dark text-slate-100 flex flex-col select-none relative overflow-hidden font-sans">
-      {/* Header bar */}
-      <header className="border-b border-brand-navy-light bg-brand-navy-dark/70 backdrop-blur-md sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="p-2 rounded-xl bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-brand-lime light:text-lime-700 hover:border-brand-lime/40 transition duration-200"
-              title="Return to Dashboard (ESC)"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/dashboard")}>
-              <span className="text-xl font-extrabold text-white light:text-slate-900 tracking-wide">KEY</span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-lime text-brand-navy-dark rounded font-mono">books</span>
-            </div>
-            <div className="h-6 w-[1px] bg-slate-800"></div>
-            <div className="flex items-center gap-2 text-brand-lime light:text-lime-700 font-bold">
-              <Building2 className="w-5 h-5" />
-              <span>{company?.name}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <span className="text-xs font-mono bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 px-3 py-1 rounded text-slate-400 light:text-slate-600">
-              Esc to Back
-            </span>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Layout Grid */}
-      <main className="flex-1 max-w-[1400px] mx-auto px-6 py-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <AppLayout
+      pageTitle="Account Groups Management"
+      pageSubtitle="Maintain groups and subgroup nesting hierarchies to categorize ledger charts of accounts."
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Group Management Grid - 9 span */}
-        <section className="lg:col-span-9 rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-6 shadow-2xl backdrop-blur-xl space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900 light:border-slate-200 pb-4">
+        <section className="lg:col-span-8 xl:col-span-9 rounded-3xl bg-[#0b1528]/50 light:bg-white border border-slate-800/80 light:border-slate-200 p-6 shadow-xl backdrop-blur-xl space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 light:border-slate-200 pb-4">
             <div>
-              <h1 className="text-2xl font-black text-white light:text-slate-900 flex items-center gap-2">
-                <FolderOpen className="w-6 h-6 text-brand-lime light:text-lime-700" />
-                Account Groups Management
-              </h1>
-              <p className="text-xs text-slate-400 light:text-slate-600 mt-1">
-                Maintain groups and subgroup nesting hierarchies to categorize ledger charts of accounts.
-              </p>
+              <h2 className="text-xl font-extrabold text-white light:text-slate-900 flex items-center gap-2">
+                <FolderOpen className="w-5 h-5 text-brand-red" />
+                Groups Directory
+              </h2>
             </div>
 
             <button
               onClick={handleOpenCreateModal}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-brand-navy-dark bg-brand-lime hover:bg-white transition duration-200 text-xs shadow-lg shadow-brand-lime/10"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-white bg-brand-red hover:bg-red-600 active:bg-red-700 transition duration-200 text-xs shadow-lg shadow-red-500/25"
             >
               <Plus className="w-4 h-4" />
               Create Group (Alt+N)
@@ -424,16 +410,13 @@ export default function GroupsPage() {
                 setSearchQuery(e.target.value);
                 setSelectedRowIndex(0);
               }}
-              className="w-full pl-11 pr-4 py-3 bg-brand-navy-dark/60 border border-slate-850 rounded-2xl text-slate-200 light:text-slate-800 placeholder-slate-500 outline-none focus:border-brand-lime transition text-xs font-semibold"
+              className="w-full pl-11 pr-4 py-3 bg-slate-900/60 light:bg-white border border-slate-800 light:border-slate-300 rounded-2xl text-slate-200 light:text-slate-800 placeholder-slate-500 outline-none focus:border-red-500 transition text-xs font-semibold"
             />
           </div>
 
           {/* Group Table */}
           {loading ? (
-            <div className="py-24 flex flex-col items-center justify-center gap-3 text-slate-400 light:text-slate-600">
-              <Loader2 className="w-8 h-8 animate-spin text-brand-lime light:text-lime-700" />
-              <p className="text-xs font-medium">Fetching accounts groups...</p>
-            </div>
+            <Loader kind="ledger" label="Fetching accounts groups" />
           ) : error ? (
             <div className="py-16 text-center space-y-3">
               <div className="inline-flex p-3 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
@@ -442,7 +425,7 @@ export default function GroupsPage() {
               <p className="text-slate-300 light:text-slate-700 text-sm">{error}</p>
               <button
                 onClick={() => fetchGroups(company.id)}
-                className="px-5 py-2 bg-brand-navy-light/40 border border-slate-800 light:border-slate-200 rounded-xl hover:text-white light:text-slate-900 light:hover:text-black text-xs font-bold"
+                className="px-5 py-2 bg-slate-800 light:bg-slate-100 border border-slate-750 light:border-slate-200 rounded-xl hover:text-white light:text-slate-900 light:hover:text-black text-xs font-bold"
               >
                 Retry Request
               </button>
@@ -452,16 +435,16 @@ export default function GroupsPage() {
               <p className="text-slate-400 light:text-slate-600 text-xs">No accounting groups match your search criteria.</p>
               <button
                 onClick={handleOpenCreateModal}
-                className="px-5 py-2 bg-brand-lime text-brand-navy-dark hover:bg-white font-bold rounded-xl text-xs transition"
+                className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs transition"
               >
                 Create Custom Group
               </button>
             </div>
           ) : (
-            <div className="overflow-x-auto border border-slate-900 light:border-slate-200/50 light:border-slate-200 rounded-2xl bg-brand-navy-dark/20 light:bg-white">
+            <div className="overflow-x-auto border border-slate-800 light:border-slate-200 rounded-2xl bg-slate-900/30 light:bg-white">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-slate-900 light:border-slate-200 bg-slate-950 light:bg-slate-100/40 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[10px]">
+                  <tr className="border-b border-slate-800 light:border-slate-200 bg-slate-950 light:bg-slate-100 text-slate-400 light:text-slate-600 uppercase font-black tracking-wider text-[10px]">
                     <th className="py-3 px-4">Group Name</th>
                     <th className="py-3 px-4">Type</th>
                     <th className="py-3 px-4">Parent Group</th>
@@ -469,17 +452,17 @@ export default function GroupsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredGroups.map((group, idx) => {
+                  {paginatedGroups.map((group, idx) => {
                     const isSelected = selectedRowIndex === idx;
                     return (
                       <tr
                         key={group.id}
                         onClick={() => setSelectedRowIndex(idx)}
                         onDoubleClick={() => handleOpenEditModal(group)}
-                        className={`border-b border-slate-900 light:border-slate-200/40 light:border-slate-200 transition duration-150 cursor-pointer ${
+                        className={`border-b border-slate-800/50 light:border-slate-100 transition duration-150 cursor-pointer ${
                           isSelected
-                            ? "bg-brand-lime/10 light:bg-lime-100/60 text-brand-lime light:text-lime-700 font-bold border-l-4 border-l-brand-lime"
-                            : "text-slate-300 light:text-slate-700 hover:bg-slate-900 light:bg-slate-200/80/30"
+                            ? "bg-red-500/10 light:bg-red-50 text-red-500 light:text-red-600 font-bold border-l-4 border-l-red-500"
+                            : "text-slate-300 light:text-slate-700 hover:bg-slate-800/40 light:hover:bg-slate-100/60"
                         }`}
                       >
                         <td className="py-3 px-4">
@@ -490,7 +473,7 @@ export default function GroupsPage() {
                         </td>
                         <td className="py-3 px-4">
                           <span className={`px-2 py-0.5 border rounded-md text-[10px] uppercase font-semibold ${
-                            group.type === "asset" ? "bg-red-500/10 border-red-500/20 text-red-400 light:text-lime-700" :
+                            group.type === "asset" ? "bg-red-500/10 border-red-500/20 text-red-400" :
                             group.type === "liability" ? "bg-sky-500/10 border-sky-500/20 text-sky-400" :
                             group.type === "income" ? "bg-purple-500/10 border-purple-500/20 text-purple-400" :
                             "bg-rose-500/10 light:bg-rose-100/60 border-rose-500/20 text-rose-400"
@@ -508,7 +491,7 @@ export default function GroupsPage() {
                                 e.stopPropagation();
                                 handleOpenEditModal(group);
                               }}
-                              className="p-1.5 rounded bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
+                              className="p-1.5 rounded bg-slate-800 light:bg-slate-100 border border-slate-700 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black"
                               title="Alter (Alt+A)"
                             >
                               <Edit2 className="w-3.5 h-3.5" />
@@ -518,7 +501,7 @@ export default function GroupsPage() {
                                 e.stopPropagation();
                                 handleDeleteGroup(group.id, group.name);
                               }}
-                              className="p-1.5 rounded bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-red-400"
+                              className="p-1.5 rounded bg-slate-800 light:bg-slate-100 border border-slate-700 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-red-400"
                               title="Delete (Delete)"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -533,40 +516,92 @@ export default function GroupsPage() {
             </div>
           )}
 
+          {/* Pagination Toolbar */}
+          {filteredGroups.length > 0 && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-slate-800 light:border-slate-200 text-xs">
+              <p className="text-slate-400 light:text-slate-600">
+                Showing <span className="font-bold text-white light:text-slate-900">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to{" "}
+                <span className="font-bold text-white light:text-slate-900">{Math.min(currentPage * ITEMS_PER_PAGE, filteredGroups.length)}</span> of{" "}
+                <span className="font-bold text-white light:text-slate-900">{filteredGroups.length}</span> groups
+              </p>
+
+              {totalPages > 1 && (
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => { setCurrentPage(prev => Math.max(prev - 1, 1)); setSelectedRowIndex(0); }}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1.5 rounded-lg border border-slate-800 light:border-slate-200 bg-slate-900/60 light:bg-white text-slate-300 light:text-slate-700 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-800 light:hover:bg-slate-100 font-semibold"
+                  >
+                    Previous
+                  </button>
+
+                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                    let pageNum = i + 1;
+                    if (totalPages > 5 && currentPage > 3) {
+                      pageNum = currentPage - 3 + i + 1;
+                      if (pageNum > totalPages) pageNum = totalPages - 4 + i;
+                    }
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => { setCurrentPage(pageNum); setSelectedRowIndex(0); }}
+                        className={`w-8 h-8 rounded-lg font-bold text-xs flex items-center justify-center transition ${
+                          currentPage === pageNum
+                            ? "bg-red-600 text-white"
+                            : "border border-slate-800 light:border-slate-200 bg-slate-900/60 light:bg-white text-slate-300 light:text-slate-700 hover:bg-slate-800 light:hover:bg-slate-100"
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+
+                  <button
+                    onClick={() => { setCurrentPage(prev => Math.min(prev + 1, totalPages)); setSelectedRowIndex(0); }}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1.5 rounded-lg border border-slate-800 light:border-slate-200 bg-slate-900/60 light:bg-white text-slate-300 light:text-slate-700 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-800 light:hover:bg-slate-100 font-semibold"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Guide Legend */}
-          <div className="flex justify-between items-center bg-slate-950 light:bg-slate-100/20 light:bg-slate-100 border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-3 rounded-2xl text-[10px] text-slate-400 light:text-slate-600 font-mono">
+          <div className="flex justify-between items-center bg-slate-950 light:bg-slate-50 border border-slate-800 light:border-slate-200 p-3 rounded-2xl text-[10px] text-slate-400 light:text-slate-600 font-mono">
             <span>Use ↑↓ keys to select, Enter to edit</span>
             <span>ALT+N = Create | ALT+A = Alter | Delete = Remove | ESC = Exit</span>
           </div>
         </section>
 
         {/* Right Column: Sidebar Stats & Legend - 3 span */}
-        <section className="lg:col-span-3 space-y-6">
+        <section className="lg:col-span-4 xl:col-span-3 space-y-6">
           {/* Quick Statistics */}
-          <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-widest text-brand-lime light:text-lime-700 flex items-center gap-1.5 border-b border-slate-900 light:border-slate-200 pb-2">
+          <div className="rounded-3xl bg-[#0b1528]/50 light:bg-white border border-slate-800/80 light:border-slate-200 p-5 shadow-xl backdrop-blur-xl space-y-4">
+            <h3 className="text-xs font-black uppercase tracking-widest text-brand-red flex items-center gap-1.5 border-b border-slate-800 light:border-slate-200 pb-2">
               <TrendingUp className="w-4 h-4" />
               Groups Distribution
             </h3>
 
             <div className="space-y-3.5 text-xs">
-              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+              <div className="flex items-center justify-between py-1 border-b border-slate-800/50 light:border-slate-100">
                 <span className="text-slate-400 light:text-slate-600">Total Groups</span>
                 <span className="font-bold text-white light:text-slate-900 font-mono">{groups.length}</span>
               </div>
-              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+              <div className="flex items-center justify-between py-1 border-b border-slate-800/50 light:border-slate-100">
                 <span className="text-slate-400 light:text-slate-600">Asset Groups</span>
-                <span className="font-bold text-red-400 light:text-lime-700 font-mono">{stats.assetCount}</span>
+                <span className="font-bold text-emerald-400 font-mono">{stats.assetCount}</span>
               </div>
-              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+              <div className="flex items-center justify-between py-1 border-b border-slate-800/50 light:border-slate-100">
                 <span className="text-slate-400 light:text-slate-600">Liability Groups</span>
                 <span className="font-bold text-sky-400 font-mono">{stats.liabilityCount}</span>
               </div>
-              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+              <div className="flex items-center justify-between py-1 border-b border-slate-800/50 light:border-slate-100">
                 <span className="text-slate-400 light:text-slate-600">Income Groups</span>
                 <span className="font-bold text-purple-400 font-mono">{stats.incomeCount}</span>
               </div>
-              <div className="flex items-center justify-between py-1 border-b border-slate-900 light:border-slate-200/40 light:border-slate-200">
+              <div className="flex items-center justify-between py-1 border-b border-slate-800/50 light:border-slate-100">
                 <span className="text-slate-400 light:text-slate-600">Expense Groups</span>
                 <span className="font-bold text-rose-400 font-mono">{stats.expenseCount}</span>
               </div>
@@ -574,48 +609,48 @@ export default function GroupsPage() {
           </div>
 
           {/* Quick Help Drawer */}
-          <div className="rounded-3xl bg-brand-navy-light/10 light:bg-white border border-slate-900 light:border-slate-200/60 light:border-slate-200 p-5 shadow-2xl backdrop-blur-xl">
-            <h3 className="text-xs font-black uppercase tracking-widest text-white light:text-slate-900 flex items-center gap-1.5 border-b border-slate-900 light:border-slate-200 pb-2">
+          <div className="rounded-3xl bg-[#0b1528]/50 light:bg-white border border-slate-800/80 light:border-slate-200 p-5 shadow-xl backdrop-blur-xl">
+            <h3 className="text-xs font-black uppercase tracking-widest text-white light:text-slate-900 flex items-center gap-1.5 border-b border-slate-800 light:border-slate-200 pb-2">
               <HelpCircle className="w-4 h-4 text-sky-400" />
               Keyboard Help
             </h3>
             <div className="space-y-2.5 pt-3 text-[10px] font-mono text-slate-400 light:text-slate-600">
               <div className="flex justify-between items-center">
                 <span>Create Group</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-brand-lime light:text-lime-700 rounded">Alt + N</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-brand-red font-bold rounded">Alt + N</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Alter Group</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">Alt + A / Enter</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">Alt + A / Enter</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Delete selected</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">Delete</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">Delete</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Focus search</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">Ctrl + F</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">Ctrl + F</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Navigate rows</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">↑ / ↓</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">↑ / ↓</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Dashboard</span>
-                <span className="px-1.5 py-0.5 bg-slate-950 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">ESC</span>
+                <span className="px-1.5 py-0.5 bg-slate-900 light:bg-slate-100 border border-slate-800 light:border-slate-200 text-white light:text-slate-900 rounded">ESC</span>
               </div>
             </div>
           </div>
         </section>
-      </main>
+      </div>
 
       {/* Form Modal (Create / Alter) */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-lg bg-brand-navy-dark border border-slate-800 light:border-slate-200 rounded-3xl p-6 md:p-8 space-y-5 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <div className="flex items-center justify-between border-b border-slate-900 light:border-slate-200 pb-3">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <FolderOpen className="w-5 h-5 text-brand-lime light:text-lime-700" />
+          <div className="w-full max-w-lg bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 rounded-3xl p-6 md:p-8 space-y-5 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div className="flex items-center justify-between border-b border-slate-800 light:border-slate-200 pb-3">
+              <h2 className="text-xl font-bold text-white light:text-slate-900 flex items-center gap-2">
+                <FolderOpen className="w-5 h-5 text-red-500" />
                 {modalMode === "create" ? "Create Account Group" : "Alter Account Group"}
               </h2>
               <button
@@ -623,7 +658,7 @@ export default function GroupsPage() {
                   setIsModalOpen(false);
                   setFormError("");
                 }}
-                className="p-1 rounded-full text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black hover:bg-slate-900 light:bg-slate-200/80"
+                className="p-1.5 rounded-full text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black hover:bg-slate-800 light:hover:bg-slate-100"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -646,7 +681,7 @@ export default function GroupsPage() {
                   autoFocus
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition"
+                  className="w-full px-4 py-2.5 bg-slate-950 light:bg-slate-50 border border-slate-800 light:border-slate-300 rounded-xl text-white light:text-slate-900 outline-none focus:border-red-500 transition"
                   placeholder="e.g. Indirect Expenses, Current Assets"
                 />
               </div>
@@ -657,13 +692,13 @@ export default function GroupsPage() {
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value as any, parent_id: "" })}
-                  className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition cursor-pointer"
+                  className="w-full px-4 py-2.5 bg-slate-950 light:bg-slate-50 border border-slate-800 light:border-slate-300 rounded-xl text-white light:text-slate-900 outline-none focus:border-red-500 transition cursor-pointer"
                   disabled={modalMode === "edit"} // Prevent changing type for existing group to keep child classifications intact
                 >
-                  <option value="asset" className="bg-brand-navy-dark">Asset</option>
-                  <option value="liability" className="bg-brand-navy-dark">Liability</option>
-                  <option value="income" className="bg-brand-navy-dark">Income</option>
-                  <option value="expense" className="bg-brand-navy-dark">Expense</option>
+                  <option value="asset">Asset</option>
+                  <option value="liability">Liability</option>
+                  <option value="income">Income</option>
+                  <option value="expense">Expense</option>
                 </select>
                 {modalMode === "edit" && (
                   <p className="text-[10px] text-slate-500 light:text-slate-500 italic mt-1">Group type cannot be altered after creation.</p>
@@ -676,32 +711,32 @@ export default function GroupsPage() {
                 <select
                   value={formData.parent_id}
                   onChange={(e) => setFormData({ ...formData, parent_id: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-brand-navy-light/10 light:bg-white border border-slate-850 rounded-xl text-white light:text-slate-900 outline-none focus:border-brand-lime transition cursor-pointer"
+                  className="w-full px-4 py-2.5 bg-slate-950 light:bg-slate-50 border border-slate-800 light:border-slate-300 rounded-xl text-white light:text-slate-900 outline-none focus:border-red-500 transition cursor-pointer"
                 >
-                  <option value="" className="bg-brand-navy-dark text-slate-400 light:text-slate-600 font-bold">PRIMARY (No parent)</option>
+                  <option value="">PRIMARY (No parent)</option>
                   {eligibleParents.map((parent) => (
-                    <option key={parent.id} value={parent.id} className="bg-brand-navy-dark text-white light:text-slate-900">
+                    <option key={parent.id} value={parent.id}>
                       {parent.name}
                     </option>
                   ))}
                 </select>
               </div>
 
-              <div className="flex justify-end gap-3.5 border-t border-slate-900 light:border-slate-200 pt-5">
+              <div className="flex justify-end gap-3.5 border-t border-slate-800 light:border-slate-200 pt-5">
                 <button
                   type="button"
                   onClick={() => {
                     setIsModalOpen(false);
                     setFormError("");
                   }}
-                  className="px-5 py-2.5 rounded-xl border border-slate-800 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-white light:text-slate-900 light:hover:text-black"
+                  className="px-5 py-2.5 rounded-xl border border-slate-700 light:border-slate-200 text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold text-brand-navy-dark bg-brand-lime hover:bg-white disabled:bg-slate-800 transition"
+                  className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 disabled:bg-slate-800 transition"
                 >
                   {formLoading ? (
                     <>
@@ -723,15 +758,15 @@ export default function GroupsPage() {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className="p-4 rounded-2xl bg-brand-navy-light/95 border border-slate-800 light:border-slate-200 text-xs font-semibold text-white light:text-slate-900 shadow-2xl backdrop-blur-md flex items-center gap-3 animate-fade-in-left pointer-events-auto"
+            className="p-4 rounded-2xl bg-slate-900/95 light:bg-white border border-slate-800 light:border-slate-200 text-xs font-semibold text-white light:text-slate-900 shadow-2xl backdrop-blur-md flex items-center gap-3 animate-fade-in-left pointer-events-auto"
           >
-            <div className="p-1 bg-brand-lime/10 light:bg-lime-100/60 border border-brand-lime/20 text-brand-lime light:text-lime-700 rounded-lg shrink-0">
+            <div className="p-1 bg-brand-red/15 border border-brand-red/30 text-brand-red rounded-lg shrink-0">
               <HelpCircle className="w-4 h-4" />
             </div>
             <span>{toast.text}</span>
           </div>
         ))}
       </div>
-    </div>
+    </AppLayout>
   );
 }

@@ -2,6 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import Lenis from "lenis";
+import "lenis/dist/lenis.css";
+import Logo from "./components/Logo";
+import { getCurrentUser, logout } from "./utils/api";
 import {
   Layers,
   Warehouse,
@@ -15,17 +20,67 @@ import {
   Menu,
   X,
   Sun,
-  Moon
+  Moon,
+  LogOut,
+  LayoutDashboard,
+  UserPlus
 } from "lucide-react";
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(3); // Keep an item open by default
   const [theme, setTheme] = useState("dark");
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const router = useRouter();
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "dark";
-    setTheme(savedTheme);
+    const isLight = document.documentElement.classList.contains("light");
+    setTheme(isLight ? "light" : "dark");
+    setCurrentUser(getCurrentUser());
+
+    // Initialize Lenis smooth scroll
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      touchMultiplier: 1.5,
+    });
+
+    let animationFrameId: number;
+
+    function raf(time: number) {
+      lenis.raf(time);
+      animationFrameId = requestAnimationFrame(raf);
+    }
+
+    animationFrameId = requestAnimationFrame(raf);
+
+    // Smooth scroll for internal anchor navigation links
+    const handleAnchorClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest("a");
+      if (
+        anchor &&
+        anchor.hash &&
+        anchor.hash.startsWith("#") &&
+        anchor.origin === window.location.origin &&
+        anchor.pathname === window.location.pathname
+      ) {
+        const targetElement = document.querySelector(anchor.hash);
+        if (targetElement) {
+          e.preventDefault();
+          lenis.scrollTo(targetElement as HTMLElement, { offset: -80, duration: 1.4 });
+        }
+      }
+    };
+
+    document.addEventListener("click", handleAnchorClick);
+
+    return () => {
+      document.removeEventListener("click", handleAnchorClick);
+      cancelAnimationFrame(animationFrameId);
+      lenis.destroy();
+    };
   }, []);
 
   const toggleTheme = () => {
@@ -124,9 +179,9 @@ export default function LandingPage() {
   return (
     <div className="relative min-h-screen bg-brand-navy-dark text-slate-100 light:text-slate-900 overflow-x-hidden select-none">
       {/* Decorative growth vectors in background */}
-      <div className="absolute top-0 right-0 w-full h-[800px] pointer-events-none opacity-20 lg:opacity-40">
+      <div className="absolute top-0 right-0 w-full h-[850px] pointer-events-none opacity-25 lg:opacity-50 overflow-hidden">
         <svg
-          className="absolute right-0 top-0 w-full max-w-[800px] h-full"
+          className="absolute right-0 top-0 w-full max-w-[1100px] h-full"
           viewBox="0 0 800 800"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -159,23 +214,9 @@ export default function LandingPage() {
       </div>
 
       {/* Navigation Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#020617]/75 light:bg-[#f8fafc]/75 border-[#0b1528] light:border-slate-300 border-[#0b1528]/40 light:border-slate-200 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="flex flex-col gap-1 w-8 h-8 justify-center">
-              <span className="w-8 h-1 bg-white rounded-full transition-transform group-hover:translate-x-1"></span>
-              <span className="w-6 h-1 bg-brand-red rounded-full transition-transform group-hover:translate-x-2"></span>
-              <span className="w-7 h-1 bg-sky-400 rounded-full transition-transform group-hover:translate-x-1.5"></span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-bold text-white light:text-slate-900 tracking-wide">
-                KEY
-              </span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-red text-brand-navy-dark rounded font-mono">
-                books
-              </span>
-            </div>
-          </Link>
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#020617]/75 light:bg-[#f8fafc]/75 border-b border-[#0b1528] light:border-slate-200 transition-all duration-300">
+        <div className="w-full max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 h-20 flex items-center justify-between">
+          <Logo size="md" href="/" />
 
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300 light:text-slate-700">
             <Link
@@ -204,31 +245,67 @@ export default function LandingPage() {
             </Link>
           </nav>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl bg-slate-900 light:bg-slate-200/80 border border-slate-800 light:border-slate-300 text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black transition duration-200"
+              className="p-2 rounded-xl bg-slate-900 light:bg-slate-200 border border-slate-800 light:border-slate-300 text-slate-400 light:text-slate-600 hover:text-white light:hover:text-black transition duration-200"
               title="Toggle Theme"
             >
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
-            <Link
-              href="/login"
-              className="px-4 py-2 text-sm font-semibold text-slate-300 light:text-slate-700 hover:text-white light:hover:text-black transition-colors"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/login"
-              className="px-5 py-2 text-sm font-semibold rounded-full bg-[#0f2249] light:bg-slate-200 border border-slate-800 light:border-slate-300 text-slate-200 light:text-slate-800 hover:text-white light:hover:text-black hover:bg-[#0b1528] light:hover:bg-slate-300 hover:border-brand-red/50 transition-all duration-300 shadow-lg shadow-black/50"
-            >
-              Launch Application
-            </Link>
+
+            {currentUser ? (
+              <>
+                <div className="text-right hidden lg:block mr-1">
+                  <p className="text-[11px] text-slate-400 light:text-slate-500 font-medium">Signed in as</p>
+                  <p className="text-xs font-bold text-white light:text-slate-900">{currentUser.name}</p>
+                </div>
+                <Link
+                  href="/companies"
+                  className="px-5 py-2.5 text-sm font-bold rounded-full bg-brand-red hover:bg-red-600 active:bg-red-700 text-white transition-all duration-300 shadow-md shadow-red-500/20 hover:shadow-red-500/40 hover:-translate-y-0.5 flex items-center gap-2"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => {
+                    logout();
+                    setCurrentUser(null);
+                    router.push("/");
+                  }}
+                  className="p-2 rounded-xl bg-slate-900 light:bg-slate-200 border border-slate-800 light:border-slate-300 text-slate-400 light:text-slate-600 hover:text-brand-red hover:border-brand-red/40 transition duration-200"
+                  title="Sign Out"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/register"
+                  className="px-4 py-2 text-sm font-semibold text-slate-300 light:text-slate-700 hover:text-white light:hover:text-black transition-colors"
+                >
+                  Create Account
+                </Link>
+                <Link
+                  href="/login"
+                  className="px-4 py-2 text-sm font-semibold text-slate-300 light:text-slate-700 hover:text-white light:hover:text-black transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/login"
+                  className="px-5 py-2.5 text-sm font-bold rounded-full bg-brand-red hover:bg-red-600 active:bg-red-700 text-white transition-all duration-300 shadow-md shadow-red-500/20 hover:shadow-red-500/40 hover:-translate-y-0.5"
+                >
+                  Launch Application
+                </Link>
+              </>
+            )}
           </div>
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-slate-300 light:text-slate-700 hover:text-white light:text-slate-900 light:hover:text-black transition-colors"
+            className="md:hidden p-2 text-slate-300 light:text-slate-700 hover:text-white light:hover:text-black transition-colors"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -287,26 +364,59 @@ export default function LandingPage() {
                 </>
               )}
             </button>
-            <Link
-              href="/login"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full py-3.5 text-center font-bold text-brand-navy-dark bg-brand-red rounded-full hover:bg-white transition-all shadow-lg"
-            >
-              Launch Application
-            </Link>
-            <Link
-              href="/login"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full py-3.5 text-center font-bold text-slate-300 light:text-slate-700 border border-slate-700 rounded-full hover:text-white light:hover:text-black transition-all"
-            >
-              Sign In
-            </Link>
+            {currentUser ? (
+              <>
+                <Link
+                  href="/companies"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-3.5 text-center font-bold text-white bg-brand-red rounded-full hover:bg-red-600 transition-all shadow-lg flex items-center justify-center gap-2"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  Go to Dashboard
+                </Link>
+                <button
+                  onClick={() => {
+                    logout();
+                    setCurrentUser(null);
+                    setMobileMenuOpen(false);
+                    router.push("/");
+                  }}
+                  className="w-full py-3.5 text-center font-bold text-slate-300 light:text-slate-700 border border-slate-700 rounded-full hover:text-brand-red transition-all"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-3.5 text-center font-bold text-white bg-brand-red rounded-full hover:bg-red-600 transition-all shadow-lg"
+                >
+                  Launch Application
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-3.5 text-center font-bold text-slate-300 light:text-slate-700 border border-slate-700 rounded-full hover:text-white light:hover:text-black transition-all"
+                >
+                  Create Account
+                </Link>
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-3.5 text-center font-bold text-slate-300 light:text-slate-700 border border-slate-700 rounded-full hover:text-white light:hover:text-black transition-all"
+                >
+                  Sign In
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
 
       {/* HERO SECTION */}
-      <section className="relative max-w-7xl mx-auto px-6 pt-16 pb-24 md:pt-28 md:pb-36 flex flex-col items-start justify-center min-h-[calc(100vh-80px)]">
+      <section className="relative w-full max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pt-16 pb-24 md:pt-28 md:pb-36 flex flex-col items-start justify-center min-h-[calc(100vh-80px)]">
         <div className="max-w-3xl space-y-8 z-10">
           <h1 className="text-4xl md:text-6xl font-extrabold text-white light:text-slate-900 tracking-tight leading-[1.1] animate-fade-in">
             Keyboard-First Accounting <br />
@@ -325,16 +435,16 @@ export default function LandingPage() {
 
           <div className="flex flex-wrap items-center gap-5 pt-4">
             <Link
-              href="/login"
-              className="group px-8 py-3.5 flex items-center gap-2 rounded-full font-bold text-brand-navy-dark bg-brand-red hover:bg-white transition-all duration-300 shadow-xl shadow-brand-red/10 transform hover:-translate-y-0.5 active:translate-y-0"
+              href={currentUser ? "/companies" : "/login"}
+              className="group px-8 py-3.5 flex items-center gap-2 rounded-full font-bold text-white bg-brand-red hover:bg-red-600 active:bg-red-700 transition-all duration-300 shadow-xl shadow-red-500/25 hover:shadow-red-500/40 transform hover:-translate-y-0.5 active:translate-y-0"
             >
-              Launch Application
+              {currentUser ? "Go to Dashboard" : "Launch Application"}
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Link>
 
             <Link
               href="#features"
-              className="px-8 py-3.5 rounded-full font-bold text-slate-300 light:text-slate-700 bg-[#0b1528]/60 light:bg-slate-200 hover:bg-[#0b1528] light:hover:bg-slate-300/80 hover:text-white light:text-slate-900 light:hover:text-black border border-slate-800 light:border-slate-200 hover:border-slate-600 light:hover:border-slate-400 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0"
+              className="px-8 py-3.5 rounded-full font-bold text-slate-300 light:text-slate-700 bg-[#0b1528]/60 light:bg-slate-200 hover:bg-[#0b1528] light:hover:bg-slate-300/80 hover:text-white light:hover:text-black border border-slate-800 light:border-slate-300 hover:border-slate-600 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0"
             >
               Explore Features
             </Link>
@@ -343,10 +453,10 @@ export default function LandingPage() {
       </section>
 
       {/* FEATURES SECTION */}
-      <section id="features" className="bg-[#020617]/45 light:bg-[#f1f5f9]/45 border-t border-[#0b1528] light:border-slate-300 border-[#0b1528]/45 light:border-slate-200 py-24 scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-6">
+      <section id="features" className="bg-[#020617]/45 light:bg-[#f1f5f9]/45 border-t border-[#0b1528]/45 light:border-slate-200 py-24 scroll-mt-20">
+        <div className="w-full max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16">
           <div className="max-w-2xl mb-16">
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white light:text-slate-900 light:text-slate-900 tracking-tight">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white light:text-slate-900 tracking-tight">
               Functional Features
             </h2>
             <p className="text-slate-400 light:text-slate-600 text-sm mt-2">
@@ -379,13 +489,13 @@ export default function LandingPage() {
       </section>
 
       {/* ROADMAP SECTION */}
-      <section id="roadmap" className="py-24 border-[#0b1528] light:border-slate-300 border-[#0b1528]/45 light:border-slate-200 scroll-mt-20 bg-brand-navy-mid/10 light:bg-slate-200/40">
-        <div className="max-w-7xl mx-auto px-6">
+      <section id="roadmap" className="py-24 border-[#0b1528]/45 light:border-slate-200 scroll-mt-20 bg-brand-navy-mid/10 light:bg-slate-200/40">
+        <div className="w-full max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16">
           <div className="max-w-2xl mb-12">
             <span className="text-sm font-extrabold uppercase tracking-widest text-brand-red">
               Project Roadmap
             </span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white light:text-slate-900 light:text-slate-900 tracking-tight mt-2">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white light:text-slate-900 tracking-tight mt-2">
               Planned Capabilities
             </h2>
             <p className="text-slate-400 light:text-slate-600 text-sm mt-2">
@@ -423,20 +533,20 @@ export default function LandingPage() {
 
       {/* ABOUT US SECTION */}
       <section id="about" className="py-24 scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="w-full max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-5 space-y-6">
             <span className="text-sm font-extrabold uppercase tracking-widest text-brand-red">
               Project Description
             </span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white light:text-slate-900 light:text-slate-900 tracking-tight leading-tight">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white light:text-slate-900 tracking-tight leading-tight">
               Simulating Core Financial Workflows
             </h2>
             <div className="pt-4">
               <Link
-                href="/login"
-                className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-bold text-brand-navy-dark bg-brand-red hover:bg-white transition-all duration-300 shadow-xl shadow-brand-red/10"
+                href={currentUser ? "/companies" : "/login"}
+                className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-bold text-white bg-brand-red hover:bg-red-600 active:bg-red-700 transition-all duration-300 shadow-xl shadow-red-500/25 hover:shadow-red-500/40 transform hover:-translate-y-0.5"
               >
-                Launch Application
+                {currentUser ? "Go to Dashboard" : "Launch Application"}
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
@@ -463,18 +573,18 @@ export default function LandingPage() {
           </svg>
         </div>
 
-        <div className="max-w-4xl mx-auto px-6 z-10 relative">
+        <div className="w-full max-w-[1200px] mx-auto px-6 sm:px-10 lg:px-16 z-10 relative">
           <div className="space-y-6">
             {faqs.map((faq, index) => {
               const isOpen = openFaqIndex === index;
               return (
                 <div
                   key={index}
-                  className="border-[#0b1528] light:border-slate-300 border-slate-800 light:border-slate-200/80 last:border-[#0b1528] light:border-slate-300 pb-4 transition-all"
+                  className="border-b border-slate-800 light:border-slate-200/80 pb-4 transition-all"
                 >
                   <button
                     onClick={() => toggleFaq(index)}
-                    className="w-full py-4 flex items-center justify-between text-left text-white light:text-slate-900 light:text-slate-900 hover:text-brand-red group transition-colors duration-200"
+                    className="w-full py-4 flex items-center justify-between text-left text-white light:text-slate-900 hover:text-brand-red group transition-colors duration-200"
                   >
                     <span className="text-lg md:text-xl font-medium pr-8">
                       {faq.question}
@@ -506,10 +616,10 @@ export default function LandingPage() {
 
           <div className="mt-16 flex justify-center">
             <Link
-              href="/login"
-              className="group px-8 py-3.5 flex items-center gap-2 rounded-full font-bold text-brand-navy-dark bg-brand-red hover:bg-white transition-all duration-300 shadow-xl shadow-brand-red/10"
+              href={currentUser ? "/companies" : "/login"}
+              className="group px-8 py-3.5 flex items-center gap-2 rounded-full font-bold text-white bg-brand-red hover:bg-red-600 active:bg-red-700 transition-all duration-300 shadow-xl shadow-red-500/25 hover:shadow-red-500/40 transform hover:-translate-y-0.5"
             >
-              Launch Application
+              {currentUser ? "Go to Dashboard" : "Launch Application"}
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
@@ -518,16 +628,9 @@ export default function LandingPage() {
 
       {/* CONTACT / FOOTER SECTION */}
       <footer id="contacts" className="bg-[#0b1528]/10 light:bg-slate-200/40 border-t border-[#0b1528]/40 light:border-slate-200 py-16 scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div className="w-full max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="md:col-span-2 space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-bold text-white light:text-slate-900 tracking-wide">
-                KEY
-              </span>
-              <span className="px-2 py-0.5 text-xs font-extrabold bg-brand-red text-brand-navy-dark rounded font-mono">
-                books
-              </span>
-            </div>
+            <Logo size="md" href="/" />
             <p className="text-sm text-slate-400 light:text-slate-600 max-w-sm leading-relaxed">
               Keyboard-first accounting and stock inventory register built as an academic simulation project.
             </p>
@@ -581,7 +684,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-slate-900 light:border-slate-200/60 text-center text-xs text-slate-500 light:text-slate-500">
+        <div className="w-full max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 mt-12 pt-8 border-t border-slate-900 light:border-slate-200/60 text-center text-xs text-slate-500">
           <p>© {new Date().getFullYear()} KEYbooks. Internship Capstone Project.</p>
         </div>
       </footer>

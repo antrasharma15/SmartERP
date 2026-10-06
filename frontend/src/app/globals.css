@@ -2,26 +2,88 @@
 
 @custom-variant light (.light &);
 
+/* ═══════════════════════════════════════════════════════════════
+   KEYbooks — material design system
+   Physical/mechanical, not glassmorphic. Every surface has a real
+   edge: a lit top bevel, a body, and a hard shadow underneath.
+   ═══════════════════════════════════════════════════════════════ */
+
 :root {
   --background: #020617;
   --foreground: #f8fafc;
+
+  /* Brand — unchanged, existing pages depend on these */
   --color-brand-lime: #bef264;
   --color-brand-red: #ef4444;
   --color-brand-navy-dark: #020617;
   --color-brand-navy-mid: #060c18;
   --color-brand-navy-light: #0b1528;
   --color-brand-navy-accent: #0f2249;
+
+  /* Material — surfaces are stacked, each one lighter than its parent */
+  --mat-0: #05090f;   /* page ground */
+  --mat-1: #0a121f;   /* panel */
+  --mat-2: #101c2e;   /* raised control */
+  --mat-3: #17273d;   /* hover / keycap top */
+  --mat-edge: #1e3350;      /* body edge */
+  --mat-bevel: #ffffff1a;   /* lit top bevel */
+  --mat-groove: #00000080;  /* hard bottom shadow */
+
+  --ink-1: #f8fafc;
+  --ink-2: #94a3b8;
+  --ink-3: #8a99b0;   /* AA on --mat-1; was #4a5b73 at 2.9:1 */
+
+  --accent: #ef4444;
+  --accent-ink: #ffffff;
+  --positive: #84cc16;
+  --negative: #f87171;
+
+  /* Elevation — two-part: a hard offset edge + a soft ambient */
+  --lift-1: 0 1px 0 0 var(--mat-bevel) inset, 0 2px 0 0 #00000066, 0 3px 8px -2px #0009;
+  --lift-2: 0 1px 0 0 var(--mat-bevel) inset, 0 3px 0 0 #00000073, 0 8px 20px -6px #000c;
+  --lift-3: 0 1px 0 0 var(--mat-bevel) inset, 0 5px 0 0 #0000007a, 0 18px 40px -12px #000d;
+  --sunk:   0 2px 5px 0 #00000073 inset, 0 -1px 0 0 var(--mat-bevel) inset;
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .light {
-  --background: #f8fafc;
+  --background: #f4f6fb;
   --foreground: #0f172a;
+
   --color-brand-lime: #15803d;
   --color-brand-red: #dc2626;
   --color-brand-navy-dark: #f8fafc;
   --color-brand-navy-mid: #f1f5f9;
   --color-brand-navy-light: #e2e8f0;
   --color-brand-navy-accent: #cbd5e1;
+
+  --mat-0: #f7f9fc;
+  --mat-1: #ffffff;
+  --mat-2: #ffffff;
+  --mat-3: #f2f5fa;
+  --mat-edge: #c9d2e0;
+  --mat-bevel: #ffffff;
+  --mat-groove: #94a3b840;
+
+  --ink-1: #05070d;
+  --ink-2: #333f52;
+  --ink-3: #4d5a6e;   /* AA on white; was #93a1b5 at 2.5:1 */
+
+  --accent: #dc2626;
+  --accent-ink: #ffffff;
+  --positive: #15803d;
+  --negative: #dc2626;
+
+  --lift-1: 0 1px 0 0 #ffffff inset, 0 1px 0 0 #cbd5e1, 0 2px 6px -2px #94a3b855;
+  --lift-2: 0 1px 0 0 #ffffff inset, 0 2px 0 0 #c8d2e0, 0 8px 18px -8px #64748b66;
+  --lift-3: 0 1px 0 0 #ffffff inset, 0 4px 0 0 #c2ccdb, 0 18px 36px -14px #47556966;
+  --sunk:   0 2px 4px 0 #94a3b855 inset, 0 -1px 0 0 #ffffff inset;
 }
 
 @theme inline {
@@ -33,47 +95,763 @@
   --color-brand-navy-mid: var(--color-brand-navy-mid);
   --color-brand-navy-light: var(--color-brand-navy-light);
   --color-brand-navy-accent: var(--color-brand-navy-accent);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --color-mat-0: var(--mat-0);
+  --color-mat-1: var(--mat-1);
+  --color-mat-2: var(--mat-2);
+  --color-mat-3: var(--mat-3);
+  --color-mat-edge: var(--mat-edge);
+  --color-ink-1: var(--ink-1);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+
+  --font-display: var(--font-bricolage);
+  --font-sans: var(--font-instrument);
+  --font-mono: var(--font-jetbrains);
 }
+
+/* ── Base ──────────────────────────────────────────────────── */
 
 html {
   scroll-behavior: smooth;
   height: 100%;
+  font-size: 15px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background-color: var(--color-brand-navy-dark);
-  color: var(--color-foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  background-color: var(--mat-0);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-feature-settings: "cv11", "ss01";
   min-height: 100vh;
   margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* Scrollbar styles */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+html.light,
+html.light body { background-color: var(--mat-0) !important; color: #0f172a !important; }
+
+html:not(.light),
+html:not(.light) body { background-color: var(--mat-0) !important; color: #f8fafc !important; }
+
+/* Paper grain — one SVG turbulence tile over the whole app.
+   Kills the flat "AI gradient" look for free, costs zero JS. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
 }
-::-webkit-scrollbar-track {
-  background: #030712;
+.light body::before { opacity: 0.9; mix-blend-mode: multiply; }
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  letter-spacing: -0.022em;
 }
+
+/* Every figure in an ERP must align in its column. Non-negotiable. */
+table, .num, .tabular, input[type="number"], kbd, td, th {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+::selection { background: var(--accent); color: #fff; }
+
+/* One focus ring for the whole app — this is a keyboard-first product,
+   so focus is a first-class visual, never `outline: none`. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* ── Materials ─────────────────────────────────────────────── */
+
+.mat-raised {
+  background: linear-gradient(180deg, var(--mat-2), var(--mat-1));
+  border: 1px solid var(--mat-edge);
+  box-shadow: var(--lift-1);
+}
+
+.mat-sunk {
+  background: var(--mat-0);
+  border: 1px solid var(--mat-edge);
+  box-shadow: var(--sunk);
+}
+
+/* ── Panel — replaces the generic rounded card ─────────────────
+   A panel is a machine housing: hard header rail, bevelled body,
+   no floating drop-shadowed rectangle. */
+
+.panel {
+  position: relative;
+  background: linear-gradient(180deg, var(--mat-1), var(--mat-0));
+  border: 1px solid var(--mat-edge);
+  border-radius: var(--r-lg);
+  box-shadow: var(--lift-2);
+  overflow: hidden;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 1rem;
+  background: linear-gradient(180deg, var(--mat-3), var(--mat-2));
+  border-bottom: 1px solid var(--mat-edge);
+  box-shadow: 0 1px 0 0 var(--mat-bevel) inset;
+  font-family: var(--font-display), sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.panel-body { padding: 1rem; position: relative; }
+
+/* Accent rail on the left edge — the panel is bolted to something */
+.panel-accent::after {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--accent);
+  box-shadow: 0 0 12px -1px var(--accent);
+}
+
+/* ── Buttons — real keycaps, they travel when pressed ──────── */
+
+.btn {
+  --btn-face: var(--mat-3);
+  --btn-face-2: var(--mat-2);
+  --btn-ink: var(--ink-1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.95rem;
+  border: 1px solid var(--mat-edge);
+  border-radius: var(--r-md);
+  background: linear-gradient(180deg, var(--btn-face), var(--btn-face-2));
+  color: var(--btn-ink);
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.8rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--lift-1);
+  transition: transform 90ms var(--ease), box-shadow 90ms var(--ease), filter 140ms var(--ease);
+}
+
+.btn:hover:not(:disabled) { filter: brightness(1.12); }
+
+/* The whole point: the key physically sinks and its shadow collapses. */
+.btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 0 var(--mat-bevel) inset, 0 0 0 0 #0000, 0 1px 3px -1px #0009;
+}
+
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-primary {
+  --btn-face: color-mix(in srgb, var(--accent) 100%, white 12%);
+  --btn-face-2: var(--accent);
+  --btn-ink: var(--accent-ink);
+  border-color: color-mix(in srgb, var(--accent) 70%, black);
+}
+
+.btn-go {
+  --btn-face: color-mix(in srgb, var(--positive) 100%, white 14%);
+  --btn-face-2: var(--positive);
+  --btn-ink: #06210a;
+  border-color: color-mix(in srgb, var(--positive) 70%, black);
+}
+
+.btn-ghost {
+  --btn-face: transparent;
+  --btn-face-2: transparent;
+  --btn-ink: var(--ink-2);
+  border-color: transparent;
+  box-shadow: none;
+}
+.btn-ghost:hover:not(:disabled) { background: var(--mat-2); color: var(--ink-1); }
+.btn-ghost:active:not(:disabled) { transform: translateY(1px); box-shadow: none; }
+
+.btn-sm { padding: 0.35rem 0.65rem; font-size: 0.72rem; border-radius: var(--r-sm); }
+.btn-lg { padding: 0.7rem 1.3rem; font-size: 0.9rem; border-radius: var(--r-lg); }
+
+/* ── Keycap — for the hotkey hints that are this app's whole idea ── */
+
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.55rem;
+  height: 1.45rem;
+  padding: 0 0.4rem;
+  border: 1px solid var(--mat-edge);
+  border-bottom-width: 2px;
+  border-radius: var(--r-sm);
+  background: linear-gradient(180deg, var(--mat-3), var(--mat-1));
+  box-shadow: 0 1px 0 0 var(--mat-bevel) inset, 0 2px 0 -1px #00000066;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.kbd-hot { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--mat-edge)); }
+
+/* ── Ledger table — the core surface of an accounting app ───── */
+
+.ledger {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.8rem;
+}
+
+.ledger thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 0.55rem 0.75rem;
+  background: linear-gradient(180deg, var(--mat-3), var(--mat-2));
+  border-bottom: 1px solid var(--mat-edge);
+  box-shadow: 0 1px 0 0 var(--mat-bevel) inset;
+  font-family: var(--font-display), sans-serif;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  text-align: left;
+}
+
+.ledger tbody td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--mat-edge) 55%, transparent);
+  color: var(--ink-1);
+}
+
+/* Zebra via a ruled-paper gradient, not a per-row class */
+.ledger tbody tr:nth-child(even) { background: color-mix(in srgb, var(--mat-2) 45%, transparent); }
+.ledger tbody tr:hover { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+
+.ledger .amt { text-align: right; font-family: var(--font-mono), monospace; font-variant-numeric: tabular-nums; }
+.amt-cr { color: var(--positive); }
+.amt-dr { color: var(--negative); }
+
+/* Keyboard cursor row — this app is driven by arrow keys, so the
+   selected row needs to read as *selected*, not merely hovered. */
+.row-active,
+.ledger tbody tr.row-active {
+  background: color-mix(in srgb, var(--accent) 14%, transparent) !important;
+  box-shadow: inset 3px 0 0 0 var(--accent);
+  scroll-margin-block: 6rem;
+}
+
+/* ── Doodles — hand-drawn marks, zero images ───────────────── */
+
+/* Wobbly underline for section headings */
+.doodle-underline {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.35rem;
+}
+.doodle-underline::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 7px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='7' viewBox='0 0 120 7'%3E%3Cpath d='M1 4.2c14-3 26 1.6 40-.4S108 1 119 3.6' fill='none' stroke='%23ef4444' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left bottom / auto 7px;
+}
+
+/* Circled/annotated emphasis, like a pen mark on a printed report */
+.doodle-circle {
+  position: relative;
+  display: inline-block;
+  padding: 0.15em 0.5em;
+}
+.doodle-circle::before {
+  content: "";
+  position: absolute;
+  inset: -0.25em -0.1em;
+  border: 2px solid var(--accent);
+  border-radius: 48% 52% 46% 54% / 58% 44% 56% 42%;
+  opacity: 0.75;
+  transform: rotate(-1.5deg);
+  pointer-events: none;
+}
+
+/* Graph-paper ground for empty states and dashboards */
+.doodle-grid {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--mat-edge) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--mat-edge) 55%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Torn/perforated edge, like a tear-off invoice stub */
+.doodle-perforate {
+  -webkit-mask-image: radial-gradient(circle at 5px 50%, transparent 4px, #000 4.5px);
+  mask-image: radial-gradient(circle at 5px 50%, transparent 4px, #000 4.5px);
+  -webkit-mask-size: 10px 100%;
+  mask-size: 10px 100%;
+}
+
+/* ── Inputs ────────────────────────────────────────────────── */
+
+.field {
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  background: var(--mat-0);
+  border: 1px solid var(--mat-edge);
+  border-radius: var(--r-md);
+  box-shadow: var(--sunk);
+  color: var(--ink-1);
+  font-family: inherit;
+  font-size: 0.82rem;
+  transition: border-color 140ms var(--ease), box-shadow 140ms var(--ease);
+}
+.field::placeholder { color: var(--ink-3); }
+.field:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--sunk), 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+/* ── Native select / option theming ────────────────────────── */
+
+select { color-scheme: dark; }
+.light select { color-scheme: light; }
+option { background-color: #0f172a !important; color: #f8fafc !important; }
+.light option { background-color: #ffffff !important; color: #0f172a !important; }
+select option:disabled { color: #64748b !important; }
+.light select option:disabled { color: #94a3b8 !important; }
+
+/* ── Scrollbar ─────────────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--mat-0); }
 ::-webkit-scrollbar-thumb {
-  background: #1f2937;
-  border-radius: 4px;
+  background: var(--mat-edge);
+  border: 2px solid var(--mat-0);
+  border-radius: 6px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #ef4444;
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ── Motion ────────────────────────────────────────────────── */
+
+@keyframes fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.animate-fade-in { animation: fade-in 180ms var(--ease) both; }
+
+@keyframes pop-in { from { opacity: 0; transform: scale(0.97) translateY(6px); } to { opacity: 1; transform: none; } }
+.animate-pop-in { animation: pop-in 220ms var(--ease) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-/* Hide Netlify Collaborative Deploy Preview Toolbar Drawer */
-#netlify-drawer-outer,
-.netlify-drawer,
-netlify-drawer,
-#netlify-drawer,
-iframe[src*="netlify"],
-netlify-drawer-container {
+/* ── Compatibility with existing page markup ───────────────── */
+
+.light .border-slate-800,
+.light .border-slate-850,
+.light .border-slate-900 { border-color: #e2e8f0; }
+
+/* Hide Netlify deploy-preview toolbar */
+#netlify-drawer-outer, .netlify-drawer, netlify-drawer,
+#netlify-drawer, iframe[src*="netlify"], netlify-drawer-container {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   De-slop layer
+   The pages carry ~148 bubble radii, 75 backdrop-blurs, 69 huge soft
+   shadows and 202 flat buttons. Rather than edit 25 files, retune the
+   utilities they already use. Colour and layout are left alone; only
+   the material and the motion change.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* 1. Glassmorphism out. A frosted panel is the single clearest "AI
+      template" tell, and it makes text sit on a muddy background. */
+[class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 2. Shadows: a real object has a hard contact edge and a tight ambient
+      shadow. Tailwind's xl/2xl are wide soft blurs that read as fog. */
+.shadow-sm  { box-shadow: 0 1px 0 0 var(--mat-bevel) inset, 0 1px 0 0 #00000047 !important; }
+.shadow-md  { box-shadow: var(--lift-1) !important; }
+.shadow-lg  { box-shadow: var(--lift-1) !important; }
+.shadow-xl  { box-shadow: var(--lift-2) !important; }
+.shadow-2xl { box-shadow: var(--lift-3) !important; }
+.shadow-inner { box-shadow: var(--sunk) !important; }
+
+/* 3. Radii: pull the bubbles in. 24px reads as a toy, 16px as a panel. */
+.rounded-3xl { border-radius: var(--r-xl) !important; }
+.rounded-2xl { border-radius: var(--r-lg) !important; }
+.rounded-xl  { border-radius: var(--r-md) !important; }
+
+/* 4. Buttons. 202 of them are bare <button> tags that look like text.
+      Give every one the press physics, and give any button carrying a
+      background the keycap edge — without touching its colour. */
+button {
+  transition: transform 90ms var(--ease), box-shadow 90ms var(--ease), filter 140ms var(--ease);
+}
+button:not(:disabled):active {
+  transform: translateY(1.5px);
+}
+button[class*="bg-"]:not([class*="bg-transparent"]):not(.btn) {
+  box-shadow: 0 1px 0 0 var(--mat-bevel) inset, 0 2px 0 0 #00000052, 0 3px 8px -3px #0009;
+}
+.light button[class*="bg-"]:not([class*="bg-transparent"]):not(.btn) {
+  box-shadow: 0 1px 0 0 #ffffff inset, 0 2px 0 0 #cbd5e1, 0 3px 8px -4px #94a3b877;
+}
+button[class*="bg-"]:not(:disabled):active {
+  box-shadow: 0 1px 0 0 var(--mat-bevel) inset, 0 1px 2px -1px #0009 !important;
+}
+button:disabled { cursor: not-allowed; }
+
+/* 5. Motion. Tailwind defaults to a symmetric ease over 150ms and the
+      pages stretch that to 300-700ms, which is what reads as sluggish.
+      One decelerating curve, and cap the long ones. */
+[class*="transition"] { transition-timing-function: var(--ease) !important; }
+.duration-150 { transition-duration: 110ms !important; }
+.duration-200 { transition-duration: 140ms !important; }
+.duration-300 { transition-duration: 180ms !important; }
+.duration-500 { transition-duration: 260ms !important; }
+.duration-700 { transition-duration: 320ms !important; }
+
+/* transition-all animates layout properties too, which is where the
+   jank comes from. Keep the intent, drop width/height/top/left. */
+.transition-all {
+  transition-property: color, background-color, border-color, fill, stroke,
+    box-shadow, transform, opacity, filter !important;
+}
+
+/* 6. Inputs get the machined recess, matching .field, without markup edits. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+textarea,
+select {
+  transition: border-color 140ms var(--ease), box-shadow 140ms var(--ease);
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Chart tokens
+   Categorical slots are the validated 4-slot order (adjacent-pair
+   CVD ΔE 9.1 light / 8.4 dark, normal-vision 22.9 / 19.8), assigned
+   in fixed order and never cycled. In light mode the aqua and yellow
+   slots fall under 3:1 against the surface, so every segment carries
+   a visible direct label — required relief, not decoration.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --viz-1: #3987e5;  /* blue   — the default single hue for magnitude */
+  --viz-2: #d95926;  /* orange */
+  --viz-3: #199e70;  /* aqua   */
+  --viz-4: #c98500;  /* yellow */
+  --viz-grid: color-mix(in srgb, var(--mat-edge) 70%, transparent);
+}
+
+.light {
+  --viz-1: #2a78d6;
+  --viz-2: #eb6834;
+  --viz-3: #1baf7a;
+  --viz-4: #eda100;
+}
+
+/* Column marks: thin, rounded at the data end only, anchored to the
+   baseline, with a 2px gap so adjacent columns never merge. */
+/* No height here: the caller sets it with a utility (h-36). Declaring
+   height:100% made the track collapse, since .panel-body is auto-height. */
+.col-track { display: flex; align-items: flex-end; gap: 2px; }
+.col {
+  flex: 1;
+  min-width: 0;
+  border-radius: 4px 4px 0 0;
+  transition: filter 140ms var(--ease);
+}
+.col:hover { filter: brightness(1.25); }
+
+/* Horizontal magnitude bar, rounded at the data end only. */
+.hbar { height: 9px; border-radius: 0 4px 4px 0; transition: filter 140ms var(--ease); }
+.hbar:hover { filter: brightness(1.2); }
+
+.legend-dot { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+
+
+/* ── Text-colour contrast ───────────────────────────────────────
+   Measured with a per-node contrast audit across every route in both
+   themes (public/__audit.html during development).
+
+   Overriding the utility *classes* proved unreliable: `light:text-x`
+   compiles to a different, escaped class name than `text-x`, and the
+   two forms did not survive the CSS pipeline consistently. Redefining
+   the palette variables the utilities are built on is one hook that
+   catches every form — text, and the class in both spellings.
+
+   Only the `-400` steps are remapped in light mode. Those are used as
+   text on white throughout this app (amounts, status words, Logout)
+   where they measured 1.7–2.9:1; fills and borders use the `-500`/
+   `-600` steps or an alpha, so they keep the brand values.
+   ─────────────────────────────────────────────────────────────── */
+
+.light {
+  --color-red-400: #a81616;
+  --color-rose-400: #a3123c;
+  --color-orange-400: #9a4210;
+  --color-amber-400: #855207;
+  --color-yellow-400: #7a5c06;
+  --color-lime-400: #4d6a06;
+  --color-green-400: #14682f;
+  --color-emerald-400: #0a6b48;
+  --color-teal-400: #0b6a68;
+  --color-cyan-400: #0d6379;
+  --color-sky-400: #0a5f92;
+  --color-blue-400: #1d4ed8;
+  --color-indigo-400: #3730a3;
+  --color-violet-400: #5b21b6;
+  --color-purple-400: #6b21a8;
+  --color-pink-400: #9d174d;
+  /* red-500 is both the brand fill and a text colour. Darkening it in
+     light mode fixes small red text (3.1:1) and simultaneously lifts
+     white-on-red buttons from 3.8:1. Dark mode keeps #ef4444: lifting
+     it there would brighten the button ground and hurt its white text. */
+  --color-red-500: #c01515;
+  --color-brand-red: #c01515;
+
+  --color-slate-400: #475569;
+  --color-slate-500: #334155;
+  --color-slate-600: #1e293b;
+}
+
+/* Dark mode: slate-500/600 as body text sits at 2.4–4.2:1 on the
+   panel ground. Lift the steps used for text; the surface steps
+   (700–950) are untouched. */
+:root:not(.light) {
+  --color-slate-500: #93a3b8;
+  --color-slate-600: #8496ad;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Loaders — one per domain, so the wait tells you what is loading.
+   All real CSS 3D (preserve-3d + perspective on the stage), no
+   library, no images. Every animation is inside the reduced-motion
+   guard already declared above.
+   ═══════════════════════════════════════════════════════════════ */
+
+.ldr {
+  display: grid;
+  place-items: center;
+  gap: 1.1rem;
+  padding: 2.5rem 1rem;
+}
+.ldr-stage {
+  perspective: 620px;
+  perspective-origin: 50% 45%;
+  width: 110px;
+  height: 112px;
+  display: grid;
+  place-items: center;
+}
+.ldr-cap {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.ldr-cap::after {
+  content: "";
+  animation: ldr-dots 1.4s steps(4, end) infinite;
+}
+@keyframes ldr-dots { 0%{content:""} 25%{content:"."} 50%{content:".."} 75%{content:"..."} }
+
+/* ── 1. Ledger: bound sheets, the top one flips ─────────────── */
+.ldr-ledger { position: relative; width: 62px; height: 78px; transform-style: preserve-3d; animation: ldr-tilt 4s ease-in-out infinite; }
+.ldr-ledger i {
+  position: absolute;
+  inset: 0;
+  border-radius: 3px 5px 5px 3px;
+  background:
+    repeating-linear-gradient(var(--mat-3) 0 7px, color-mix(in srgb, var(--viz-1) 60%, transparent) 7px 8px),
+    var(--mat-3);
+  border: 1px solid var(--mat-edge);
+  border-left: 3px solid var(--accent);
+  box-shadow: 0 6px 14px -6px #000a;
+  transform-origin: left center;
+  backface-visibility: hidden;
+}
+.ldr-ledger i:nth-child(1) { transform: translateZ(-8px) translateX(3px); opacity: .45; }
+.ldr-ledger i:nth-child(2) { transform: translateZ(-4px) translateX(1.5px); opacity: .7; }
+.ldr-ledger i:nth-child(3) { animation: ldr-flip 1.7s cubic-bezier(.6,.05,.3,1) infinite; }
+@keyframes ldr-flip { 0%,12%{transform:rotateY(0)} 62%,100%{transform:rotateY(-168deg)} }
+@keyframes ldr-tilt { 0%,100%{transform:rotateX(14deg) rotateZ(-4deg)} 50%{transform:rotateX(22deg) rotateZ(4deg)} }
+
+/* ── 2. Crate: a real six-face cube for stock ───────────────── */
+.ldr-cube { transform-style: preserve-3d; animation: ldr-spin 3.4s linear infinite; width: 56px; height: 56px; position: relative; }
+.ldr-cube i {
+  position: absolute; inset: 0;
+  border: 1.5px solid color-mix(in srgb, var(--viz-1) 75%, black);
+  background: color-mix(in srgb, var(--viz-1) 26%, var(--mat-1));
+  box-shadow: inset 0 0 22px -6px var(--viz-1);
+}
+.ldr-cube i:nth-child(1){transform:translateZ(28px)}
+.ldr-cube i:nth-child(2){transform:rotateY(180deg) translateZ(28px)}
+.ldr-cube i:nth-child(3){transform:rotateY(90deg) translateZ(28px)}
+.ldr-cube i:nth-child(4){transform:rotateY(-90deg) translateZ(28px)}
+.ldr-cube i:nth-child(5){transform:rotateX(90deg) translateZ(28px)}
+.ldr-cube i:nth-child(6){transform:rotateX(-90deg) translateZ(28px)}
+@keyframes ldr-spin { to { transform: rotateX(-24deg) rotateY(360deg); } }
+
+/* ── 3. Voucher: sheet feeds in, stamp strikes ──────────────── */
+.ldr-stamp { transform-style: preserve-3d; transform: rotateX(46deg); position: relative; width: 92px; height: 74px; }
+.ldr-stamp .sheet {
+  position: absolute; left: 8px; top: 16px; width: 76px; height: 52px;
+  background: repeating-linear-gradient(var(--mat-3) 0 6px, color-mix(in srgb, var(--ink-2) 55%, transparent) 6px 7px), var(--mat-3);
+  border: 1px solid var(--ink-3); border-radius: 2px;
+  box-shadow: 0 6px 14px -8px #000c;
+  animation: ldr-feed 2.2s ease-in-out infinite;
+}
+.ldr-stamp .mark {
+  position: absolute; left: 30px; top: 30px; width: 32px; height: 18px;
+  border: 3px solid var(--accent); border-radius: 3px; opacity: 0;
+  transform: translateZ(1px) rotate(-8deg);
+  animation: ldr-mark 2.2s ease-in-out infinite;
+}
+.ldr-stamp .die {
+  position: absolute; left: 28px; top: 26px; width: 36px; height: 24px;
+  background: linear-gradient(180deg, var(--mat-3), var(--mat-2));
+  border: 1px solid var(--mat-edge); border-radius: 3px;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 60%, transparent) inset, 0 16px 22px -10px #000e;
+  animation: ldr-press 2.2s cubic-bezier(.5,0,.3,1) infinite;
+}
+@keyframes ldr-feed { 0%{transform:translateX(-36px);opacity:0} 22%,100%{transform:translateX(0);opacity:1} }
+@keyframes ldr-press { 0%,30%{transform:translateZ(54px)} 46%{transform:translateZ(4px)} 62%,100%{transform:translateZ(54px)} }
+@keyframes ldr-mark { 0%,46%{opacity:0} 52%{opacity:1} 92%,100%{opacity:0} }
+
+/* ── 4. Invoice: paper rolling out of a printer ─────────────── */
+.ldr-print { transform-style: preserve-3d; transform: rotateX(18deg); position: relative; width: 96px; height: 104px; }
+.ldr-print .paper {
+  position: absolute; bottom: 24px; left: 20px; width: 56px; height: 68px;
+  /* --mat-1 is also the panel's own ground, so a sheet painted in it
+     vanished. Step it up to --mat-3 and rule it in ink. */
+  background: repeating-linear-gradient(var(--mat-3) 0 6px, color-mix(in srgb, var(--ink-2) 55%, transparent) 6px 7px), var(--mat-3);
+  border: 1px solid var(--ink-3); border-bottom: 0; border-radius: 3px 3px 0 0;
+  box-shadow: 0 -8px 18px -8px #000c;
+  transform-origin: bottom center;
+  animation: ldr-emit 2.4s cubic-bezier(.4,0,.2,1) infinite;
+}
+.ldr-print .body {
+  position: absolute; bottom: 0; left: 4px; width: 88px; height: 30px;
+  background: linear-gradient(180deg, var(--mat-3), var(--mat-1));
+  border: 1px solid var(--mat-edge); border-radius: 5px;
+  box-shadow: var(--lift-2);
+}
+.ldr-print .slot {
+  position: absolute; bottom: 22px; left: 14px; width: 68px; height: 5px;
+  background: var(--mat-0); box-shadow: var(--sunk), 0 0 0 1px var(--mat-edge);
+  border-radius: 3px;
+}
+@keyframes ldr-emit { 0%{transform:scaleY(.04);opacity:0} 16%{opacity:1} 72%,100%{transform:scaleY(1);opacity:1} }
+
+/* ── 5. Scale: the beam finds balance ──────────────────────── */
+.ldr-scale { position: relative; width: 96px; height: 84px; transform-style: preserve-3d; transform: rotateX(12deg); }
+.ldr-scale .post { position: absolute; left: 46px; bottom: 8px; width: 4px; height: 46px; background: var(--mat-edge); border-radius: 2px; }
+.ldr-scale .base { position: absolute; left: 28px; bottom: 2px; width: 40px; height: 7px; border-radius: 3px; background: linear-gradient(180deg,var(--mat-3),var(--mat-1)); border: 1px solid var(--mat-edge); }
+.ldr-scale .beam {
+  position: absolute; left: 12px; bottom: 52px; width: 72px; height: 4px;
+  background: var(--accent); border-radius: 2px; transform-origin: center;
+  box-shadow: 0 0 12px -2px var(--accent);
+  animation: ldr-sway 2.6s cubic-bezier(.45,0,.25,1) infinite;
+}
+.ldr-scale .beam::before, .ldr-scale .beam::after {
+  content: ""; position: absolute; top: 4px; width: 22px; height: 9px;
+  border: 1.5px solid var(--mat-edge); border-top: 0; border-radius: 0 0 11px 11px;
+  background: color-mix(in srgb, var(--viz-1) 22%, transparent);
+}
+.ldr-scale .beam::before { left: -2px; }
+.ldr-scale .beam::after { right: -2px; }
+@keyframes ldr-sway { 0%{transform:rotate(-15deg)} 35%{transform:rotate(12deg)} 65%{transform:rotate(-5deg)} 85%,100%{transform:rotate(0)} }
+
+/* ── 6. Columns: report bars rising with depth ──────────────── */
+.ldr-bars { display: flex; align-items: flex-end; gap: 7px; height: 72px; transform-style: preserve-3d; transform: rotateX(16deg) rotateY(-18deg); }
+.ldr-bars i {
+  width: 14px; border-radius: 2px 2px 0 0; transform-origin: bottom;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--viz-1) 100%, white 24%), var(--viz-1));
+  box-shadow: 5px 0 0 -1px color-mix(in srgb, var(--viz-1) 45%, black), 0 0 16px -4px var(--viz-1);
+  animation: ldr-rise 1.5s cubic-bezier(.4,0,.2,1) infinite;
+}
+.ldr-bars i:nth-child(1){height:34px;animation-delay:0s}
+.ldr-bars i:nth-child(2){height:58px;animation-delay:.12s}
+.ldr-bars i:nth-child(3){height:44px;animation-delay:.24s}
+.ldr-bars i:nth-child(4){height:70px;animation-delay:.36s}
+@keyframes ldr-rise { 0%,100%{transform:scaleY(.18)} 50%{transform:scaleY(1)} }
+
+/* ── 7. Coins: cash stacking ───────────────────────────────── */
+.ldr-coins { position: relative; width: 76px; height: 82px; transform-style: preserve-3d; transform: rotateX(62deg); }
+.ldr-coins i {
+  position: absolute; left: 14px; width: 48px; height: 48px; border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, color-mix(in srgb, var(--viz-4) 100%, white 34%), var(--viz-4));
+  border: 1.5px solid color-mix(in srgb, var(--viz-4) 60%, black);
+  animation: ldr-drop 1.9s cubic-bezier(.35,1.4,.5,1) infinite;
+}
+.ldr-coins i:nth-child(1){top:30px;animation-delay:0s}
+.ldr-coins i:nth-child(2){top:22px;animation-delay:.22s}
+.ldr-coins i:nth-child(3){top:14px;animation-delay:.44s}
+.ldr-coins i:nth-child(4){top:6px;animation-delay:.66s}
+@keyframes ldr-drop { 0%{transform:translateZ(52px);opacity:0} 26%,100%{transform:translateZ(0);opacity:1} }
+
+/* ── 8. Dial: the company/settings vault ───────────────────── */
+.ldr-dial { position: relative; width: 76px; height: 76px; transform-style: preserve-3d; transform: rotateX(24deg); }
+.ldr-dial .ring {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 5px solid var(--mat-edge);
+  border-top-color: var(--accent);
+  border-right-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow: 0 10px 22px -10px #000c, inset 0 0 18px -8px var(--accent);
+  animation: ldr-turn 1.5s cubic-bezier(.6,0,.4,1) infinite;
+}
+.ldr-dial .hub {
+  position: absolute; inset: 22px; border-radius: 50%;
+  background: linear-gradient(180deg, var(--mat-3), var(--mat-1));
+  border: 1px solid var(--mat-edge);
+  box-shadow: var(--lift-1);
+}
+@keyframes ldr-turn { 0%{transform:rotate(0)} 55%{transform:rotate(320deg)} 100%{transform:rotate(720deg)} }
