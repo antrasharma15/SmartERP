@@ -19,9 +19,26 @@ const settingsRoutes = require('./routes/settingsRoutes');
 const { protect } = require('./Middleware/authMiddleware');
 const { checkLock } = require('./Middleware/lockMiddleware');
 
+const os = require('os');
+
 const app = express();
 
+// Which backend copy is answering? In Docker, HOSTNAME is the container id.
+const INSTANCE_ID = process.env.HOSTNAME || os.hostname();
+
+// Behind Nginx every request arrives from the proxy's IP. Trusting one proxy hop makes
+// req.ip (and the rate limiter) use the real client address from X-Forwarded-For.
+if (process.env.TRUST_PROXY) {
+  app.set('trust proxy', Number(process.env.TRUST_PROXY) || true);
+}
+
 app.use(helmet());
+
+// Tag every response with the instance that served it (visible in browser DevTools > Network).
+app.use((req, res, next) => {
+  res.setHeader('X-Served-By', INSTANCE_ID);
+  next();
+});
 
 // Configure CORS to support HTTP-only cookies with credentials
 const allowedOrigins = [
@@ -57,6 +74,7 @@ app.use(cookieParser()); // Required to parse HTTP-only JWT cookies
 
 // Request Logging Middleware for diagnostics (redacts sensitive variables)
 app.use((req, res, next) => {
+  if (req.url === '/health') return next(); // skip noisy Docker healthcheck logs
   console.log(`[BACKEND REQUEST] ${req.method} ${req.url} - Origin: ${req.headers.origin}`);
   if (req.method !== 'GET' && req.body) {
     const sanitizedBody = { ...req.body };
@@ -89,7 +107,10 @@ app.get('/', (req, res) => {
 
 // Cloud Run startup/liveness probe. Must not touch the DB: a slow or cold
 // Cloud SQL instance would otherwise fail the probe and kill a healthy revision.
+// Load-balancing demo: refresh /whoami and watch the instance id change.
+app.get('/whoami', (req, res) => res.json({ instance: INSTANCE_ID, pid: process.pid }));
+
 app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT} (instance ${INSTANCE_ID})`));

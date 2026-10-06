@@ -32,9 +32,15 @@ services:
 
   backend:
     build: ./backend
-    environment: *backend-env
-    ports:
-      - "5000:5000"
+    environment:
+      <<: *backend-env
+      TRUST_PROXY: "1"
+    # No published port: several copies cannot share one host port.
+    # They are reached only through Nginx, on the internal Docker network.
+    expose:
+      - "5000"
+    deploy:
+      replicas: ${BACKEND_REPLICAS:-3}
     depends_on:
       db:
         condition: service_healthy
@@ -47,6 +53,19 @@ services:
       retries: 5
     restart: unless-stopped
 
+  # Load balancer. The browser talks to port 5000 exactly as before,
+  # so the frontend does not need to be rebuilt.
+  nginx:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "5000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
   frontend:
     build:
       context: ./frontend
@@ -55,8 +74,7 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      backend:
-        condition: service_healthy
+      - nginx
     restart: unless-stopped
 
 volumes:
