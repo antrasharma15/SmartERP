@@ -1,245 +1,185 @@
-# KEYbooks
+# SmartERP (KEYbooks)
 
-> Keyboard-first double-entry accounting and stock inventory ERP system.
+SmartERP is a keyboard-first ERP and accounting platform built for fast daily bookkeeping workflows.  
+It combines double-entry accounting, inventory tracking, billing, and financial reporting in a modern web app.
 
-[![Status](https://img.shields.io/badge/Status-Academic_/_Internship_Project-blue.svg)](#project-context)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](#license)
-[![Node Version](https://img.shields.io/badge/Node-%3E%3D_18.0.0-slate.svg)](#prerequisites)
+## Highlights
 
-KEYbooks is a keyboard-driven, web-based ERP application inspired by Tally and Zoho Books. Built as an academic capstone/internship project, it simulates rapid data-entry workflows for managing ledgers, double-entry vouchers, and FIFO/WAC-valued inventory within a concurrent multi-user database environment.
-
----
-
-## Table of Contents
-
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Screenshots](#screenshots)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Running Locally](#running-locally)
-  - [Building for Production](#building-for-production)
-- [Environment Variables](#environment-variables)
-- [Project Structure](#project-structure)
-- [Database Schema](#database-schema)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgements](#acknowledgements)
-- [Contact](#contact)
-
----
-
-## Features
-
-### Accounting & Day Books
-*   **Double-Entry Voucher System**: Create and record Payment, Receipt, Sales, and Purchase vouchers with automatic debit/credit balance matching and error prevention.
-*   **Cash & Bank Registers**: View real-time running balances, filterable by date range and selected bank or cash ledgers.
-*   **Chronological Day Book**: Browse all transactions chronologically with toggleable drill-down drawers to inspect double-entry debit/credit splits.
-
-### Inventory Management
-*   **Stock Valuations**: Tracks inventory flows using First-In, First-Out (FIFO) and Weighted Average Cost (WAC) valuation methodologies.
-*   **Multi-Godown Tracking**: Assign and monitor items across multiple warehouse locations.
-*   **Stock Warnings**: System-generated visual warnings when inventory levels fall below defined reorder levels.
-
-### Dynamic Financial Reports
-*   **Live Reports**: Instantly computes Trial Balance, Balance Sheet, and Profit & Loss statements directly from ledger transactional data.
-
-### Platform Security & UX
-*   **Multi-User Safety Locks**: Enforces central database mutex locks during settings and master data edits to prevent concurrency conflicts, supported by audit logging.
-*   **Dual-Theme Layout**: Full interface support for high-contrast Light and Dark mode themes.
-*   **Keyboard-First Navigation**: Binds quick-action shortcuts (e.g. Gateway hotkeys) to replicate desktop terminal accounting experiences.
-
----
+- Keyboard-driven workflow inspired by desktop accounting tools
+- Double-entry vouchers (sales, purchase, payment, receipt)
+- Ledger, groups, units, stock groups, stock items, and customer masters
+- Billing/invoice flows with configurable invoice settings
+- Real-time financial reports (Trial Balance, P&L, Balance Sheet, Day Book, Cash/Bank, Stock Summary)
+- Multi-company support with role-based access
+- Email verification and password reset flows
+- Concurrency lock checks for critical business operations
 
 ## Tech Stack
 
-| Layer | Technology | Key Usage |
-| :--- | :--- | :--- |
-| **Frontend** | Next.js (App Router), React, TypeScript | View renders, navigation contexts, keyboard listeners |
-| **Styling** | Tailwind CSS v4 | Responsive utility styling, theme variables (Light/Dark) |
-| **Backend** | Node.js, Express | REST API server, JWT session verification, mutex logic |
-| **Database** | PostgreSQL | Relational transactional ledger schema |
-| **Mailer** | Nodemailer | SMTP email verification and password resets |
+### Frontend
+- Next.js (App Router) + React + TypeScript
+- Tailwind CSS
+- ESLint
 
----
+### Backend
+- Node.js + Express
+- PostgreSQL (`pg`)
+- JWT auth with HTTP-only cookies
+- Nodemailer for email delivery (with development fallback logging)
+- Security middleware: Helmet, CORS policy, rate limiter
+
+## Repository Structure
+
+```text
+SmartERP/
+├── backend/
+│   ├── config/          # DB + mail configuration
+│   ├── controllers/     # Route handlers
+│   ├── Middleware/      # Auth, lock, rate limit middleware
+│   ├── migrations/      # DB migration scripts
+│   ├── models/          # Data-access layer
+│   ├── routes/          # API route definitions
+│   ├── tests/           # Integration scripts
+│   └── server.js        # Express app entrypoint
+└── frontend/
+    ├── src/app/         # Next.js routes and UI modules
+    ├── src/assets/      # README screenshots
+    └── public/          # Static assets
+```
+
+## Prerequisites
+
+- Node.js 18+
+- PostgreSQL 14+
+- npm
+
+## Quick Start
+
+### 1) Clone and install
+
+```bash
+git clone https://github.com/antrasharma15/SmartERP.git
+cd SmartERP
+
+cd backend && npm install
+cd ../frontend && npm install
+```
+
+### 2) Configure backend environment
+
+Create `backend/.env`:
+
+```env
+DATABASE_URL=******HOST:5432/DATABASE
+PORT=5000
+NODE_ENV=development
+JWT_SECRET=replace_with_strong_secret
+FRONTEND_URL=http://localhost:3000
+
+SMTP_HOST=
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM="KEYbooks Security <security@myKEYbooks.com>"
+```
+
+> If SMTP values are not provided, backend mail calls are logged to console in development mode.
+
+### 3) Run the app
+
+In terminal 1:
+
+```bash
+cd backend
+npm run dev
+```
+
+In terminal 2:
+
+```bash
+cd frontend
+npm run dev
+```
+
+- Frontend: http://localhost:3000
+- Backend: http://localhost:5000
+
+## Scripts
+
+### Backend (`/backend`)
+- `npm run dev` — start with nodemon
+- `npm start` — start with node
+
+### Frontend (`/frontend`)
+- `npm run dev` — Next.js dev server
+- `npm run build` — production build
+- `npm run start` — run production build
+- `npm run lint` — run ESLint
+
+## API Overview
+
+Base URL: `http://localhost:5000/api`
+
+Main route groups:
+
+- `/auth`
+- `/companies`
+- `/ledgers`
+- `/groups`
+- `/units`
+- `/stock-groups`
+- `/stock-items`
+- `/vouchers`
+- `/customers`
+- `/invoices`
+- `/reports`
+- `/settings`
+
+Most business routes require authentication and pass through lock checks.
+
+## Testing
+
+Backend includes integration-style test scripts in `/backend/tests`.  
+Run them against a running local backend instance, for example:
+
+```bash
+cd backend
+node tests/authIntegration.js
+```
 
 ## Screenshots
 
-Here are visual references of the implemented screens and reports in KEYbooks:
+### Landing
+![Landing](frontend/src/assets/landing.jpeg)
 
-### 1. Landing Screen & Application Homepage
-![KEYbooks Landing Screen](frontend/src/assets/landing.jpeg)
-*Figure 1: High-contrast theme-aware homepage and landing screen.*
+### Registration
+![Register](frontend/src/assets/signup.jpeg)
 
-### 2. Secure User Sign Up
-![KEYbooks Sign Up Screen](frontend/src/assets/signup.jpeg)
-*Figure 2: User registration page with client-side validation and password strength enforcement.*
+### Dashboard
+![Dashboard](frontend/src/assets/Dashboard.jpeg)
 
-### 3. Main Workspace Dashboard
-![KEYbooks Dashboard Gateway](frontend/src/assets/Dashboard.jpeg)
-*Figure 3: Main dashboard gateway displaying companies, navigation shortcuts, and active shortcuts menu.*
+### Balance Sheet
+![Balance Sheet](frontend/src/assets/balsheet.jpeg)
 
-### 4. Dynamic Balance Sheet Statement
-![KEYbooks Balance Sheet Report](frontend/src/assets/balsheet.jpeg)
-*Figure 4: Dynamically calculated Trial Balance and Balance Sheet generated from transactional ledger data.*
+### Profit & Loss
+![Profit and Loss](frontend/src/assets/proloss.jpeg)
 
-### 5. Profit & Loss Statement Report
-![KEYbooks Profit & Loss Statement](frontend/src/assets/proloss.jpeg)
-*Figure 5: Live Profit & Loss statement statement tracking company revenue, expenses, and net profit margins.*
+## Current Focus / Roadmap
 
----
-
-## Getting Started
-
-### Prerequisites
-*   **Node.js**: Version `>= 18.0.0`
-*   **Database**: PostgreSQL `>= 14`
-*   **SMTP Transporter**: Access to SMTP mail server (or falls back to mock console logs in development)
-
-### Installation
-1.  **Clone the Repository**:
-    ```bash
-    git clone https://github.com/antrasharma15/SmartERP.git
-    cd SmartERP
-    ```
-
-2.  **Install Dependencies**:
-    *   For the Backend:
-        ```bash
-        cd backend
-        npm install
-        ```
-    *   For the Frontend:
-        ```bash
-        cd ../frontend
-        npm install
-        ```
-
-3.  **Configure Environment Variables**:
-    *   Create a `.env` file in the `backend/` directory (see the [Environment Variables](#environment-variables) section below for keys).
-
-### Running Locally
-1.  **Start the Backend**:
-    ```bash
-    cd backend
-    npm run dev
-    ```
-    The API server starts on `http://localhost:5000`.
-
-2.  **Start the Frontend**:
-    ```bash
-    cd ../frontend
-    npm run dev
-    ```
-    Open `http://localhost:3000` in your web browser.
-
-### Building for Production
-*   **Build the Next.js Frontend**:
-    ```bash
-    cd frontend
-    npm run build
-    npm run start
-    ```
-*   **Run the Express Backend**:
-    ```bash
-    cd backend
-    npm run start
-    ```
-
----
-
-## Environment Variables
-
-Configure these keys inside your `backend/.env` file:
-
-| Variable | Description | Example Value |
-| :--- | :--- | :--- |
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@host:5432/db` |
-| `PORT` | Backend port | `5000` |
-| `JWT_SECRET` | Secret key for JWT signing | `your_long_secure_secret_key` |
-| `NODE_ENV` | Run environment | `production` (or `development`) |
-| `SMTP_HOST` | Outgoing SMTP mail server | `smtp.mailtrap.io` |
-| `SMTP_PORT` | SMTP connection port | `587` |
-| `SMTP_USER` | SMTP username | `your_smtp_user` |
-| `SMTP_PASS` | SMTP password | `your_smtp_password` |
-| `FRONTEND_URL` | Application root web URL | `http://localhost:3000` |
-
----
-
-## Project Structure
-
-```
-├── backend/
-│   ├── config/          # Database & SMTP configurations
-│   ├── controllers/     # Controller logic (Auth, Settings, Ledgers, Vouchers)
-│   ├── Middleware/      # JWT checks, Concurrency locks, Rate limiting
-│   ├── models/          # Parameterized PostgreSQL model queries
-│   ├── routes/          # API route definitions
-│   └── server.js        # Server entry point
-├── frontend/
-│   ├── public/          # Favicons, logo badges, images
-│   └── src/app/         # Next.js pages, reports, dashboard, layouts
-│       ├── context/     # Global state and contexts
-│       └── utils/       # API call wrappers
-└── docs/                # Screenshots and specifications
-```
-
----
-
-## Database Schema
-
-KEYbooks utilizes a PostgreSQL database structure. Core tables include:
-*   **`users`**: Customer/operator profile credentials.
-*   **`companies`**: Profile details for the active business entity.
-*   **`company_users`**: Maps roles (`owner`, `admin`, `accountant`, `viewer`) to users.
-*   **`ledgers`**: Accounting heads mapped under Tally groups.
-*   **`vouchers`**: Transaction headers (Purchase/Sales dates and narrations).
-*   **`voucher_entries`**: Double-entry ledger splits (Debits/Credits).
-*   **`stock_items`**: Stock inventory entities.
-*   **`stock_transactions`**: FIFO/WAC transactions for buying/selling goods.
-*   **`system_locks`**: Active mutex concurrency logs.
-
-*Note: Database setups and triggers reside inside the SQL scripts in [backend/migrations](file:///c:/Users/hp/SmartERP/backend/migrations).*
-
----
-
-## Roadmap
-
-Planned features under design:
-- [ ] **GST Filing Automation**: Export GSTR-1 and GSTR-2 format grids.
-- [ ] **Bank Reconciliation**: Upload bank statements (CSV/OFX) to match book registers.
-- [ ] **Cheque Management**: Track and print issued/received cheque balances.
-- [ ] **PDF Invoice Generator**: Dynamic styling engine for downloading invoices.
-
----
+- GST workflows and compliance exports
+- Bank reconciliation improvements
+- Cheque management
+- Better invoice template customization
 
 ## Contributing
 
-1.  Fork the repository.
-2.  Create your feature branch (`git checkout -b feature/AmazingFeature`).
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4.  Push to the branch (`git push origin feature/AmazingFeature`).
-5.  Open a Pull Request.
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Open a pull request
 
----
+## Author
 
-## License
-
-This project is licensed under the MIT License - see the `LICENSE` file for details.
-
----
-
-## Acknowledgements
-
-*   Inspiration for user flows drawn from **Tally Prime** and **Zoho Books** accounting paradigms.
-*   Next.js and Tailwind CSS template structures.
-
----
-
-## Contact
-
-*   **Developer**: Antra Sharma
-*   **GitHub**: [@antrasharma15](https://github.com/antrasharma15)
-*   **Project Link**: [SmartERP / KEYbooks](https://github.com/antrasharma15/SmartERP)
+- Antra Sharma  
+  GitHub: [@antrasharma15](https://github.com/antrasharma15)
