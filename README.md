@@ -2,6 +2,8 @@
 
 > Keyboard-first double-entry accounting and stock inventory ERP system.
 
+
+🚀 **Live Demo:** [Click here to use SmartERP](http://15.252.173.85)
 [![Status](https://img.shields.io/badge/Status-Academic_/_Internship_Project-blue.svg)](#project-context)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](#license)
 [![Node Version](https://img.shields.io/badge/Node-%3E%3D_18.0.0-slate.svg)](#prerequisites)
