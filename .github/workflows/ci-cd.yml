@@ -57,7 +57,7 @@ jobs:
             context: ./backend
           - name: frontend
             context: ./frontend
-            build_args: NEXT_PUBLIC_API_URL=http://localhost:5000/api
+            build_args: NEXT_PUBLIC_API_URL=/api
     steps:
       - uses: actions/checkout@v4
 
