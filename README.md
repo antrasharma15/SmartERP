@@ -1,7 +1,7 @@
 # SmartERP (KEYbooks) ☁️
 
 > **Cloud-native, keyboard-first double-entry ERP and inventory management system.**  
-> Inspired by the ergonomics of **Tally Prime** and the cloud accessibility of **Zoho Books**, fully containerized and deployed on **AWS EC2** with **Nginx Load Balancing** and **GitHub Actions CI/CD**.
+> Inspired by the ergonomics of **Tally Prime** ..and the cloud accessibility of **Zoho Books**, fully containerized and deployed on **AWS EC2** with **Nginx Load Balancing** and **GitHub Actions CI/CD**.
 
 [![Deploy Status](https://img.shields.io/badge/AWS-EC2%20Deployed-FF9900?logo=amazonec2&logoColor=white)](#-deployment)
 [![Docker](https://img.shields.io/badge/Docker-Compose%20Multi--Container-2496ED?logo=docker&logoColor=white)](#%EF%B8%8F-architecture)
@@ -13,7 +13,7 @@
 
 ---
 
-## 🚀 Live Demo
+## 🚀 Live Demo for SmartERP
 
 **Live Application Link:** [http://15.252.173.85](http://15.252.173.85)
 
