@@ -125,5 +125,5 @@ jobs:
             echo "📊 Verifying running services status..."
             sudo docker compose ps
 
-            echo "✅ Deployment completed successfully! Live on http://${{ secrets.EC2_HOST }}"
+            echo "✅ Deployment completed successfully!! Live on http://${{ secrets.EC2_HOST }}"
 
