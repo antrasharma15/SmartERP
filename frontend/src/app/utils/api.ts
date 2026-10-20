@@ -93,12 +93,15 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
   if (!response.ok) {
     if (response.status === 401) {
       if (typeof window !== "undefined") {
-        console.warn("[apiFetch] Unauthorized request (401). Cleaning session and redirecting to login.");
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-        localStorage.removeItem("activeCompany");
-        if (window.location.pathname !== "/login") {
-          window.location.href = "/login";
+        // Do not treat a failed login credential attempt as an expired session
+        if (!path.includes("/auth/login")) {
+          console.warn("[apiFetch] Unauthorized request (401). Cleaning session and redirecting to login.");
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          localStorage.removeItem("activeCompany");
+          if (window.location.pathname !== "/login") {
+            window.location.href = "/login";
+          }
         }
       }
     }
